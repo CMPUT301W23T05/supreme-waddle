@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/communityFragment">
+    app:startDestination="@id/scannerFragment">
 
     <fragment
         android:id="@+id/mapsFragment"
@@ -35,6 +35,11 @@
         android:name="com.example.qrky.communityFragment"
         android:label="fragment_community"
         tools:layout="@layout/fragment_community" />
+    <fragment
+        android:id="@+id/leaderboardFragment"
+        android:name="com.example.qrky.leaderboardFragment"
+        android:label="fragment_leaderboard"
+        tools:layout="@layout/fragment_leaderboard" />
     <fragment
         android:id="@+id/loginFragment3"
         android:name="com.example.qrky.loginFragment"
