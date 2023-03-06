@@ -22,10 +22,10 @@ public class MainActivity extends AppCompatActivity {
 
         //Initialize the bottom navigation view
         //create bottom navigation view object
-        BottomNavigationView bttmNavView = (BottomNavigationView) findViewById(R.id.bottom_navigating_view);
+        BottomNavigationView bttmNavView = findViewById(R.id.bottom_navigating_view);
         NavHostFragment bttmNavHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_fragment);
+        assert bttmNavHostFragment != null;
         NavController bttmNavController = bttmNavHostFragment.getNavController();
         NavigationUI.setupWithNavController(bttmNavView, bttmNavController);
-
     }
 }
