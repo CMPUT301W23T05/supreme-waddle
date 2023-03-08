@@ -19,4 +19,6 @@
     <string name="confirm_track_location_title">Track Location?</string>
     <string name="confirm_track_location_confirm">Yes, let\'s track it!</string>
     <string name="confirm_track_location_cancel">No, don\'t track it.</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 </resources>
