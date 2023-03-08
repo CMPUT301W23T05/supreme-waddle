@@ -1,5 +1,7 @@
 package com.example.qrky;
 
+import static com.google.firebase.firestore.FieldValue.arrayUnion;
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -33,6 +35,9 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.zxing.Result;
 import com.king.zxing.CaptureFragment;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -82,12 +87,35 @@ public class scannerFragment extends CaptureFragment {
         }
 
         final Map<String, Object> map = new HashMap<>();
-        map.put("code", mCode);
-        map.put("location", mGeoPoint);
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        byte[] encodedhash = digest.digest(
+                mCode.getBytes(StandardCharsets.UTF_8));
+        StringBuilder hexString = new StringBuilder(2 * encodedhash.length);
+        for (int i = 0; i < encodedhash.length; i++) {
+            String hex = Integer.toHexString(0xff & encodedhash[i]);
+            if(hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        if (mDb.collection("QR Codes").document(hexString.toString()).get().isSuccessful(
+        )) {
+            mDb.collection("QR Codes").document(hexString.toString()).update("playerID", arrayUnion("playerID"));
+            return;
+        }
+        map.put("hash", hexString.toString());
+        if(isLocationRequired) {
+            map.put("location", mGeoPoint);
+        }
         map.put("imageUrl", mImageUrl);
         map.put("timestamp", Timestamp.now());
         Log.d("TAGTAG", "goSaveLibrary: ");
-        mDb.collection("libraries").add(map);
+        mDb.collection("QR Codes").add(map);
         MainActivity activity = (MainActivity) requireActivity();
         activity.switchTab(R.id.libraryFragment);
     }
