@@ -42,6 +42,8 @@ dependencies {
     def nav_version = "2.5.3"
     // Java language implementation
     implementation "androidx.navigation:navigation-fragment:$nav_version"
+    implementation 'androidx.cardview:cardview:1.0.0'
+
 
     implementation "androidx.navigation:navigation-ui:$nav_version"
     implementation 'androidx.appcompat:appcompat:1.6.1'
