@@ -15,4 +15,8 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="geoloc_permission_q">Track Location?</string>
+
+    <string name="confirm_track_location_title">Track Location?</string>
+    <string name="confirm_track_location_confirm">Yes, let\'s track it!</string>
+    <string name="confirm_track_location_cancel">No, don\'t track it.</string>
 </resources>

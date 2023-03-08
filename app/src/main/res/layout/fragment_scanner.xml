@@ -5,11 +5,23 @@
     android:layout_height="match_parent"
     tools:context=".scannerFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.camera.view.PreviewView
+        android:id="@+id/preview_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="SCANNING PAGE"
-        android:textSize="34sp"/>
+        android:layout_height="match_parent" />
+
+    <com.king.zxing.ViewfinderView
+        android:id="@+id/viewfinder_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageButton
+        android:id="@+id/ib_take_picture"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="120dp"
+        android:src="@drawable/baseline_camera_alt_24"
+        android:background="@android:color/transparent"/>
 
 </FrameLayout>
