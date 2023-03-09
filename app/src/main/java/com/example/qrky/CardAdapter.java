@@ -30,7 +30,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         CardData card = cards.get(position);
         holder.title.setText(card.getTitle());
         holder.score.setText(String.valueOf(card.getScore()));
-    }
+
+            }
 
     @Override
     public int getItemCount() {
@@ -46,8 +47,18 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             super(itemView);
             title = itemView.findViewById(R.id.card_title);
             score = itemView.findViewById(R.id.score);
+            itemView.findViewById(R.id.button_delete);
+
+
         }
     }
+
+    private void removeAt(int position) {
+        cards.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, cards.size());
+    }
+
 }
 
 

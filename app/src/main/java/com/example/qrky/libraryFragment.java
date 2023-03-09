@@ -73,7 +73,7 @@ public class libraryFragment extends Fragment {
 
     private List<CardData> cards() {
         List<CardData> cards = new ArrayList<>();
-        String[] titles = {"Items 1", "Item 2", "Items 3", "Item 4"};
+        String[] titles = {"QR Code 1", "QR Code 2", "QR Code 3", "QR Code 4"};
 
         for (int i = 0; i < titles.length; i++) {
             String title = titles[i];
@@ -89,6 +89,9 @@ public class libraryFragment extends Fragment {
 
         return cards;
     }
+
+
+
 
 }
 
