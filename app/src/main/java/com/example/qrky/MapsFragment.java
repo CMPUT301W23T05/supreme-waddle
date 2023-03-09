@@ -14,134 +14,102 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 import android.Manifest;
 import androidx.appcompat.app.AlertDialog;
 import android.content.DialogInterface;
+import com.google.android.gms.location.FusedLocationProviderClient;
+
 
 
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
+
+    private static final int PERMISSION_REQUEST_CODE = 1;
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 123;
 
     private GoogleMap mMap;
-    private static final int PERMISSION_REQUEST_CODE = 1;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        checkLocationPermission();
-        return inflater.inflate(R.layout.fragment_maps, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_maps, container, false);
 
+        // Initialize map
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        // Check for location permission
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
+        }
+
+        return rootView;
     }
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true);
-            mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-                @Override
-                public void onMyLocationChange(Location location) {
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
-                    mMap.addMarker(new MarkerOptions().position(latLng).title("My Location"));
-                }
-            });
-        } else {
-            requestLocationPermission();
-        }
+
+        // Set current location button listener
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
                 if (ContextCompat.checkSelfPermission(requireContext(),
                         Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    mMap.setMyLocationEnabled(true);
+                    mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17));
+                            }
+                        }
+                    });
                 } else {
-                    requestLocationPermission();
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
                 }
                 return false;
             }
         });
-    }
 
-
-    private void requestLocationPermission() {
-        if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Location permission needed")
-                    .setMessage("This app needs the Location permission, please accept to use location functionality")
-                    .setPositiveButton("OK", (dialogInterface, i) -> {
-                        //Prompt the user once explanation has been shown
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                PERMISSION_REQUEST_CODE);
-                    })
-                    .create()
-                    .show();
-
-        } else {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show an explanation to the user
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(getActivity(),
-                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION);
-                            }
-                        })
-                        .create()
-                        .show();
-
-            } else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-        } else {
-            // Permission has already been granted
-            // Do your location-related task here
+        // Enable current location layer if permission is granted
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission granted
-                // Do your location-related task here
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    mMap.setMyLocationEnabled(true);
+                }
             } else {
                 // Permission denied
                 Toast.makeText(getActivity(), "Location permission denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
-
 }

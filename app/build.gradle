@@ -49,6 +49,9 @@ dependencies {
     // Java language implementation
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+
+
 
 
     implementation "androidx.navigation:navigation-ui:$nav_version"
