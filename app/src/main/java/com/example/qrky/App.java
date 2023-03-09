@@ -1,4 +1,5 @@
 package com.example.qrky;
+//set up for firebase database
 
 import android.app.Application;
 

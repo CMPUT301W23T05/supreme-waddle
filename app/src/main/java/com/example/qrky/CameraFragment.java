@@ -18,20 +18,23 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.common.util.concurrent.ListenableFuture;
+/**
+ * This CameraFragment is extending from the Fragment class. It is responsible for setting up and managing the camera preview in an Android app.
+ */
 
 public class CameraFragment extends Fragment {
 
     private PreviewView mPreviewView;
     private ProcessCameraProvider mCameraProvider;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
-
+//onCreateView method is responsible for inflating the fragment's layout file and returning the root view.
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_camera, container, false);
     }
-
+//onViewCreated method is called after the view is created and is responsible for setting up the camera preview.
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -51,7 +54,7 @@ public class CameraFragment extends Fragment {
             } catch (Exception ignored) {}
         }, ContextCompat.getMainExecutor(requireContext()));
     }
-
+//onPause method is called when the fragment is paused and is responsible for releasing the camera resources.
     @Override
     public void onPause() {
         super.onPause();

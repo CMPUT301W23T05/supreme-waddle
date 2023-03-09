@@ -1,5 +1,5 @@
 package com.example.qrky;
-
+//This ConfirmDialog extending the DialogFragment class. It is responsible for displaying a confirmation dialog with a title, a confirm button, and a cancel button.
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,13 +28,14 @@ public class ConfirmDialog extends DialogFragment {
         return dialog;
     }
 
+    //The onCreateView method is responsible for inflating the dialog's layout file and returning the root view. It returns the inflated dialog_confirm layout.
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.dialog_confirm, container, false);
     }
-
+    //The onViewCreated method is called after the view is created and is responsible for initializing the dialog's UI components and setting up click listeners for the confirm and cancel buttons.
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -71,7 +72,7 @@ public class ConfirmDialog extends DialogFragment {
         }
     }
 
-
+    //The onCancel method is called when the dialog is canceled by the user and is responsible for setting the fragment result with a boolean value indicating that the cancel button was clicked.
     @Override
     public void onCancel(@NonNull DialogInterface dialog) {
         Bundle result = new Bundle();
