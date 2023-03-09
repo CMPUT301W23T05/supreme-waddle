@@ -1,7 +1,5 @@
 package com.example.qrky;
 
-import static com.google.firebase.firestore.FieldValue.arrayUnion;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -19,8 +17,10 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
@@ -29,18 +29,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.zxing.Result;
 import com.king.zxing.CaptureFragment;
-
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 public class scannerFragment extends CaptureFragment {
 
@@ -49,11 +40,11 @@ public class scannerFragment extends CaptureFragment {
     private ImageCapture mImageCapture;
     private ImageButton mIbTakePicture;
     private LocationHelper mLocationHelper;
-
+    private Database mDatabase;
     private String mCode;
     private GeoPoint mGeoPoint;
-    private final String mImageUrl = "";
-    private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
+    private ImageProxy mImage;
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -62,6 +53,7 @@ public class scannerFragment extends CaptureFragment {
         mIbTakePicture.setVisibility(View.GONE);
         mIbTakePicture.setOnClickListener(v -> takePicture());
         mLocationHelper = new LocationHelper(requireContext(), getViewLifecycleOwner());
+        mDatabase = new Database();
         startLocation();
     }
 
@@ -76,62 +68,20 @@ public class scannerFragment extends CaptureFragment {
         return super.onScanResultCallback(result);
     }
 
-    private void goSaveLibrary(boolean isLocationRequired) {
-        if (TextUtils.isEmpty(mCode)) {
-            Toast.makeText(requireContext(), "Code not valid.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (isLocationRequired && Objects.isNull(mGeoPoint)) {
-            Toast.makeText(requireContext(), "Wait for location succeed.", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
-        final Map<String, Object> map = new HashMap<>();
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        byte[] encodedhash = digest.digest(
-                mCode.getBytes(StandardCharsets.UTF_8));
-        StringBuilder hexString = new StringBuilder(2 * encodedhash.length);
-        for (int i = 0; i < encodedhash.length; i++) {
-            String hex = Integer.toHexString(0xff & encodedhash[i]);
-            if(hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
-        }
-        if (mDb.collection("QR Codes").document(hexString.toString()).get().isSuccessful(
-        )) {
-            mDb.collection("QR Codes").document(hexString.toString()).update("playerID", arrayUnion("playerID"));
-            return;
-        }
-        map.put("hash", hexString.toString());
-        if(isLocationRequired) {
-            map.put("location", mGeoPoint);
-        }
-        map.put("imageUrl", mImageUrl);
-        map.put("timestamp", Timestamp.now());
-        Log.d("TAGTAG", "goSaveLibrary: ");
-        mDb.collection("QR Codes").add(map);
-        MainActivity activity = (MainActivity) requireActivity();
-        activity.switchTab(R.id.libraryFragment);
-    }
-
+    @OptIn(markerClass = ExperimentalGetImage.class)
     private void confirmTrackLocation() {
         getParentFragmentManager().setFragmentResultListener(
                 ConfirmDialog.class.getSimpleName(), getViewLifecycleOwner(),
                 (requestKey, result) -> {
-                    Log.d("TAGTAG", "confirmTrackLocation: ");
+                    Log.d("TAG", "confirmTrackLocation: ");
                     boolean confirm = result.getBoolean("confirm", false);
                     if (confirm) {
                         useCameraForTakingPicture();
                         tryStartLocation(true);
                     } else {
                         getCameraScan().startCamera();
-                        goSaveLibrary(false);
+                        mDatabase.goSaveLibrary(true, mCode, mGeoPoint, mImage);
                     }
                 });
         ConfirmDialog.newInstance(
@@ -165,19 +115,21 @@ public class scannerFragment extends CaptureFragment {
         }, ContextCompat.getMainExecutor(requireContext()));
     }
 
+    @OptIn(markerClass = ExperimentalGetImage.class)
     private void takePicture() {
         mImageCapture.takePicture(ContextCompat.getMainExecutor(requireContext()),
                 new ImageCapture.OnImageCapturedCallback() {
                     @Override
                     public void onCaptureSuccess(@NonNull ImageProxy image) {
                         super.onCaptureSuccess(image);
+                        mImage = image;
                     }
                 });
         getRootView().postDelayed(() -> {
             getRootView().setForeground(new ColorDrawable(Color.WHITE));
             getRootView().postDelayed(() -> getRootView().setForeground(null), 50);
         }, 100);
-        goSaveLibrary(true);
+        mDatabase.goSaveLibrary(true, mCode, mGeoPoint, mImage);
     }
 
     @Override
