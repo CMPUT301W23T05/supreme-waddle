@@ -66,12 +66,17 @@ public class Database {
     }
     @ExperimentalGetImage
     private Bitmap getImageBitmap(ImageProxy image) {
-        Image mediaImage = image.getImage();
-        if (mediaImage != null) {
-            ByteBuffer buffer = mediaImage.getPlanes()[0].getBuffer();
-            byte[] bytes = new byte[buffer.capacity()];
-            buffer.get(bytes);
-            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
+        if (image != null) {
+            Image mediaImage = image.getImage();
+            if (mediaImage != null) {
+                ByteBuffer buffer = mediaImage.getPlanes()[0].getBuffer();
+                byte[] bytes = new byte[buffer.capacity()];
+                buffer.get(bytes);
+                return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
+            }
+            else {
+                return null;
+            }
         }
         else {
             return null;
