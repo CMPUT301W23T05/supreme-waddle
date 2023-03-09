@@ -3,6 +3,8 @@ package com.example.qrky;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,6 +46,16 @@ public class nearbyCodesFragment extends Fragment {
         // Set up the title
         TextView titleTextView = view.findViewById(R.id.nearby_codes_title);
         titleTextView.setText("Nearby Codes");
+
+        // Get the button view and set the click listener
+        mapsButton = view.findViewById(R.id.maps_button);
+        mapsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_fragment);
+                navController.navigate(R.id.mapsFragment);
+            }
+        });
 
         return view;
     }
