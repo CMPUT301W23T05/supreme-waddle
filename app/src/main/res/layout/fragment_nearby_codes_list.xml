@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list"
-    android:name="com.example.qrky.nearbyCodesFragment"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
-    app:layoutManager="LinearLayoutManager"
-    tools:context=".nearbyCodesFragment"
-    tools:listitem="@layout/fragment_nearby_codes" >
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+>
 
-        <TextView
-            android:id="@+id/item_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceListItem" />
+    <TextView
+        android:id="@+id/item_text"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="3dp"
+        android:layout_weight="1"
+        android:background="@drawable/list_shape"
+        android:textSize="18sp"
+        android:gravity="center_vertical"/>
 
-        <TextView
-            android:id="@+id/content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceListItem" />
+    <TextView
+        android:id="@+id/distance_text"
+        android:layout_width="35dp"
+        android:layout_height="40dp"
+        android:layout_margin="2dp"
+        android:background="@drawable/list_shape"
+        android:textSize="18sp"
+        android:gravity="center"/>
 
-    </LinearLayout>
+</LinearLayout>
 
-</androidx.recyclerview.widget.RecyclerView>
