@@ -1,7 +1,14 @@
 package com.example.qrky;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -14,49 +21,143 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.qrky.placeholder.PlaceholderContent;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import android.Manifest;
+
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+
+
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A fragment representing a list of nearby QR codes.
  */
-public class nearbyCodesFragment extends Fragment {
+public class nearbyCodesFragment extends Fragment implements LocationListener {
 
     private RecyclerView mRecyclerView;
     private MyItemRecyclerViewAdapter mAdapter;
+    private List<PlaceholderContent.PlaceholderItem> mValues = new ArrayList<>();
 
-    public nearbyCodesFragment() {
-    }
+    private LocationManager locationManager;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    CollectionReference qrCodesRef = db.collection("QR Codes");
+
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
+
+    public nearbyCodesFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nearby_codes, container, false);
 
-        // Set up the button and search view
-        Button mapsButton = view.findViewById(R.id.maps_button);
-        SearchView searchView = view.findViewById(R.id.search_view);
-        Button nearbyCodesButton = view.findViewById(R.id.nearby_codes_button);
-
-        // Set up the RecyclerView
+        // Set up the recycler view and adapter
         mRecyclerView = view.findViewById(R.id.nearby_codes_recycler_view);
-        mAdapter = new MyItemRecyclerViewAdapter(PlaceholderContent.ITEMS);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mAdapter = new MyItemRecyclerViewAdapter(mValues);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        // Set up location manager
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
-        // Set up the title
-        TextView titleTextView = view.findViewById(R.id.nearby_codes_title);
-        titleTextView.setText("Nearby Codes");
-
-        // Get the button view and set the click listener
-        mapsButton = view.findViewById(R.id.maps_button);
-        mapsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_fragment);
-                navController.navigate(R.id.mapsFragment);
+        // Check if location permission is granted
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // Request location updates
+            try {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            } catch (SecurityException e) {
+                // Handle the exception
+                e.printStackTrace();
             }
-        });
+        } else {
+            // Request location permission
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
+        }
 
         return view;
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission has been granted, perform the action
+                try {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                } catch (SecurityException e) {
+                    // Handle the exception
+                    e.printStackTrace();
+                }
+
+            } else {
+                // Permission has been denied, handle it
+                Toast.makeText(getContext(), "Permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+    private void queryNearbyCodes(double latitude, double longitude, double radius) {
+        mValues.clear(); // Clear the list before adding new items
+        qrCodesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot querySnapshot) {
+                for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+                    // Get the name attribute and location attribute
+                    String name = documentSnapshot.getString("name");
+                    GeoPoint docLocation = documentSnapshot.getGeoPoint("location");
+
+                    // Check if both attributes are not null
+                    if (name != null && docLocation != null) {
+                        // Calculate the distance between the document's location and the current location
+                        float[] distance = new float[1];
+                        Location.distanceBetween(latitude, longitude, docLocation.getLatitude(), docLocation.getLongitude(), distance);
+
+                        // Check if the distance is within the radius
+                        if (distance[0] <= radius * 1000) {
+                            PlaceholderContent.PlaceholderItem item = new PlaceholderContent.PlaceholderItem(documentSnapshot.getId(), name, "");
+                            mValues.add(item);
+                        }
+                    }
+                }
+
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        double radius = 10.0; // Search within a 5km radius
+
+        queryNearbyCodes(latitude, longitude, radius);
+
+    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        // Stop location updates when the fragment is destroyed
+        locationManager.removeUpdates(this);
+    }
 }
+
