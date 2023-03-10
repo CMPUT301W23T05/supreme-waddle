@@ -41,11 +41,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/button_layout"
-        android:backgroundTint="@android:color/white"
+        android:backgroundTint="#FFE2BA"
         android:radius="100dp"
         android:iconifiedByDefault="false"
         android:queryHint="Search Codes"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp"
+        android:background="@drawable/searchview_background"
+        android:textColor="#06000A"/>
 
     <TextView
         android:id="@+id/nearby_codes_title"

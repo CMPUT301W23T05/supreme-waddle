@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
             android:backgroundTint="#FFE2BA"
-            android:background="@drawable/button_background"
+            android:background="@drawable/searchview_background"
             android:iconifiedByDefault="false"
             android:queryHint="Search Collection"
             android:radius="100dp"
