@@ -14,27 +14,43 @@ import com.example.qrky.placeholder.PlaceholderContent.PlaceholderItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import androidx.annotation.NonNull;
+
 
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<PlaceholderItem> mValues;
+    private List<PlaceholderItem> mValues;
+    private List<PlaceholderItem> mFilteredValues;
 
     public MyItemRecyclerViewAdapter(List<PlaceholderItem> items) {
         mValues = items;
+        mFilteredValues = items;
     }
 
+    public void filter(String query) {
+        List<PlaceholderItem> filteredList = new ArrayList<>();
+        for (PlaceholderItem item : mValues) {
+            if (item.content.toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+        mFilteredValues = filteredList;
+        notifyDataSetChanged();
+    }
+
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_nearby_codes_list, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mContentView.setText(mValues.get(position).content);
-        holder.mDistanceView.setText(mValues.get(position).details);
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        holder.mItem = mFilteredValues.get(position);
+        holder.mContentView.setText(mFilteredValues.get(position).content);
+        holder.mDistanceView.setText(mFilteredValues.get(position).details);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +62,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mFilteredValues.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -58,8 +74,8 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mDistanceView = (TextView) view.findViewById(R.id.distance_text);
-            mContentView = (TextView) view.findViewById(R.id.item_text);
+            mDistanceView = view.findViewById(R.id.distance_text);
+            mContentView = view.findViewById(R.id.item_text);
         }
 
         @Override
@@ -67,6 +83,5 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             return super.toString() + " '" + mContentView.getText() + "'";
         }
     }
-
 }
 

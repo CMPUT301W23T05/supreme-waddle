@@ -63,7 +63,7 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
     private Button mapsButton;
-
+    private SearchView mSearchView;
     public nearbyCodesFragment() {}
 
     @Override
@@ -77,7 +77,19 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         // Set up location manager
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        mSearchView = view.findViewById(R.id.search_view);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mAdapter.filter(newText);
+                return false;
+            }
+        });
         // Check if location permission is granted
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // Request location updates
