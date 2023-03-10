@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,8 +93,20 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        // Refresh the data every 5 minutes
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                loadQRCodesFromFirebase();
+                handler.postDelayed(this, 5 * 60 * 1000); // Repeat after 5 minutes
+            }
+        };
+        handler.postDelayed(runnable, 5 * 60 * 1000); // Start after 5 minutes
+
         return rootView;
     }
+
 
 
     @Override
@@ -156,7 +169,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         // Build a query to retrieve documents that have a "Location" attribute with a non-null geopoint value
         Query query = qrCodesRef.whereNotEqualTo("Location", null);
 
-
         // Execute the query
         query.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -177,6 +189,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             }
         });
     }
+
+
 
 
 }
