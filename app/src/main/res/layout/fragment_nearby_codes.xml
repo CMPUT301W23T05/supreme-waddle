@@ -11,20 +11,23 @@
         android:id="@+id/button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
 
         <Button
             android:id="@+id/maps_button"
-            android:layout_width="wrap_content"
+            android:layout_width="133dp"
             android:layout_height="wrap_content"
-            android:text="Maps"/>
+            android:layout_margin="10dp"
+            android:text="Maps" />
 
         <Button
             android:id="@+id/nearby_codes_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:text="Nearby codes" />
 
     </LinearLayout>
@@ -33,8 +36,11 @@
         android:id="@+id/search_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:queryHint="Search"
         android:layout_below="@id/button_layout"
+        android:backgroundTint="@android:color/white"
+        android:radius="100dp"
+        android:iconifiedByDefault="false"
+        android:queryHint="Search Codes"
         android:layout_marginTop="16dp"/>
 
     <TextView
