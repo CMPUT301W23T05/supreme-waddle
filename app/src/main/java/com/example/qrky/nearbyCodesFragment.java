@@ -153,7 +153,7 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
 
                         // Check if the distance is within the radius
                         if (distance[0] <= radius * 1000) {
-                            String s = String.format("%.1f", distance[0]/1000.0);
+                            String s = String.format("%.2f", distance[0]/1000.0);
                             PlaceholderContent.PlaceholderItem item = new PlaceholderContent.PlaceholderItem(documentSnapshot.getId(), name, s);
                             mValues.add(item);
                         }
