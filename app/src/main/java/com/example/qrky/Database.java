@@ -3,8 +3,10 @@ package com.example.qrky;
 import static com.google.firebase.firestore.FieldValue.arrayUnion;
 
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import static java.lang.Double.parseDouble;
+
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.media.Image;
 import android.util.Log;
 
@@ -15,32 +17,33 @@ import androidx.camera.core.ImageProxy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class Database {
     private final FirebaseFirestore mDb;
-    private final FirebaseStorage storage;
+    private final StorageReference storageRef;
     public Database() {
         mDb = FirebaseFirestore.getInstance();
-        storage  = FirebaseStorage.getInstance();
-
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
     }
     @ExperimentalGetImage
-    public void goSaveLibrary(boolean isLocationRequired, String mCode, GeoPoint mGeoPoint, ImageProxy Photo) {
-        String path = getImageBitmap(Photo);
+    public void goSaveLibrary(boolean isLocationRequired, String mCode, GeoPoint mGeoPoint, byte[] Photo) {
         final Map<String, Object> map = new HashMap<>();
+
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("SHA-256");
@@ -57,17 +60,16 @@ public class Database {
             }
             hexString.append(hex);
         }
-        if (mDb.collection("QR Codes").document(hexString.toString()).get().isSuccessful(
-        )) {
-            mDb.collection("QR Codes").document(hexString.toString()).update("playerID", arrayUnion("playerID"));
-
+        uploadImage(Photo, hexString.toString());
+        if (mDb.collection("QR Codes").document(hexString.toString()).get().isSuccessful()) {
+            mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID1"));
+            mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
         }
+
         else {
-            map.put("hash", hexString.toString());
             if (isLocationRequired) {
                 map.put("location", mGeoPoint);
             }
-            map.put("photoPath", path);
             map.put("timestamp", Timestamp.now());
             map.put("playerID", arrayUnion("playerID"));
             Log.d("TAG", "goSaveLibrary: ");
@@ -75,40 +77,46 @@ public class Database {
         }
     }
     @ExperimentalGetImage
-    private String getImageBitmap(ImageProxy image) {
-        final String[] path = new String[1];
-        if (image != null) {
-            Image mediaImage = image.getImage();
-            if (mediaImage != null) {
-                StorageReference storageRef = storage.getReference();
-                ByteBuffer buffer = mediaImage.getPlanes()[0].getBuffer();
-                byte[] bytes = new byte[buffer.capacity()];
-                buffer.get(bytes);
+    public void uploadImage(byte[] Photo, String mCode) {
 
+        if (Photo != null) {
 
-                UploadTask uploadTask = storageRef.putBytes(bytes);
-                uploadTask.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle unsuccessful uploads
+            final String[] path = new String[1];
+//            storage of image from https://www.geeksforgeeks.org/android-how-to-upload-an-image-on-firebase-storage/
+            StorageReference ref
+                    = storageRef
+                    .child(
+                            "QRImages/"
+                                    + UUID.randomUUID().toString());
+            ref.putBytes(Photo)
+                    .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    // ...
+                    Log.d("uploadImage", "onFailure: " + exception.getMessage());
+                    path[0] = null;
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                    // ...
+                    path[0] = ref.getPath();
+                    Log.d("uploadImage", "onSuccess: " + path[0]);
+                    mDb.collection("QR Codes").document(mCode).update("photo", (path[0]));
+                }
+            }).addOnProgressListener(taskSnapshot -> {
+                        double progress
+                                = (100.0
+                                * taskSnapshot.getBytesTransferred()
+                                / taskSnapshot.getTotalByteCount());
+                        Log.d("uploadImage",  "Progress: " + String.valueOf(progress) + "% uploaded");
+                    });
 
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                        // ...
-                        path[0] = storageRef.getPath();
-                    }
-                });
-                return path[0];
-            }
-            else {
-                return null;
-            }
         }
-        else {
-            return null;
-        }
+
+
+
     }
 }

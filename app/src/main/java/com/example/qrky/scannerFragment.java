@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.Image;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -33,6 +34,8 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.zxing.Result;
 import com.king.zxing.CaptureFragment;
 
+import java.nio.ByteBuffer;
+
 public class scannerFragment extends CaptureFragment {
 
     private ProcessCameraProvider mCameraProvider;
@@ -43,7 +46,7 @@ public class scannerFragment extends CaptureFragment {
     private Database mDatabase;
     private String mCode;
     private GeoPoint mGeoPoint;
-    private ImageProxy mImage;
+    byte[] bytes;
 
 
     @Override
@@ -81,7 +84,7 @@ public class scannerFragment extends CaptureFragment {
                         tryStartLocation(true);
                     } else {
                         getCameraScan().startCamera();
-                        mDatabase.goSaveLibrary(true, mCode, mGeoPoint, mImage);
+                        mDatabase.goSaveLibrary(true, mCode, mGeoPoint, bytes);
                     }
                 });
         ConfirmDialog.newInstance(
@@ -122,14 +125,26 @@ public class scannerFragment extends CaptureFragment {
                     @Override
                     public void onCaptureSuccess(@NonNull ImageProxy image) {
                         super.onCaptureSuccess(image);
-                        mImage = image;
+                        Image mediaImage = image.getImage();
+                        Log.d("onCapture", "onCaptureSuccess: " + mediaImage);
+                        if (mediaImage != null) {
+                            ByteBuffer buffer = mediaImage.getPlanes()[0].getBuffer();
+                            bytes = new byte[buffer.capacity()];
+                            buffer.get(bytes);
+                            image.close();
+                        }
                     }
                 });
         getRootView().postDelayed(() -> {
             getRootView().setForeground(new ColorDrawable(Color.WHITE));
             getRootView().postDelayed(() -> getRootView().setForeground(null), 50);
         }, 100);
-        mDatabase.goSaveLibrary(true, mCode, mGeoPoint, mImage);
+        mDatabase.goSaveLibrary(true, mCode, mGeoPoint, bytes);
+        getCameraScan().startCamera();
+        mIbTakePicture.setVisibility(View.GONE);
+        viewfinderView.setVisibility(View.VISIBLE);
+
+
     }
 
     @Override
