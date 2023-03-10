@@ -62,6 +62,7 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
     CollectionReference qrCodesRef = db.collection("QR Codes");
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
+    private Button mapsButton;
 
     public nearbyCodesFragment() {}
 
@@ -90,6 +91,14 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
             // Request location permission
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
         }
+        mapsButton = view.findViewById(R.id.maps_button);
+        mapsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_fragment);
+                navController.navigate(R.id.mapsFragment);
+            }
+        });
 
         return view;
     }
@@ -132,7 +141,8 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
 
                         // Check if the distance is within the radius
                         if (distance[0] <= radius * 1000) {
-                            PlaceholderContent.PlaceholderItem item = new PlaceholderContent.PlaceholderItem(documentSnapshot.getId(), name, "");
+                            String s = String.format("%.1f", distance[0]/1000.0);
+                            PlaceholderContent.PlaceholderItem item = new PlaceholderContent.PlaceholderItem(documentSnapshot.getId(), name, s);
                             mValues.add(item);
                         }
                     }
@@ -147,7 +157,7 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
     public void onLocationChanged(Location location) {
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
-        double radius = 10.0; // Search within a 5km radius
+        double radius = 6.0; // Search within a 5km radius
 
         queryNearbyCodes(latitude, longitude, radius);
 

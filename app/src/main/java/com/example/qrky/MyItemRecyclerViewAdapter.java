@@ -34,6 +34,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mContentView.setText(mValues.get(position).content);
+        holder.mDistanceView.setText(mValues.get(position).details);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,12 +52,13 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mContentView;
+        public final TextView mDistanceView;
         public PlaceholderItem mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-
+            mDistanceView = (TextView) view.findViewById(R.id.distance_text);
             mContentView = (TextView) view.findViewById(R.id.item_text);
         }
 

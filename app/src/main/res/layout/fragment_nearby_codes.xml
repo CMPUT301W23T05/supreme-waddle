@@ -60,7 +60,8 @@
         android:paddingEnd="16dp"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
-        android:layout_below="@id/search_view"/>
+        android:layout_below="@id/search_view"
+        android:layout_margin="5dp"/>
 
     <View
         android:id="@+id/nearby_codes_divider"
