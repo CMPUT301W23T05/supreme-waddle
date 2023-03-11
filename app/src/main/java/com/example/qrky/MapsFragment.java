@@ -139,6 +139,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         }
+        mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17));
+                }
+            }
+        });
 
         loadQRCodesFromFirebase();
     }
@@ -167,25 +175,26 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         CollectionReference qrCodesRef = db.collection("QR Codes");
 
         // Build a query to retrieve documents that have a "Location" attribute with a non-null geopoint value
-        Query query = qrCodesRef.whereNotEqualTo("Location", null);
+        Query query = qrCodesRef.whereNotEqualTo("location", null);
 
-        // Execute the query
-        query.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                // Retrieve the documents from the query result
-                QuerySnapshot querySnapshot = task.getResult();
-                List<DocumentSnapshot> documents = querySnapshot.getDocuments();
+        // Add a listener to the query to get real-time updates
+        query.addSnapshotListener((querySnapshot, error) -> {
+            if (error != null) {
+                Log.e(TAG, "Error getting QR codes: ", error);
+                return;
+            }
 
-                // Do something with the documents
-                for (DocumentSnapshot document : documents) {
-                    Log.d(TAG, "Document data: " + document.getData());
-                    String qrCodeData = document.getString("data");
-                    GeoPoint qrCodeLocation = document.getGeoPoint("Location");
-                    LatLng latLng = new LatLng(qrCodeLocation.getLatitude(), qrCodeLocation.getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(latLng).title(qrCodeData));
+            // Clear the map
+            mMap.clear();
+
+            // Loop through the documents and add markers to the map
+            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                GeoPoint location = document.getGeoPoint("location");
+                if (location != null) {
+                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+                    mMap.addMarker(new MarkerOptions().position(latLng));
                 }
-            } else {
-                Log.w(TAG, "Error getting documents.", task.getException());
             }
         });
     }
