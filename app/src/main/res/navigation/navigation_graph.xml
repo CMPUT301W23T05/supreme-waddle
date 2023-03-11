@@ -45,4 +45,17 @@
         android:name="com.example.qrky.registerFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" />
+    <dialog
+        android:id="@+id/confirmDialog"
+        android:name="com.example.qrky.ConfirmDialog"
+        android:label="ConfirmDialog" />
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.example.qrky.CameraFragment"
+        android:label="CameraFragment" />
+    <fragment
+        android:id="@+id/otherUsersCodes2"
+        android:name="com.example.qrky.OtherUsersCodes"
+        android:label="fragment_other_users_codes"
+        tools:layout="@layout/fragment_other_users_codes" />
 </navigation>

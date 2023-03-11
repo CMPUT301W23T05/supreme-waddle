@@ -13,6 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 
 // US 02.03.01: As a player, I want to be able to browse QR codes that other players have scanned.
 // Artist: Franco Bonilla
@@ -29,11 +31,10 @@ import androidx.lifecycle.ViewModelProvider;
 //     5. Player sees OtherUser's code library (goal)
 
 public class OtherUsersCodes extends Fragment {
-
-//    FragmentOtherUsersCodesBinding binding;
-    private OtherUsersCodesViewModel mViewModel;
+    private OtherUsersCodesViewModel otherUsersCodeVM;
     private GridView gridOfCodes;
     private ImageButton backBttn;
+    private final FirebaseFirestore qrkyDB = FirebaseFirestore.getInstance();
 
     public OtherUsersCodes() {}
     public static OtherUsersCodes newInstance() {
@@ -44,17 +45,15 @@ public class OtherUsersCodes extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         Log.i("OtherUsersCodes", "Looking at OtherUser's codes");
         super.onCreate(savedInstanceState);
-//        binding = FragmentOtherUsersCodesBinding.inflate(getLayoutInflater());
-//        setContentView(binding.getRoot());
 
         // hide bottom navigation bar when viewing OtherUser's codes
         MainActivity mainAct = (MainActivity) getActivity();
         assert mainAct != null;
         mainAct.bttmNavView.setVisibility(View.INVISIBLE);
 
-        mViewModel = new ViewModelProvider(this).get(OtherUsersCodesViewModel.class);
-        mViewModel.addTestData();  // add test data
-        Log.i("OtherUsersCodes", "codeDrawings: " + mViewModel.codeDrawings);
+        // call ViewModel
+        otherUsersCodeVM = new ViewModelProvider(requireActivity()).get(OtherUsersCodesViewModel.class);
+        otherUsersCodeVM.addTestData();  // add test data
     }
 
     @Override
@@ -64,7 +63,7 @@ public class OtherUsersCodes extends Fragment {
 
         // create grid of OtherUser's codes
         gridOfCodes = (GridView) view.findViewById(R.id.otherUsersCodes);
-        OtherUsersLibraryAdapter adapter = new OtherUsersLibraryAdapter(OtherUsersCodes.this.getContext(), mViewModel.codeNames, mViewModel.codeScores, mViewModel.codeDrawings);
+        OtherUsersLibraryAdapter adapter = new OtherUsersLibraryAdapter(OtherUsersCodes.this.getContext(), otherUsersCodeVM.codeNames, otherUsersCodeVM.codeScores, otherUsersCodeVM.codeDrawings);
         gridOfCodes.setAdapter(adapter);
 
         // go back to the OtherUser Profile

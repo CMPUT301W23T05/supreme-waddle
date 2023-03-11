@@ -12,7 +12,7 @@
         android:text="COMMUNITY PAGE (show leaderboard here too)"
         android:textSize="34sp" />
 
-    <!--TODO: DELETE BUTTON (Just for testing OtherUserCodes)-->
+    <!--TODO: Move button to other users' profiles-->
     <Button
         android:id="@+id/SeeOtherUserCodes"
         android:layout_width="wrap_content"

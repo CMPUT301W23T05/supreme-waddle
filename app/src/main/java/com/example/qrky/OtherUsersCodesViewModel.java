@@ -26,7 +26,7 @@ public class OtherUsersCodesViewModel extends ViewModel {
 
     // TODO: get code library from database
 
-    // TODO: DELETE TEST DATA
+    // TODO: Move to testing class
     public void addTestData() {
         codeNames.add("CookieMonster");
         codeScores.add(100);
