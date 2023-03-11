@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.Image;
@@ -59,6 +61,7 @@ public class scannerFragment extends CaptureFragment {
     private ImageCapture mImageCapture;
     private ImageButton mIbTakePicture;
     private LocationHelper mLocationHelper;
+    private ImageView mIvPhoto;
     private Database mDatabase;
     private String mCode;
     private GeoPoint mGeoPoint;
@@ -103,7 +106,8 @@ public class scannerFragment extends CaptureFragment {
      *
      * @param isLocationRequired
      */
-    private void goSaveLibrary(boolean isLocationRequired) {
+    @OptIn(markerClass = ExperimentalGetImage.class)
+    private void goSaveLibrary(boolean isLocationRequired, byte[] bytes) {
         if (TextUtils.isEmpty(mCode)) {
             Toast.makeText(requireContext(), "Code not valid.", Toast.LENGTH_SHORT).show();
             return;
@@ -112,22 +116,23 @@ public class scannerFragment extends CaptureFragment {
             Toast.makeText(requireContext(), "Wait for location succeed.", Toast.LENGTH_SHORT).show();
             return;
         }
+        mDatabase.goSaveLibrary(true, mCode, mGeoPoint, bytes);
+    }
 
-    @OptIn(markerClass = ExperimentalGetImage.class)
     private void confirmTrackLocation() {
-        getParentFragmentManager().setFragmentResultListener(
-                ConfirmDialog.class.getSimpleName(), getViewLifecycleOwner(),
-                (requestKey, result) -> {
-                    Log.d("TAG", "confirmTrackLocation: ");
-                    boolean confirm = result.getBoolean("confirm", false);
-                    if (confirm) {
-                        useCameraForTakingPicture();
-                        tryStartLocation(true);
-                    } else {
-                        getCameraScan().startCamera();
-                        mDatabase.goSaveLibrary(true, mCode, mGeoPoint, bytes);
-                    }
-                });
+    getParentFragmentManager().setFragmentResultListener(
+            ConfirmDialog.class.getSimpleName(), getViewLifecycleOwner(),
+            (requestKey, result) -> {
+                Log.d("TAG", "confirmTrackLocation: ");
+                boolean confirm = result.getBoolean("confirm", false);
+                if (confirm) {
+                    useCameraForTakingPicture();
+                    tryStartLocation(true);
+                } else {
+                    getCameraScan().startCamera();
+                    goSaveLibrary(false, bytes);
+                }
+            });
         ConfirmDialog.newInstance(
                 getString(R.string.confirm_track_location_title),
                 getString(R.string.confirm_track_location_confirm),
@@ -156,7 +161,7 @@ public class scannerFragment extends CaptureFragment {
                         .build();
 
                 preview.setSurfaceProvider(previewView.getSurfaceProvider());
-                Camera camera = mCameraProvider.bindToLifecycle(
+                mCameraProvider.bindToLifecycle(
                         getViewLifecycleOwner(), cameraSelector, preview, mImageCapture);
             } catch (Exception ignored) {}
         }, ContextCompat.getMainExecutor(requireContext()));
@@ -171,12 +176,14 @@ public class scannerFragment extends CaptureFragment {
             Toast.makeText(requireContext(), "Wait for location succeed.", Toast.LENGTH_SHORT).show();
             return;
         }
+
         mImageCapture.takePicture(ContextCompat.getMainExecutor(requireContext()),
                 new ImageCapture.OnImageCapturedCallback() {
                     @Override
                     public void onCaptureSuccess(@NonNull ImageProxy image) {
                         Log.d(TAG, "onCaptureSuccess: ");
                         savePhoto(image);
+
                         mCameraProvider.unbindAll();
                     }
 
@@ -189,18 +196,22 @@ public class scannerFragment extends CaptureFragment {
             getRootView().setForeground(new ColorDrawable(Color.WHITE));
             getRootView().postDelayed(() -> getRootView().setForeground(null), 50);
         }, 100);
-        goSaveLibrary(true);
+        goSaveLibrary(true, bytes);
+        mIvPhoto.setVisibility(View.VISIBLE);
     }
 
+    private void savePhoto(ImageProxy image) {
+
+        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+        buffer.rewind();
+        bytes = new byte[buffer.capacity()];
+        buffer.get(bytes);
+        byte[] clonedBytes = bytes.clone();
+        Bitmap mIvPhotoBitmap = BitmapFactory.decodeByteArray(clonedBytes, 0, clonedBytes.length);
+        mIvPhoto.setImageBitmap(mIvPhotoBitmap);
+    }
     @Override
     public void onDestroyView() {
-        if (uploadTask != null) {
-            uploadTask.cancel();
-        }
-        if (mIvPhotoBitmap != null) {
-            mIvPhotoBitmap.recycle();
-            mIvPhotoBitmap = null;
-        }
         super.onDestroyView();
     }
 
