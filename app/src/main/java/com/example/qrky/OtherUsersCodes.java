@@ -53,7 +53,8 @@ public class OtherUsersCodes extends Fragment {
 
         // call ViewModel
         otherUsersCodeVM = new ViewModelProvider(requireActivity()).get(OtherUsersCodesViewModel.class);
-        otherUsersCodeVM.addTestData();  // add test data
+        otherUsersCodeVM.getOtherUsersCodes();  // add data
+        otherUsersCodeVM.getTestData();  // add test data
     }
 
     @Override
