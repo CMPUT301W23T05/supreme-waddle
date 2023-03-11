@@ -24,4 +24,11 @@
         android:src="@drawable/baseline_camera_alt_24"
         android:background="@android:color/transparent"/>
 
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/iv_photo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"/>
+
 </FrameLayout>
