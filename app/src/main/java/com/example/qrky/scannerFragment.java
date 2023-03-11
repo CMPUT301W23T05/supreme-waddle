@@ -2,8 +2,8 @@ package com.example.qrky;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.Image;
@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -31,14 +32,28 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.zxing.Result;
 import com.king.zxing.CaptureFragment;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
+/**
+ *
+ */
 public class scannerFragment extends CaptureFragment {
 
+    private static final String TAG = "SW.ScannerF";
     private ProcessCameraProvider mCameraProvider;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private ImageCapture mImageCapture;
@@ -50,10 +65,17 @@ public class scannerFragment extends CaptureFragment {
     byte[] bytes;
 
 
+    /**
+     *
+     * @param view The View returned by {@link @onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mIbTakePicture = view.findViewById(R.id.ib_take_picture);
+        mIvPhoto = view.findViewById(R.id.iv_photo);
         mIbTakePicture.setVisibility(View.GONE);
         mIbTakePicture.setOnClickListener(v -> takePicture());
         mLocationHelper = new LocationHelper(requireContext(), getViewLifecycleOwner());
@@ -61,6 +83,11 @@ public class scannerFragment extends CaptureFragment {
         startLocation();
     }
 
+    /**
+     *
+     * @param result
+     * @return
+     */
     @Override
     public boolean onScanResultCallback(Result result) {
         if (!TextUtils.isEmpty(result.getText())) {
@@ -72,6 +99,19 @@ public class scannerFragment extends CaptureFragment {
         return super.onScanResultCallback(result);
     }
 
+    /**
+     *
+     * @param isLocationRequired
+     */
+    private void goSaveLibrary(boolean isLocationRequired) {
+        if (TextUtils.isEmpty(mCode)) {
+            Toast.makeText(requireContext(), "Code not valid.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (isLocationRequired && Objects.isNull(mGeoPoint)) {
+            Toast.makeText(requireContext(), "Wait for location succeed.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
     @OptIn(markerClass = ExperimentalGetImage.class)
     private void confirmTrackLocation() {
@@ -95,6 +135,9 @@ public class scannerFragment extends CaptureFragment {
         ).show(getParentFragmentManager(), ConfirmDialog.class.getSimpleName());
     }
 
+    /**
+     *
+     */
     private void useCameraForTakingPicture() {
         viewfinderView.setVisibility(View.GONE);
         mIbTakePicture.setVisibility(View.VISIBLE);
@@ -113,63 +156,78 @@ public class scannerFragment extends CaptureFragment {
                         .build();
 
                 preview.setSurfaceProvider(previewView.getSurfaceProvider());
-                mCameraProvider.bindToLifecycle(
+                Camera camera = mCameraProvider.bindToLifecycle(
                         getViewLifecycleOwner(), cameraSelector, preview, mImageCapture);
             } catch (Exception ignored) {}
-        }, ContextCompat.getMainExecutor(this.requireContext()));
+        }, ContextCompat.getMainExecutor(requireContext()));
     }
 
     @OptIn(markerClass = ExperimentalGetImage.class)
+    /**
+     *
+     */
     private void takePicture() {
-        mCameraProvider.bindToLifecycle(
-            getViewLifecycleOwner(), new CameraSelector.Builder()
-                        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                        .build(), new Preview.Builder().build(), mImageCapture);
+        if (Objects.isNull(mGeoPoint)) {
+            Toast.makeText(requireContext(), "Wait for location succeed.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         mImageCapture.takePicture(ContextCompat.getMainExecutor(requireContext()),
                 new ImageCapture.OnImageCapturedCallback() {
                     @Override
                     public void onCaptureSuccess(@NonNull ImageProxy image) {
-                        super.onCaptureSuccess(image);
-                        Image mediaImage = image.getImage();
-                        Log.d("onCapture", "onCaptureSuccess: " + mediaImage);
-                        if (mediaImage != null) {
-                            ByteBuffer buffer = mediaImage.getPlanes()[0].getBuffer();
-                            bytes = new byte[buffer.capacity()];
-                            buffer.get(bytes);
-                            image.close();
-
-                        }
-                        mDatabase.goSaveLibrary(true, mCode, mGeoPoint, bytes);
+                        Log.d(TAG, "onCaptureSuccess: ");
+                        savePhoto(image);
+                        mCameraProvider.unbindAll();
                     }
+
                     @Override
                     public void onError(@NonNull ImageCaptureException exception) {
-                        super.onError(exception);
-                        Log.d("onCapture", "onError: " + exception);
+                        Log.e(TAG, "onError: ", exception);
                     }
                 });
-        getCameraScan().stopCamera();
         getRootView().postDelayed(() -> {
             getRootView().setForeground(new ColorDrawable(Color.WHITE));
             getRootView().postDelayed(() -> getRootView().setForeground(null), 50);
         }, 100);
-
-        getCameraScan().startCamera();
-        mIbTakePicture.setVisibility(View.GONE);
-        viewfinderView.setVisibility(View.VISIBLE);
-
-
+        goSaveLibrary(true);
     }
+
+    @Override
+    public void onDestroyView() {
+        if (uploadTask != null) {
+            uploadTask.cancel();
+        }
+        if (mIvPhotoBitmap != null) {
+            mIvPhotoBitmap.recycle();
+            mIvPhotoBitmap = null;
+        }
+        super.onDestroyView();
+    }
+
+    /**
+     *
+     * @return
+     */
 
     @Override
     public int getLayoutId() {
         return R.layout.fragment_scanner;
     }
 
+    /**
+     *
+     * @return
+     */
+
     @Override
     public int getPreviewViewId() {
         return R.id.preview_view;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getViewfinderViewId() {
         return R.id.viewfinder_view;
@@ -185,6 +243,10 @@ public class scannerFragment extends CaptureFragment {
                     new ActivityResultContracts.RequestMultiplePermissions(),
                     result -> tryStartLocation(false));
 
+    /**
+     *
+     * @param shouldRequest
+     */
     private void tryStartLocation(boolean shouldRequest) {
         if (ActivityCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -196,6 +258,9 @@ public class scannerFragment extends CaptureFragment {
         }
     }
 
+    /**
+     *
+     */
     private void startLocation() {
         mLocationHelper.startLocation(
                 LocationManager.GPS_PROVIDER, new LocationHelper.LocationCallback() {
