@@ -23,6 +23,7 @@ import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
@@ -112,14 +113,18 @@ public class scannerFragment extends CaptureFragment {
                         .build();
 
                 preview.setSurfaceProvider(previewView.getSurfaceProvider());
-                Camera camera = mCameraProvider.bindToLifecycle(
+                mCameraProvider.bindToLifecycle(
                         getViewLifecycleOwner(), cameraSelector, preview, mImageCapture);
             } catch (Exception ignored) {}
-        }, ContextCompat.getMainExecutor(requireContext()));
+        }, ContextCompat.getMainExecutor(this.requireContext()));
     }
 
     @OptIn(markerClass = ExperimentalGetImage.class)
     private void takePicture() {
+        mCameraProvider.bindToLifecycle(
+            getViewLifecycleOwner(), new CameraSelector.Builder()
+                        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                        .build(), new Preview.Builder().build(), mImageCapture);
         mImageCapture.takePicture(ContextCompat.getMainExecutor(requireContext()),
                 new ImageCapture.OnImageCapturedCallback() {
                     @Override
@@ -132,14 +137,22 @@ public class scannerFragment extends CaptureFragment {
                             bytes = new byte[buffer.capacity()];
                             buffer.get(bytes);
                             image.close();
+
                         }
+                        mDatabase.goSaveLibrary(true, mCode, mGeoPoint, bytes);
+                    }
+                    @Override
+                    public void onError(@NonNull ImageCaptureException exception) {
+                        super.onError(exception);
+                        Log.d("onCapture", "onError: " + exception);
                     }
                 });
+        getCameraScan().stopCamera();
         getRootView().postDelayed(() -> {
             getRootView().setForeground(new ColorDrawable(Color.WHITE));
             getRootView().postDelayed(() -> getRootView().setForeground(null), 50);
         }, 100);
-        mDatabase.goSaveLibrary(true, mCode, mGeoPoint, bytes);
+
         getCameraScan().startCamera();
         mIbTakePicture.setVisibility(View.GONE);
         viewfinderView.setVisibility(View.VISIBLE);
