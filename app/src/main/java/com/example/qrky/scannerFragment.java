@@ -1,5 +1,7 @@
 package com.example.qrky;
 
+import static java.lang.Thread.sleep;
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -117,6 +119,8 @@ public class scannerFragment extends CaptureFragment {
             return;
         }
         mDatabase.goSaveLibrary(true, mCode, mGeoPoint, bytes);
+        MainActivity activity = (MainActivity) requireActivity();
+        activity.switchTab(R.id.libraryFragment);
     }
 
     private void confirmTrackLocation() {
