@@ -49,6 +49,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ *
+ */
 public class scannerFragment extends CaptureFragment {
 
     private static final String TAG = "SW.ScannerF";
@@ -67,6 +70,12 @@ public class scannerFragment extends CaptureFragment {
     private final FirebaseStorage mStorage =
             FirebaseStorage.getInstance("gs://qrky-e8bc8.appspot.com");
 
+    /**
+     *
+     * @param view The View returned by {@link @onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -78,6 +87,11 @@ public class scannerFragment extends CaptureFragment {
         startLocation();
     }
 
+    /**
+     *
+     * @param result
+     * @return
+     */
     @Override
     public boolean onScanResultCallback(Result result) {
         if (!TextUtils.isEmpty(result.getText())) {
@@ -89,6 +103,10 @@ public class scannerFragment extends CaptureFragment {
         return super.onScanResultCallback(result);
     }
 
+    /**
+     *
+     * @param isLocationRequired
+     */
     private void goSaveLibrary(boolean isLocationRequired) {
         if (TextUtils.isEmpty(mCode)) {
             Toast.makeText(requireContext(), "Code not valid.", Toast.LENGTH_SHORT).show();
@@ -137,6 +155,9 @@ public class scannerFragment extends CaptureFragment {
         activity.switchTab(R.id.libraryFragment);
     }
 
+    /**
+     *
+     */
     private void confirmTrackLocation() {
         getParentFragmentManager().setFragmentResultListener(
                 ConfirmDialog.class.getSimpleName(), getViewLifecycleOwner(),
@@ -158,6 +179,9 @@ public class scannerFragment extends CaptureFragment {
         ).show(getParentFragmentManager(), ConfirmDialog.class.getSimpleName());
     }
 
+    /**
+     *
+     */
     private void useCameraForTakingPicture() {
         viewfinderView.setVisibility(View.GONE);
         mIbTakePicture.setVisibility(View.VISIBLE);
@@ -182,6 +206,9 @@ public class scannerFragment extends CaptureFragment {
         }, ContextCompat.getMainExecutor(requireContext()));
     }
 
+    /**
+     *
+     */
     private void takePicture() {
         if (Objects.isNull(mGeoPoint)) {
             Toast.makeText(requireContext(), "Wait for location succeed.", Toast.LENGTH_SHORT).show();
@@ -248,16 +275,30 @@ public class scannerFragment extends CaptureFragment {
         super.onDestroyView();
     }
 
+    /**
+     *
+     * @return
+     */
+
     @Override
     public int getLayoutId() {
         return R.layout.fragment_scanner;
     }
+
+    /**
+     *
+     * @return
+     */
 
     @Override
     public int getPreviewViewId() {
         return R.id.preview_view;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getViewfinderViewId() {
         return R.id.viewfinder_view;
@@ -273,6 +314,10 @@ public class scannerFragment extends CaptureFragment {
                     new ActivityResultContracts.RequestMultiplePermissions(),
                     result -> tryStartLocation(false));
 
+    /**
+     *
+     * @param shouldRequest
+     */
     private void tryStartLocation(boolean shouldRequest) {
         if (ActivityCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -284,6 +329,9 @@ public class scannerFragment extends CaptureFragment {
         }
     }
 
+    /**
+     *
+     */
     private void startLocation() {
         mLocationHelper.startLocation(
                 LocationManager.GPS_PROVIDER, new LocationHelper.LocationCallback() {
