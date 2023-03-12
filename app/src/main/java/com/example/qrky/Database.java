@@ -1,6 +1,8 @@
 package com.example.qrky;
 
 
+import static java.lang.Math.abs;
+
 import android.util.Log;
 
 import androidx.camera.core.ExperimentalGetImage;
@@ -27,6 +29,14 @@ public class Database {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
     }
+
+    /**
+     * Saves a QR code to the database
+     * @param isLocationRequired whether or not the location is required
+     * @param mCode the code to be saved
+     * @param mGeoPoint the recorded location of user who last scanned code
+     * @param Photo byte array of the photo taken
+     */
     @ExperimentalGetImage
     public void goSaveLibrary(boolean isLocationRequired, String mCode, GeoPoint mGeoPoint, byte[] Photo) {
 
@@ -64,10 +74,45 @@ public class Database {
         Log.d("goSaveLibrary", "after makeName");
         mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
         mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID1"));
-
+        mDb.collection("QR Codes").document(hexString.toString()).update("score", getScore(hexString.toString()));
     }
+
+
+    /**
+     * This method is used to generate a score for the QR Code
+     * @param mCode the hash of the QR Code
+     * @return the calculated score of the QR Code
+     */
+    private int getScore(String mCode) {
+        int score;
+        String[] halfwords = mCode.split("");
+        String[] bytes = new String[halfwords.length / 2];
+        for (int i = 0; i < halfwords.length; i += 2) {
+            bytes[i / 2] = halfwords[i] + halfwords[i + 1];
+            Log.d("getScore", "bytes: " + bytes[i / 2]);
+        }
+        Log.d("getScore", "firstBytes: " + bytes[0] + bytes[1] + bytes[2] + bytes[3]);
+        Long firstBytes = Long.valueOf(bytes[0] + bytes[1] + bytes[2] + bytes[3] + bytes[4] + bytes[5], 16);
+        Log.d("getScore", "firstBytesValue: " + firstBytes);
+        Log.d("getScore", "lastBytes: " + bytes[bytes.length-4] + bytes[bytes.length-3] + bytes[bytes.length-2] + bytes[bytes.length-1]);
+        Long lastBytes = Long.parseLong(bytes[bytes.length-4]+bytes[bytes.length-3]+bytes[bytes.length-2]+bytes[bytes.length-1], 16);
+        Log.d("getScore", "firstBytesValue: " + firstBytes);
+        score = (int) ((Long.valueOf(bytes[6] + bytes[8] + bytes[10] + bytes[12] + bytes[14] , 16)
+                + Long.valueOf(bytes[16] + bytes[18] + bytes[20] + bytes[22] + bytes[24] + bytes[26], 16)
+                - Long.valueOf(bytes[7] + bytes[9] + bytes[11] + bytes[13] + bytes[15], 16)
+                + Long.valueOf( bytes[17] + bytes[19] + bytes[21] + bytes[23] + bytes[25] + bytes[27], 16))
+                % ((abs(firstBytes) - abs(lastBytes))%1000));
+        Log.d("getScore", "score: " + score);
+        return abs(score);
+    }
+
+    /**
+     * This method is used to upload an image to the firebase storage
+     * @param Photo byte array of photo to be uploaded
+     * @param mCode the hash of the QR Code
+     */
     @ExperimentalGetImage
-    public void uploadImage(byte[] Photo, String mCode) {
+    private void uploadImage(byte[] Photo, String mCode) {
 
         if (Photo != null) {
 
