@@ -98,7 +98,7 @@ public class Database {
                 // ...
                 path[0] = ref.getPath();
                 Log.d("uploadImage", "onSuccess: " + path[0]);
-                mDb.collection("QR Codes").document(mCode).update("photo", (path[0]));
+                mDb.collection("QR Codes").document(mCode).update("photo", FieldValue.arrayUnion(path[0]));
             }).addOnProgressListener(taskSnapshot -> {
                         double progress
                                 = (100.0
