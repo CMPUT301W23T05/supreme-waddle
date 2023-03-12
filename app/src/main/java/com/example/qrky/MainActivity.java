@@ -11,7 +11,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity {
+public class  MainActivity extends AppCompatActivity {
     BottomNavigationView bttmNavView;
 
     @Override
@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(bttmNavView, bttmNavController);
 
         bttmNavView.setVisibility(View.VISIBLE);
+
+        switchTab(R.id.communityFragment);
     }
 
     public void switchTab(int id) {

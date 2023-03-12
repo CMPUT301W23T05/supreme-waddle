@@ -7,17 +7,21 @@
     android:orientation="vertical"
     tools:context=".communityFragment"
     android:background="@drawable/app_background">
+
     <SearchView
+        android:id="@+id/playersSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/searchview_background"
-        android:fontFamily="@font/josefin_sans_semibold"
         android:queryHint="Search player..."
         android:padding="5dp"
         android:gravity="end"
-        android:searchIcon="@drawable/search"/>
+        android:searchIcon="@drawable/search"
+        android:iconifiedByDefault="false"
+        android:queryBackground="@android:color/transparent"/>
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -49,14 +53,13 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ListView
+        android:id="@+id/communityCodesList"
         android:background="@drawable/leaderboard_background"
         android:layout_width="match_parent"
         android:layout_height="500dp"
         android:scrollbars="none"
-        android:id="@+id/CommunityCodeList"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="20dp"
-        android:dividerHeight="10sp" />
+        android:layout_marginBottom="20dp" />
 
         <!--TODO: Move button to other users' profiles-->
         <Button
@@ -65,4 +68,5 @@
             android:layout_height="wrap_content"
             android:text="Other's Library (Only for testing)"
             android:layout_gravity="center"/>
+
 </LinearLayout>

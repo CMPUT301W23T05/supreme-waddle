@@ -13,8 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-
 
 // US 02.03.01: As a player, I want to be able to browse QR codes that other players have scanned.
 // Artist: Franco Bonilla
@@ -34,7 +32,6 @@ public class OtherUsersCodes extends Fragment {
     private OtherUsersCodesViewModel otherUsersCodeVM;
     private GridView gridOfCodes;
     private ImageButton backBttn;
-    private final FirebaseFirestore qrkyDB = FirebaseFirestore.getInstance();
 
     public OtherUsersCodes() {}
     public static OtherUsersCodes newInstance() {
@@ -64,7 +61,7 @@ public class OtherUsersCodes extends Fragment {
 
         // create grid of OtherUser's codes
         gridOfCodes = (GridView) view.findViewById(R.id.otherUsersCodes);
-        OtherUsersLibraryAdapter adapter = new OtherUsersLibraryAdapter(OtherUsersCodes.this.getContext(), otherUsersCodeVM.codeNames, otherUsersCodeVM.codeScores, otherUsersCodeVM.codeDrawings);
+        OtherUsersLibraryAdapter adapter = new OtherUsersLibraryAdapter(requireActivity(), otherUsersCodeVM.codeNames, otherUsersCodeVM.codeScores, otherUsersCodeVM.codeDrawings);
         gridOfCodes.setAdapter(adapter);
 
         // go back to the OtherUser Profile
