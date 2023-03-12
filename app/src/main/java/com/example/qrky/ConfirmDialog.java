@@ -56,11 +56,11 @@ public class ConfirmDialog extends DialogFragment {
         return inflater.inflate(R.layout.dialog_confirm, container, false);
     }
     /**
-     *
+     *The onViewCreated method is called after the view is created and is responsible for initializing the dialog's UI components and setting up click listeners for the confirm and cancel buttons.
      * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
-     *                           The onViewCreated method is called after the view is created and is responsible for initializing the dialog's UI components and setting up click listeners for the confirm and cancel buttons.
+     *
      */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

@@ -4,14 +4,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SearchView;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class libraryFragment extends Fragment {
 
@@ -44,6 +48,16 @@ public class libraryFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         searchView = view.findViewById(R.id.search_view);
+
+        Button profileButton =  view.findViewById(R.id.profile_button);
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userProfileFragment userFragment = userProfileFragment.newInstance();
+                userFragment.show(getChildFragmentManager(),"ss");
+            }
+        });
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
