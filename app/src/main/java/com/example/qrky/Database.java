@@ -1,36 +1,22 @@
 package com.example.qrky;
 
-import static com.google.firebase.firestore.FieldValue.arrayUnion;
 
-
-import static java.lang.Double.parseDouble;
-
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.media.Image;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.camera.core.ExperimentalGetImage;
-import androidx.camera.core.ImageProxy;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class Database {
@@ -43,7 +29,6 @@ public class Database {
     }
     @ExperimentalGetImage
     public void goSaveLibrary(boolean isLocationRequired, String mCode, GeoPoint mGeoPoint, byte[] Photo) {
-        final Map<String, Object> map = new HashMap<>();
 
         MessageDigest digest;
         try {
@@ -61,20 +46,25 @@ public class Database {
             }
             hexString.append(hex);
         }
+            Log.d("goSaveLibrary", "create new");
+        try {
+            mDb.collection("QR Codes").document(hexString.toString()).set(new HashMap<String, Object>(), SetOptions.merge());
+        } catch (Exception e) {
+            Log.d("goSaveLibrary", "error");
+        }
+
+        Log.d("goSaveLibrary", "before uploadImage ");
         uploadImage(Photo, hexString.toString());
-
-        mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID1"));
-        mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
-
-
 
         if (isLocationRequired) {
             mDb.collection("QR Codes").document(hexString.toString()).update("location", mGeoPoint);
         }
+        Log.d("goSaveLibrary", "before makeName");
         mDb.collection("QR Codes").document(hexString.toString()).update("name", makeName(hexString.toString()));
+        Log.d("goSaveLibrary", "after makeName");
         mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
-        mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID"));
-        Log.d("TAG", "goSaveLibrary: ");
+        mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID1"));
+
     }
     @ExperimentalGetImage
     public void uploadImage(byte[] Photo, String mCode) {
