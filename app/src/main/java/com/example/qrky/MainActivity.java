@@ -1,6 +1,7 @@
 package com.example.qrky;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -26,9 +27,19 @@ public class MainActivity extends AppCompatActivity {
         assert bttmNavHostFragment != null;
         NavController bttmNavController = bttmNavHostFragment.getNavController();
         NavigationUI.setupWithNavController(bttmNavView, bttmNavController);
+
+        bttmNavView.setVisibility(View.VISIBLE);
     }
 
     public void switchTab(int id) {
         bttmNavView.setSelectedItemId(id);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+            bttmNavView.setVisibility(View.VISIBLE);
+        }
     }
 }

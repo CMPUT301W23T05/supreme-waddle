@@ -1,15 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".communityFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    android:orientation="vertical"
+    tools:context=".communityFragment"
+    android:background="@drawable/app_background">
+    <SearchView
         android:layout_width="match_parent"
-        android:layout_height="75dp"
-        android:text="COMMUNITY PAGE (show leaderboard here too)"
-        android:textSize="34sp" />
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/searchview_background"
+        android:fontFamily="@font/josefin_sans_semibold"
+        android:queryHint="Search player..."
+        android:padding="5dp"
+        android:gravity="end"
+        android:searchIcon="@drawable/search"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/crown2"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp" />
 
-</FrameLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp">
+        <TextView
+            android:id="@+id/playerLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefin_sans_semibold"
+            android:text="Player"
+            android:textSize="22sp"
+            app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/pointsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefin_sans_semibold"
+            android:text="Pts"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:layout_editor_absoluteY="0dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ListView
+        android:background="@drawable/leaderboard_background"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:scrollbars="none"
+        android:id="@+id/CommunityCodeList"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
+        android:dividerHeight="10sp" />
+
+        <!--TODO: Move button to other users' profiles-->
+        <Button
+            android:id="@+id/SeeOtherUserCodes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Other's Library (Only for testing)"
+            android:layout_gravity="center"/>
+</LinearLayout>
