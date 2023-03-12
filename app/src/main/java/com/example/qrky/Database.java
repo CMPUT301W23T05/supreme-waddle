@@ -111,69 +111,69 @@ public class Database {
     private String makeName(String str) {
         String[] strArr = str.split("");
         String[] wordArr = new String[6];
-//        String binary = "";
-//        if (strArr[0].equals("0")) {
-//            binary += "0000";
-//        } else if (strArr[0].equals("1")) {
-//            binary += "0001";
-//        } else if (strArr[0].equals("2")) {
-//            binary += "0010";
-//        } else if (strArr[0].equals("3")) {
-//            binary += "0011";
-//        } else if (strArr[0].equals("4")) {
-//            binary += "0100";
-//        } else if (strArr[0].equals("5")) {
-//            binary += "0101";
-//        } else if (strArr[0].equals("6")) {
-//            binary += "0110";
-//        } else if (strArr[0].equals("7")) {
-//            binary += "0111";
-//        } else if (strArr[0].equals("8")) {
-//            binary += "1000";
-//        } else if (strArr[0].equals("9")) {
-//            binary += "1001";
-//        } else if (strArr[0].equals("a")) {
-//            binary += "1010";
-//        } else if (strArr[0].equals("b")) {
-//            binary += "1011";
-//        } else if (strArr[0].equals("c")) {
-//            binary += "1100";
-//        } else if (strArr[0].equals("d")) {
-//            binary += "1101";
-//        } else if (strArr[0].equals("e")) {
-//            binary += "1110";
-//        } else if (strArr[0].equals("f")) {
-//            binary += "1111";
-//        }
-//        if (strArr[1].equals("4")) {
-//            binary += "01";
-//        } else if (strArr[1].equals("5")) {
-//            binary += "01";
-//        } else if (strArr[1].equals("6")) {
-//            binary += "01";
-//        } else if (strArr[1].equals("7")) {
-//            binary += "01";
-//        } else if (strArr[0].equals("8")) {
-//            binary += "10";
-//        } else if (strArr[0].equals("9")) {
-//            binary += "10";
-//        } else if (strArr[0].equals("a")) {
-//            binary += "10";
-//        } else if (strArr[0].equals("b")) {
-//            binary += "10";
-//        } else if (strArr[0].equals("c")) {
-//            binary += "11";
-//        } else if (strArr[0].equals("d")) {
-//            binary += "11";
-//        } else if (strArr[0].equals("e")) {
-//            binary += "11";
-//        } else if (strArr[0].equals("f")) {
-//            binary += "11";
-//        } else {
-//            binary += "00";
-//        }
-//
-//        strArr = binary.split("");
+        String binary = "";
+        if (strArr[0].equals("0")) {
+            binary += "0000";
+        } else if (strArr[0].equals("1")) {
+            binary += "0001";
+        } else if (strArr[0].equals("2")) {
+            binary += "0010";
+        } else if (strArr[0].equals("3")) {
+            binary += "0011";
+        } else if (strArr[0].equals("4")) {
+            binary += "0100";
+        } else if (strArr[0].equals("5")) {
+            binary += "0101";
+        } else if (strArr[0].equals("6")) {
+            binary += "0110";
+        } else if (strArr[0].equals("7")) {
+            binary += "0111";
+        } else if (strArr[0].equals("8")) {
+            binary += "1000";
+        } else if (strArr[0].equals("9")) {
+            binary += "1001";
+        } else if (strArr[0].equals("a")) {
+            binary += "1010";
+        } else if (strArr[0].equals("b")) {
+            binary += "1011";
+        } else if (strArr[0].equals("c")) {
+            binary += "1100";
+        } else if (strArr[0].equals("d")) {
+            binary += "1101";
+        } else if (strArr[0].equals("e")) {
+            binary += "1110";
+        } else if (strArr[0].equals("f")) {
+            binary += "1111";
+        }
+        if (strArr[1].equals("4")) {
+            binary += "01";
+        } else if (strArr[1].equals("5")) {
+            binary += "01";
+        } else if (strArr[1].equals("6")) {
+            binary += "01";
+        } else if (strArr[1].equals("7")) {
+            binary += "01";
+        } else if (strArr[0].equals("8")) {
+            binary += "10";
+        } else if (strArr[0].equals("9")) {
+            binary += "10";
+        } else if (strArr[0].equals("a")) {
+            binary += "10";
+        } else if (strArr[0].equals("b")) {
+            binary += "10";
+        } else if (strArr[0].equals("c")) {
+            binary += "11";
+        } else if (strArr[0].equals("d")) {
+            binary += "11";
+        } else if (strArr[0].equals("e")) {
+            binary += "11";
+        } else if (strArr[0].equals("f")) {
+            binary += "11";
+        } else {
+            binary += "00";
+        }
+
+        strArr = binary.split("");
         String result = "";
 
         if((strArr[0].equals("0"))){
