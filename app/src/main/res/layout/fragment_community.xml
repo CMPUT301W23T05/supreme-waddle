@@ -18,6 +18,7 @@
         android:padding="5dp"
         android:gravity="end"
         android:searchIcon="@drawable/search"/>
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

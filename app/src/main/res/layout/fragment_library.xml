@@ -51,7 +51,10 @@
             android:iconifiedByDefault="false"
             android:queryHint="Search Collection"
             android:radius="100dp"
-            android:textColor="#06000A"/>
+            android:textColor="#06000A"
+            android:searchIcon="@drawable/search"
+            android:queryBackground="@null"/>
+
 
     </LinearLayout>
 

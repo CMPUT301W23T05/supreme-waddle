@@ -162,7 +162,7 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
     public void onLocationChanged(Location location) {
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
-        double radius = 6.0; // Search within a 5km radius
+        double radius = 6.0; // Search within a 6km radius
 
         queryNearbyCodes(latitude, longitude, radius);
 
