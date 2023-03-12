@@ -1,36 +1,22 @@
 package com.example.qrky;
 
-import static com.google.firebase.firestore.FieldValue.arrayUnion;
 
-
-import static java.lang.Double.parseDouble;
-
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.media.Image;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.camera.core.ExperimentalGetImage;
-import androidx.camera.core.ImageProxy;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class Database {
@@ -43,7 +29,6 @@ public class Database {
     }
     @ExperimentalGetImage
     public void goSaveLibrary(boolean isLocationRequired, String mCode, GeoPoint mGeoPoint, byte[] Photo) {
-        final Map<String, Object> map = new HashMap<>();
 
         MessageDigest digest;
         try {
@@ -61,20 +46,25 @@ public class Database {
             }
             hexString.append(hex);
         }
+            Log.d("goSaveLibrary", "create new");
+        try {
+            mDb.collection("QR Codes").document(hexString.toString()).set(new HashMap<String, Object>(), SetOptions.merge());
+        } catch (Exception e) {
+            Log.d("goSaveLibrary", "error");
+        }
+
+        Log.d("goSaveLibrary", "before uploadImage ");
         uploadImage(Photo, hexString.toString());
-
-        mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID1"));
-        mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
-
-
 
         if (isLocationRequired) {
             mDb.collection("QR Codes").document(hexString.toString()).update("location", mGeoPoint);
         }
+        Log.d("goSaveLibrary", "before makeName");
         mDb.collection("QR Codes").document(hexString.toString()).update("name", makeName(hexString.toString()));
+        Log.d("goSaveLibrary", "after makeName");
         mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
-        mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID"));
-        Log.d("TAG", "goSaveLibrary: ");
+        mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID1"));
+
     }
     @ExperimentalGetImage
     public void uploadImage(byte[] Photo, String mCode) {
@@ -121,69 +111,69 @@ public class Database {
     private String makeName(String str) {
         String[] strArr = str.split("");
         String[] wordArr = new String[6];
-        String binary = "";
-        if (strArr[0].equals("0")) {
-            binary += "0000";
-        } else if (strArr[0].equals("1")) {
-            binary += "0001";
-        } else if (strArr[0].equals("2")) {
-            binary += "0010";
-        } else if (strArr[0].equals("3")) {
-            binary += "0011";
-        } else if (strArr[0].equals("4")) {
-            binary += "0100";
-        } else if (strArr[0].equals("5")) {
-            binary += "0101";
-        } else if (strArr[0].equals("6")) {
-            binary += "0110";
-        } else if (strArr[0].equals("7")) {
-            binary += "0111";
-        } else if (strArr[0].equals("8")) {
-            binary += "1000";
-        } else if (strArr[0].equals("9")) {
-            binary += "1001";
-        } else if (strArr[0].equals("a")) {
-            binary += "1010";
-        } else if (strArr[0].equals("b")) {
-            binary += "1011";
-        } else if (strArr[0].equals("c")) {
-            binary += "1100";
-        } else if (strArr[0].equals("d")) {
-            binary += "1101";
-        } else if (strArr[0].equals("e")) {
-            binary += "1110";
-        } else if (strArr[0].equals("f")) {
-            binary += "1111";
-        }
-        if (strArr[1].equals("4")) {
-            binary += "01";
-        } else if (strArr[1].equals("5")) {
-            binary += "01";
-        } else if (strArr[1].equals("6")) {
-            binary += "01";
-        } else if (strArr[1].equals("7")) {
-            binary += "01";
-        } else if (strArr[0].equals("8")) {
-            binary += "10";
-        } else if (strArr[0].equals("9")) {
-            binary += "10";
-        } else if (strArr[0].equals("a")) {
-            binary += "10";
-        } else if (strArr[0].equals("b")) {
-            binary += "10";
-        } else if (strArr[0].equals("c")) {
-            binary += "11";
-        } else if (strArr[0].equals("d")) {
-            binary += "11";
-        } else if (strArr[0].equals("e")) {
-            binary += "11";
-        } else if (strArr[0].equals("f")) {
-            binary += "11";
-        } else {
-            binary += "00";
-        }
-
-        strArr = binary.split("");
+//        String binary = "";
+//        if (strArr[0].equals("0")) {
+//            binary += "0000";
+//        } else if (strArr[0].equals("1")) {
+//            binary += "0001";
+//        } else if (strArr[0].equals("2")) {
+//            binary += "0010";
+//        } else if (strArr[0].equals("3")) {
+//            binary += "0011";
+//        } else if (strArr[0].equals("4")) {
+//            binary += "0100";
+//        } else if (strArr[0].equals("5")) {
+//            binary += "0101";
+//        } else if (strArr[0].equals("6")) {
+//            binary += "0110";
+//        } else if (strArr[0].equals("7")) {
+//            binary += "0111";
+//        } else if (strArr[0].equals("8")) {
+//            binary += "1000";
+//        } else if (strArr[0].equals("9")) {
+//            binary += "1001";
+//        } else if (strArr[0].equals("a")) {
+//            binary += "1010";
+//        } else if (strArr[0].equals("b")) {
+//            binary += "1011";
+//        } else if (strArr[0].equals("c")) {
+//            binary += "1100";
+//        } else if (strArr[0].equals("d")) {
+//            binary += "1101";
+//        } else if (strArr[0].equals("e")) {
+//            binary += "1110";
+//        } else if (strArr[0].equals("f")) {
+//            binary += "1111";
+//        }
+//        if (strArr[1].equals("4")) {
+//            binary += "01";
+//        } else if (strArr[1].equals("5")) {
+//            binary += "01";
+//        } else if (strArr[1].equals("6")) {
+//            binary += "01";
+//        } else if (strArr[1].equals("7")) {
+//            binary += "01";
+//        } else if (strArr[0].equals("8")) {
+//            binary += "10";
+//        } else if (strArr[0].equals("9")) {
+//            binary += "10";
+//        } else if (strArr[0].equals("a")) {
+//            binary += "10";
+//        } else if (strArr[0].equals("b")) {
+//            binary += "10";
+//        } else if (strArr[0].equals("c")) {
+//            binary += "11";
+//        } else if (strArr[0].equals("d")) {
+//            binary += "11";
+//        } else if (strArr[0].equals("e")) {
+//            binary += "11";
+//        } else if (strArr[0].equals("f")) {
+//            binary += "11";
+//        } else {
+//            binary += "00";
+//        }
+//
+//        strArr = binary.split("");
         String result = "";
 
         if((strArr[0].equals("0"))){
