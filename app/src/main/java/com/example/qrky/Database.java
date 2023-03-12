@@ -28,6 +28,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -61,20 +62,19 @@ public class Database {
             hexString.append(hex);
         }
         uploadImage(Photo, hexString.toString());
-        if (mDb.collection("QR Codes").document(hexString.toString()).get().isSuccessful()) {
-            mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID1"));
-            mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
-        }
 
-        else {
-            if (isLocationRequired) {
-                map.put("location", mGeoPoint);
-            }
-            map.put("timestamp", Timestamp.now());
-            map.put("playerID", arrayUnion("playerID"));
-            Log.d("TAG", "goSaveLibrary: ");
-            mDb.collection("QR Codes").document(hexString.toString()).set(map);
+        mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID1"));
+        mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
+
+
+
+        if (isLocationRequired) {
+            mDb.collection("QR Codes").document(hexString.toString()).update("location", mGeoPoint);
         }
+        mDb.collection("QR Codes").document(hexString.toString()).update("name", makeName(hexString.toString()));
+        mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
+        mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID"));
+        Log.d("TAG", "goSaveLibrary: ");
     }
     @ExperimentalGetImage
     public void uploadImage(byte[] Photo, String mCode) {
@@ -89,29 +89,23 @@ public class Database {
                             "QRImages/"
                                     + UUID.randomUUID().toString());
             ref.putBytes(Photo)
-                    .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                    // ...
-                    Log.d("uploadImage", "onFailure: " + exception.getMessage());
-                    path[0] = null;
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                    // ...
-                    path[0] = ref.getPath();
-                    Log.d("uploadImage", "onSuccess: " + path[0]);
-                    mDb.collection("QR Codes").document(mCode).update("photo", (path[0]));
-                }
+                    .addOnFailureListener(exception -> {
+                        // Handle unsuccessful uploads
+                        // ...
+                        Log.d("uploadImage", "onFailure: " + exception.getMessage());
+                        path[0] = null;
+                    }).addOnSuccessListener(taskSnapshot -> {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                // ...
+                path[0] = ref.getPath();
+                Log.d("uploadImage", "onSuccess: " + path[0]);
+                mDb.collection("QR Codes").document(mCode).update("photo", FieldValue.arrayUnion(path[0]));
             }).addOnProgressListener(taskSnapshot -> {
                         double progress
                                 = (100.0
                                 * taskSnapshot.getBytesTransferred()
                                 / taskSnapshot.getTotalByteCount());
-                        Log.d("uploadImage",  "Progress: " + String.valueOf(progress) + "% uploaded");
+                        Log.d("uploadImage",  "Progress: " + progress + "% uploaded");
                     });
 
         }
@@ -119,10 +113,78 @@ public class Database {
 
 
     }
+    /**
+     * This method takes a QR Code hash and converts it to a name
+     * @param str
+     * @return name: a 6 word name for a QR Code
+     */
     private String makeName(String str) {
         String[] strArr = str.split("");
         String[] wordArr = new String[6];
-        StringBuilder result = null;
+        String binary = "";
+        if (strArr[0].equals("0")) {
+            binary += "0000";
+        } else if (strArr[0].equals("1")) {
+            binary += "0001";
+        } else if (strArr[0].equals("2")) {
+            binary += "0010";
+        } else if (strArr[0].equals("3")) {
+            binary += "0011";
+        } else if (strArr[0].equals("4")) {
+            binary += "0100";
+        } else if (strArr[0].equals("5")) {
+            binary += "0101";
+        } else if (strArr[0].equals("6")) {
+            binary += "0110";
+        } else if (strArr[0].equals("7")) {
+            binary += "0111";
+        } else if (strArr[0].equals("8")) {
+            binary += "1000";
+        } else if (strArr[0].equals("9")) {
+            binary += "1001";
+        } else if (strArr[0].equals("a")) {
+            binary += "1010";
+        } else if (strArr[0].equals("b")) {
+            binary += "1011";
+        } else if (strArr[0].equals("c")) {
+            binary += "1100";
+        } else if (strArr[0].equals("d")) {
+            binary += "1101";
+        } else if (strArr[0].equals("e")) {
+            binary += "1110";
+        } else if (strArr[0].equals("f")) {
+            binary += "1111";
+        }
+        if (strArr[1].equals("4")) {
+            binary += "01";
+        } else if (strArr[1].equals("5")) {
+            binary += "01";
+        } else if (strArr[1].equals("6")) {
+            binary += "01";
+        } else if (strArr[1].equals("7")) {
+            binary += "01";
+        } else if (strArr[0].equals("8")) {
+            binary += "10";
+        } else if (strArr[0].equals("9")) {
+            binary += "10";
+        } else if (strArr[0].equals("a")) {
+            binary += "10";
+        } else if (strArr[0].equals("b")) {
+            binary += "10";
+        } else if (strArr[0].equals("c")) {
+            binary += "11";
+        } else if (strArr[0].equals("d")) {
+            binary += "11";
+        } else if (strArr[0].equals("e")) {
+            binary += "11";
+        } else if (strArr[0].equals("f")) {
+            binary += "11";
+        } else {
+            binary += "00";
+        }
+
+        strArr = binary.split("");
+        String result = "";
 
         if((strArr[0].equals("0"))){
             wordArr[0] = "Loud ";
@@ -155,9 +217,9 @@ public class Database {
             wordArr[5] = "Weak";
         }
         for (int i = 0; i < 6; i++) {
-            result.append(wordArr[i]).append(" ");
+            result += wordArr[i] + " ";
         }
 
-        return result.toString();
+        return result;
     }
 }

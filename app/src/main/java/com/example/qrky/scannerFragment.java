@@ -1,5 +1,7 @@
 package com.example.qrky;
 
+import static com.google.android.gms.tasks.Tasks.await;
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -117,6 +119,8 @@ public class scannerFragment extends CaptureFragment {
             return;
         }
         mDatabase.goSaveLibrary(true, mCode, mGeoPoint, bytes);
+
+
     }
 
     /**
@@ -186,7 +190,8 @@ public class scannerFragment extends CaptureFragment {
                     public void onCaptureSuccess(@NonNull ImageProxy image) {
                         Log.d(TAG, "onCaptureSuccess: ");
                         savePhoto(image);
-
+                        goSaveLibrary(true, bytes);
+                        bytes = null;
                         mCameraProvider.unbindAll();
                     }
 
