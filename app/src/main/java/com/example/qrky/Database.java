@@ -61,20 +61,19 @@ public class Database {
             hexString.append(hex);
         }
         uploadImage(Photo, hexString.toString());
-        if (mDb.collection("QR Codes").document(hexString.toString()).get().isSuccessful()) {
-            mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID1"));
-            mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
-        }
 
-        else {
-            if (isLocationRequired) {
-                map.put("location", mGeoPoint);
-            }
-            map.put("timestamp", Timestamp.now());
-            map.put("playerID", arrayUnion("playerID"));
-            Log.d("TAG", "goSaveLibrary: ");
-            mDb.collection("QR Codes").document(hexString.toString()).set(map);
+        mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID1"));
+        mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
+
+
+
+        if (isLocationRequired) {
+            mDb.collection("QR Codes").document(hexString.toString()).update("location", mGeoPoint);
         }
+        mDb.collection("QR Codes").document(hexString.toString()).update("name", makeName(hexString.toString()));
+        mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
+        mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID"));
+        Log.d("TAG", "goSaveLibrary: ");
     }
     @ExperimentalGetImage
     public void uploadImage(byte[] Photo, String mCode) {
@@ -89,29 +88,23 @@ public class Database {
                             "QRImages/"
                                     + UUID.randomUUID().toString());
             ref.putBytes(Photo)
-                    .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                    // ...
-                    Log.d("uploadImage", "onFailure: " + exception.getMessage());
-                    path[0] = null;
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                    // ...
-                    path[0] = ref.getPath();
-                    Log.d("uploadImage", "onSuccess: " + path[0]);
-                    mDb.collection("QR Codes").document(mCode).update("photo", (path[0]));
-                }
+                    .addOnFailureListener(exception -> {
+                        // Handle unsuccessful uploads
+                        // ...
+                        Log.d("uploadImage", "onFailure: " + exception.getMessage());
+                        path[0] = null;
+                    }).addOnSuccessListener(taskSnapshot -> {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                // ...
+                path[0] = ref.getPath();
+                Log.d("uploadImage", "onSuccess: " + path[0]);
+                mDb.collection("QR Codes").document(mCode).update("photo", (path[0]));
             }).addOnProgressListener(taskSnapshot -> {
                         double progress
                                 = (100.0
                                 * taskSnapshot.getBytesTransferred()
                                 / taskSnapshot.getTotalByteCount());
-                        Log.d("uploadImage",  "Progress: " + String.valueOf(progress) + "% uploaded");
+                        Log.d("uploadImage",  "Progress: " + progress + "% uploaded");
                     });
 
         }
@@ -122,7 +115,7 @@ public class Database {
     private String makeName(String str) {
         String[] strArr = str.split("");
         String[] wordArr = new String[6];
-        StringBuilder result = null;
+        String result = "";
 
         if((strArr[0].equals("0"))){
             wordArr[0] = "Loud ";
@@ -155,9 +148,9 @@ public class Database {
             wordArr[5] = "Weak";
         }
         for (int i = 0; i < 6; i++) {
-            result.append(wordArr[i]).append(" ");
+            result += wordArr[i] + " ";
         }
 
-        return result.toString();
+        return result;
     }
 }
