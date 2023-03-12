@@ -47,7 +47,9 @@
         android:queryHint="Search Codes"
         android:layout_marginTop="16dp"
         android:background="@drawable/searchview_background"
-        android:textColor="#06000A"/>
+        android:textColor="#06000A"
+        android:searchIcon="@drawable/search"
+        android:queryBackground="@null"/>/>
 
     <TextView
         android:id="@+id/nearby_codes_title"
@@ -76,12 +78,12 @@
         android:layout_height="match_parent"
         android:layout_below="@id/search_view"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="60dp"
         android:background="@drawable/radius_recycleriew"
         android:clipToPadding="false"
         android:paddingStart="16dp"
         android:paddingTop="16dp"
         android:paddingEnd="16dp"
-
         android:paddingBottom="16dp" />
 
 </RelativeLayout>
