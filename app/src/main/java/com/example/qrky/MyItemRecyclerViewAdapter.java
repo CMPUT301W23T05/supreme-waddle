@@ -17,28 +17,24 @@ import java.util.List;
 import androidx.annotation.NonNull;
 
 /**
-
- Adapter for a RecyclerView that displays a list of PlaceholderItem objects.
-
- Supports filtering the list based on a search query.
+ * Adapter for a RecyclerView that displays a list of PlaceholderItem objects.
+ * Supports filtering the list based on a search query.
  */
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
     private List<PlaceholderItem> mValues;
     private List<PlaceholderItem> mFilteredValues;
     /**
-
-     Constructs a new adapter with the given list of items.
-     @param items the list of items to display
+     * Constructs a new adapter with the given list of items.
+     * @param items the list of items to display
      */
     public MyItemRecyclerViewAdapter(List<PlaceholderItem> items) {
         mValues = items;
         mFilteredValues = items;
     }
     /**
-
-     Filters the list of items based on the given query and updates the view.
-     @param query the search query to filter by
+     * Filters the list of items based on the given query and updates the view.
+     * @param query the search query to filter by
      */
     public void filter(String query) {
         List<PlaceholderItem> filteredList = new ArrayList<>();
@@ -52,11 +48,10 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         notifyDataSetChanged();
     }
     /**
-
-     This method inflates the layout for the RecyclerView item and creates a new ViewHolder object.
-     @param parent the ViewGroup into which the new View will be added after it is bound to an adapter position.
-     @param viewType the view type of the new View.
-     @return a new ViewHolder object.
+     * This method inflates the layout for the RecyclerView item and creates a new ViewHolder object.
+     * @param parent the ViewGroup into which the new View will be added after it is bound to an adapter position.
+     * @param viewType the view type of the new View.
+     * @return a new ViewHolder object.
      */
     @NonNull
     @Override
@@ -66,12 +61,9 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         return new ViewHolder(view);
     }
     /**
-
-     This method sets the content of the RecyclerView item at the specified position.
-
-     @param holder the ViewHolder object for the item to be updated.
-
-     @param position the position of the item to be updated.
+     * This method sets the content of the RecyclerView item at the specified position.
+     * @param holder the ViewHolder object for the item to be updated.
+     * @param position the position of the item to be updated.
      */
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
@@ -89,9 +81,8 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         }
     }
     /**
-
-     This method returns the number of items in the adapter's data set.
-     @return the number of items in the adapter's data set.
+     * This method returns the number of items in the adapter's data set.
+     * @return the number of items in the adapter's data set.
      */
     @Override
     public int getItemCount() {
@@ -104,8 +95,8 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         public final TextView mDistanceView;
         public PlaceholderItem mItem;
         /**
-
-         This class defines the ViewHolder for the RecyclerView items.
+         * This class defines the ViewHolder for the RecyclerView items.
+         * @param view view to hold
          */
         public ViewHolder(View view) {
             super(view);
