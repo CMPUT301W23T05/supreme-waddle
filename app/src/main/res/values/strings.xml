@@ -21,4 +21,8 @@
     <string name="confirm_track_location_cancel">No, don\'t track it.</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name ="username1"> %s</string>
+    <string name="rank">%1$d</string>
+    <string name="cards_collected">%1$d</string>
+    <string name="total_points">%1$d</string>
 </resources>

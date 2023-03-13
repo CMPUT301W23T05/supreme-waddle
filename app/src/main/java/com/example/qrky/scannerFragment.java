@@ -53,7 +53,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- *
+ *This code is implementing a barcode scanner functionality that allows the user to scan a barcode and capture an image.
  */
 public class scannerFragment extends CaptureFragment {
 
@@ -71,7 +71,7 @@ public class scannerFragment extends CaptureFragment {
 
 
     /**
-     *
+     *onViewCreated method initializes the necessary UI components and starts the location service.
      * @param view The View returned by {@link @onCreateView(LayoutInflater, ViewGroup, Bundle)}.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
@@ -89,7 +89,7 @@ public class scannerFragment extends CaptureFragment {
     }
 
     /**
-     *
+     *The onScanResultCallback method is called when a barcode is successfully scanned. It stops the camera and confirms whether the user wants to track their location.
      * @param result
      * @return
      */
@@ -105,7 +105,7 @@ public class scannerFragment extends CaptureFragment {
     }
 
     /**
-     *
+     *goSaveLibrary method is responsible for saving the specified data to a database or performing other actions related to storing data.
      * @param isLocationRequired
      */
     @OptIn(markerClass = ExperimentalGetImage.class)
@@ -123,7 +123,9 @@ public class scannerFragment extends CaptureFragment {
 
     }
 
-
+    /**
+     * confirmTrackLocation method shows a dialogue to the user and, based on their response, either starts the camera to capture an image or saves the scanned barcode data to the database.
+     */
     private void confirmTrackLocation() {
     getParentFragmentManager().setFragmentResultListener(
             ConfirmDialog.class.getSimpleName(), getViewLifecycleOwner(),
@@ -146,7 +148,7 @@ public class scannerFragment extends CaptureFragment {
     }
 
     /**
-     *
+     *useCameraForTakingPicture method initializes the CameraX library and starts the camera to capture an image.
      */
     private void useCameraForTakingPicture() {
         viewfinderView.setVisibility(View.GONE);
@@ -174,7 +176,7 @@ public class scannerFragment extends CaptureFragment {
 
     @OptIn(markerClass = ExperimentalGetImage.class)
     /**
-     *
+     *takePicture method captures an image using the initialized camera and saves the image and the scanned barcode data to the database.
      */
     private void takePicture() {
         if (Objects.isNull(mGeoPoint)) {
@@ -206,6 +208,10 @@ public class scannerFragment extends CaptureFragment {
         mIvPhoto.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * savePhoto is to extract the image data from the ImageProxy object and display it in an ImageView object with ID mIvPhoto.
+     * @param image
+     */
     private void savePhoto(ImageProxy image) {
 
         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
@@ -216,37 +222,44 @@ public class scannerFragment extends CaptureFragment {
         Bitmap mIvPhotoBitmap = BitmapFactory.decodeByteArray(clonedBytes, 0, clonedBytes.length);
         mIvPhoto.setImageBitmap(mIvPhotoBitmap);
     }
+
+    /**
+     * This code overrides the onDestroyView method of a fragment class
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
     }
 
     /**
-     *
+     *getLayoutId returns an integer representing the layout resource ID for the associated ScannerFragment.
      * @return
      */
 
     @Override
     public int getLayoutId() {
+
         return R.layout.fragment_scanner;
     }
 
     /**
-     *
+     *getPreviewViewId returns the resource ID of a preview view.
      * @return
      */
 
     @Override
     public int getPreviewViewId() {
+
         return R.id.preview_view;
     }
 
     /**
-     *
+     *getViewfinderViewId returns the ID of the view that will be used as the viewfinder for the QR code scanner.
      * @return
      */
     @Override
     public int getViewfinderViewId() {
+
         return R.id.viewfinder_view;
     }
 
@@ -261,7 +274,7 @@ public class scannerFragment extends CaptureFragment {
                     result -> tryStartLocation(false));
 
     /**
-     *
+     *tryStartLocation attempts to start location updates if the required location permissions are granted.
      * @param shouldRequest
      */
     private void tryStartLocation(boolean shouldRequest) {
@@ -276,7 +289,7 @@ public class scannerFragment extends CaptureFragment {
     }
 
     /**
-     *
+     *startLocation defines a private method startLocation() which is used to start retrieving the device's location.
      */
     private void startLocation() {
         mLocationHelper.startLocation(
