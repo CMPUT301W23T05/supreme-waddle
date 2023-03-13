@@ -21,6 +21,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * This class is used to interact with the database
+ */
 public class Database {
     private final FirebaseFirestore mDb;
     private final StorageReference storageRef;
@@ -153,7 +156,7 @@ public class Database {
      * @param str
      * @return name: a 6 word name for a QR Code
      */
-    private String makeName(String str) {
+    String makeName(String str) {
         String[] strArr = str.split("");
         String[] wordArr = new String[6];
         String binary = "";
