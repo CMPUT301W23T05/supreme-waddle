@@ -97,8 +97,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     }
     public class CardViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView title;
-        private TextView score;
+        TextView title;
+        TextView score;
         private Button deleteButton;
 
         public CardViewHolder(@NonNull View itemView) {
