@@ -11,7 +11,17 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 
 // US 02.03.01: As a player, I want to be able to browse QR codes that other players have scanned.
@@ -38,9 +48,16 @@ import androidx.lifecycle.ViewModelProvider;
  * @see OtherUsersLibraryAdapter
  */
 public class OtherUsersCodes extends Fragment {
-    public OtherUsersCodesViewModel otherUsersCodeVM;
-    private GridView gridOfCodes;
-    private ImageButton backBttn;
+//    public OtherUsersCodesViewModel otherUsersCodeVM;
+    GridView gridOfCodes;
+    ImageButton backBttn;
+
+    FirebaseFirestore qrkyDB;
+    List<String> codeNames = new ArrayList<>();
+    List<Integer> codeScores = new ArrayList<>();
+    List<List<String>> codeDrawings = new ArrayList<>();  // 0 = eyes, 1 = nose, 2 = mouth
+    String otherUsername;  // username of other user
+    List<String> playerHashes = new ArrayList<>();  // list of hashes from other user
 
     /**
      * Constructor (empty) for OtherUsersCodes.
@@ -66,10 +83,12 @@ public class OtherUsersCodes extends Fragment {
         assert mainAct != null;
         mainAct.bttmNavView.setVisibility(View.INVISIBLE);
 
+        qrkyDB = FirebaseFirestore.getInstance();
+
         // call ViewModel
-        otherUsersCodeVM = new ViewModelProvider(requireActivity()).get(OtherUsersCodesViewModel.class);
-        otherUsersCodeVM.getOtherUsersCodes();  // add data
-        otherUsersCodeVM.getTestData();  // add test data
+//        otherUsersCodeVM = new ViewModelProvider(requireActivity()).get(OtherUsersCodesViewModel.class);
+        getOtherUsersCodes();  // add data
+        getTestData();  // add test data
     }
 
     /**
@@ -87,7 +106,7 @@ public class OtherUsersCodes extends Fragment {
 
         // create grid of OtherUser's codes
         gridOfCodes = (GridView) view.findViewById(R.id.otherUsersCodes);
-        OtherUsersLibraryAdapter adapter = new OtherUsersLibraryAdapter(requireActivity(), otherUsersCodeVM.codeNames, otherUsersCodeVM.codeScores, otherUsersCodeVM.codeDrawings);
+        OtherUsersLibraryAdapter adapter = new OtherUsersLibraryAdapter(requireActivity(), getCodeNames(), getCodeScores(), getCodeDrawings());
         gridOfCodes.setAdapter(adapter);
 
         // go back to the OtherUser Profile
@@ -105,5 +124,134 @@ public class OtherUsersCodes extends Fragment {
         return view;
     }
 
+    /**
+     * Gets list of hashes from database based on username. Stores hashes in playerHashes.
+     *
+     * @since 1.0
+     */
+    public void getOtherUsersHashes() {
+        CollectionReference playersCollection = qrkyDB.collection("Players");
 
+        playersCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                // clear list before adding new data
+                playerHashes.clear();
+
+                // get list of hashes from database
+                assert value != null;
+                for (QueryDocumentSnapshot doc: value) {
+                    if (Objects.equals(doc.getString("username"), otherUsername)) {
+                        playerHashes = (List<String>) doc.get("codes");
+                        break;
+                    }
+                }
+            }
+        });
+//
+//        if (playerHashes.isEmpty()) {
+//            Log.i("OtherUsersCodesVM", "No hashes found");
+//        } else {
+//            Log.i("OtherUsersCodesVM", "Hashes found!");
+//        }
+    }
+
+    // for each hash, get code from database
+    /**
+     * Gets library of codes from the database. Uses the hashes of the codes from the player document
+     * to get the codes from the QR Codes collection. Stores the names, scores, and drawings of the
+     * codes in codeNames, codeScores, and codeDrawings. Currently does not update the adapter.
+     *
+     * @since 1.0
+     */
+    public void getOtherUsersCodes() {
+        getOtherUsersHashes();
+        CollectionReference qrCodesCollection = qrkyDB.collection("QR Codes");
+
+        for (String hash: playerHashes) {
+            qrCodesCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                    // clear lists before adding new data
+                    codeNames.clear();
+                    codeScores.clear();
+                    codeDrawings.clear();
+
+                    // add new data
+                    assert value != null;
+                    for (QueryDocumentSnapshot doc: value) {
+                        if (doc.getId().equals(hash)) {
+                            codeNames.add(doc.getString("name"));
+                            codeScores.add(Objects.requireNonNull(doc.getLong("score")).intValue());
+                            List<String> codeDrawing = new ArrayList<>();
+                            codeDrawing.add(doc.getString("eyes"));
+                            codeDrawing.add(doc.getString("nose"));
+                            codeDrawing.add(doc.getString("mouth"));
+                            codeDrawings.add(codeDrawing);
+                        }
+                    }
+                }
+            });
+        }
+
+//        if (codeNames.size() > 3) {
+//            Log.i("OtherUsersCodesVM", "Real data added!");
+//            Log.i("OtherUsersCodesVM", "Code names: " + codeNames);
+//        } else {
+//            Log.i("OtherUsersCodesVM", "No codes found");
+//        }
+    }
+
+    /**
+     * Makes test data for the code library. This is used for testing purposes.
+     * Adds three codes to the code library.
+     */
+    public void getTestData() {
+        codeNames.clear();
+        codeScores.clear();
+        codeDrawings.clear();
+
+        codeNames.add("CookieMonster");
+        codeScores.add(100);
+        List<String> codeDrawing = new ArrayList<String>();
+        codeDrawing.add("U     U");
+        codeDrawing.add("   ~   ");
+        codeDrawing.add("  ___  ");
+        codeDrawings.add(codeDrawing);
+
+
+        codeNames.add("Elmo");
+        codeScores.add(340);
+        List<String> codeDrawing2 = new ArrayList<String>();
+        codeDrawing2.add(">     <");
+        codeDrawing2.add("   -   ");
+        codeDrawing2.add("  UUU  ");
+        codeDrawings.add(codeDrawing2);
+
+        codeNames.add("DiegoZombie");
+        codeScores.add(8);
+        List<String> codeDrawing3 = new ArrayList<String>();
+        codeDrawing3.add("T     T");
+        codeDrawing3.add("   O   ");
+        codeDrawing3.add("  MWM  ");
+        codeDrawings.add(codeDrawing3);
+
+//        Log.i("OtherUsersCodesViewModel", "Test data added!");
+    }
+
+    public List<String> getCodeNames() {
+        return codeNames;
+    }
+
+    public List<Integer> getCodeScores() {
+        return codeScores;
+    }
+
+    public List<List<String>> getCodeDrawings() {
+        return codeDrawings;
+    }
+
+    public int getLibrarySize() {
+        return codeNames.size();
+    }
 }

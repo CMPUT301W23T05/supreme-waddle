@@ -13,6 +13,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,7 +49,7 @@ public class OtherUsersCodesViewModel extends ViewModel {
     //   - maybe use a hashmap to store codes and their timestamps
 
     FirebaseFirestore qrkyDB = FirebaseFirestore.getInstance();
-    List<String> codeNames = new ArrayList<>();
+    List<String> codeNames = new ArrayList<>(Arrays.asList("CookieMonster", "Elmo", "DiegoZombie"));
     List<Integer> codeScores = new ArrayList<>();
     List<List<String>> codeDrawings = new ArrayList<>();  // 0 = eyes, 1 = nose, 2 = mouth
     String otherUsername;  // username of other user
