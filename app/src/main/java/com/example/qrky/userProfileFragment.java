@@ -43,6 +43,7 @@ public class userProfileFragment extends DialogFragment {
 
     public static userProfileFragment newInstance() {
        userProfileFragment fragment = new userProfileFragment();
+
        return fragment;
     }
     /**
@@ -59,12 +60,15 @@ public class userProfileFragment extends DialogFragment {
 
 
         // functions add here
-        TextView username = view.findViewById(R.id.username);
+
         TextView rank = view.findViewById(R.id.rank);
         TextView cards_collected = view.findViewById(R.id.cards_collected);
         TextView total_points = view.findViewById(R.id.total_points);
 
-        username.setText(getResources().getString(R.string.username1,Username));
+
+
+//        username.setText("");
+
 
         Button edit_button = view.findViewById(R.id.edit_button);
         edit_button.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +84,7 @@ public class userProfileFragment extends DialogFragment {
 
     }
 
-    
+
 
 
 }
