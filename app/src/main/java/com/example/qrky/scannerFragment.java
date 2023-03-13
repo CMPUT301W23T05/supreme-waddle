@@ -123,6 +123,7 @@ public class scannerFragment extends CaptureFragment {
 
     }
 
+
     private void confirmTrackLocation() {
     getParentFragmentManager().setFragmentResultListener(
             ConfirmDialog.class.getSimpleName(), getViewLifecycleOwner(),

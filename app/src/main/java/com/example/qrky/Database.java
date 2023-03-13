@@ -83,7 +83,7 @@ public class Database {
      * @param mCode the hash of the QR Code
      * @return the calculated score of the QR Code
      */
-    private int getScore(String mCode) {
+    int getScore(String mCode) {
         int score;
         String[] halfwords = mCode.split("");
         String[] bytes = new String[halfwords.length / 2];

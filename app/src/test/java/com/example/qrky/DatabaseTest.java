@@ -1,20 +1,26 @@
 package com.example.qrky;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import org.junit.Assert;
 import org.junit.Test;
 
-public class DatabaseTest {
-    private byte[] bytes= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
+/**
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ */
+public class DatabaseTest {
     @Test
-    public void testDatabaseStore() {
-        Database testDatabase = new Database();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        Assert.assertNotNull(testDatabase);
-        testDatabase.goSaveLibrary(true, "06827919", new GeoPoint(53.5444, -113.4909), (bytes));
-//        Assert.assertNotNull(db.collection("QR Codes").document("
+    public void testGetScore() {
+
+        Database mockDb = mock(Database.class);
+        assertEquals(0, mockDb.getScore("90236548d872e262cf06bc671bf3e7424e7f8e5deb37ed59fe0e89dbf064114d"));
+        System.out.println("testGetScore " + mockDb.getScore("90236548d872e262cf06bc671bf3e7424e7f8e5deb37ed59fe0e89dbf064114d"));
+        when(mockDb.getScore("90236548d872e262cf06bc671bf3e7424e7f8e5deb37ed59fe0e89dbf064114d")).thenReturn(0);
+        assertEquals(0, mockDb.getScore("90236548d872e262cf06bc671bf3e7424e7f8e5deb37ed59fe0e89dbf064114d"));
+
     }
 }
