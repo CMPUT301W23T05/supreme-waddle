@@ -124,12 +124,28 @@ public class libraryFragment extends Fragment {
 
         return view;
     }
+    /**
+     * Adds a CardData object to the list of all cards.
+     *
+     * @param card The CardData object to add to the list.
+     */
     public void addToAllCards(CardData card) {
         allCards.add(card);
     }
+    /**
+     * Adds a CardData object to the list of filtered cards.
+     *
+     * @param card The CardData object to add to the list.
+     */
     public void addToFilteredCards(CardData card) {
         filteredCards.add(card);
     }
+    /**
+     * Filters the list of all cards based on the given query string, and populates the
+     * list of filtered cards with the matching cards.
+     *
+     * @param query The query string to filter the cards by.
+     */
     void filterCards(String query) {
         filteredCards.clear();
         if (allCards == null || allCards.isEmpty()) {
