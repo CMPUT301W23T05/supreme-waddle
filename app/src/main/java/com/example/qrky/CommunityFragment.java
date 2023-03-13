@@ -110,6 +110,7 @@ public class CommunityFragment extends Fragment {
                 for (QueryDocumentSnapshot doc: value) {
                     playerAndScore.put(doc.getString("username"), doc.getString("score"));
                 }
+                commAdapter.update(playerAndScore);
             }
         });
         Log.i("CommunityFragment", "All players and scores: " + playerAndScore.toString());

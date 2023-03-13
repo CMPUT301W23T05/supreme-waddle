@@ -49,7 +49,7 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.Comm
 
         @Override
         public void onBindViewHolder(@NonNull CommunityViewHolder holder, int position) {
-            holder.usernameView.setText(playerAndScoreRanked.get(position).get(0));
+            holder.usernameView.setText((position+1)+". "+playerAndScoreRanked.get(position).get(0));
             holder.scoreView.setText(playerAndScoreRanked.get(position).get(1));
         }
 
