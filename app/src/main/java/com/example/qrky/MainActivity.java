@@ -1,7 +1,6 @@
 package com.example.qrky;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +13,6 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class  MainActivity extends AppCompatActivity {
-    CommunityViewModel communityVM;
     BottomNavigationView bttmNavView;
 
     @Override
@@ -23,9 +21,6 @@ public class  MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        communityVM = new ViewModelProvider(this).get(CommunityViewModel.class);
-        communityVM.getPlayersAndScores();
-        Log.i("MainActivity", "Player&Score from MainActivity"+communityVM.playerAndScore);
 
         //Initialize the bottom navigation view
         //create bottom navigation view object

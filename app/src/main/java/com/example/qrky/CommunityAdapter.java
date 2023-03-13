@@ -1,12 +1,13 @@
 package com.example.qrky;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,60 +15,81 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class CommunityAdapter extends BaseAdapter {
-    Context context;
-    LayoutInflater inflater;
-    List<List<String>> playerAndScoreRanked = new ArrayList<>();
+public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.CommunityViewHolder> {
+    private List<List<String>> playerAndScoreRanked;
 
-    public CommunityAdapter(Context context, HashMap<String, String> playerAndScore) {
-        this.context = context;
-        inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        public CommunityAdapter(HashMap<String, String> playerAndScore) {
+            List<List<String>> playerAndScoreMessy = new ArrayList<>();
+            for (String key: playerAndScore.keySet()) {
+                List<String> aPlayerAndScore = Arrays.asList(key, playerAndScore.get(key));
+                playerAndScoreMessy.add(aPlayerAndScore);
+            }
+            Log.i("CommunityAdapter", "playerAndScore unsorted: " + playerAndScoreMessy);
 
-        for (String key: playerAndScore.keySet()) {
-            List<String> aPlayerAndScore = Arrays.asList(key, playerAndScore.get(key));
-            playerAndScoreRanked.add(aPlayerAndScore);
-        }
-        Log.i("CommunityAdapter", "playerAndScore unsorted: " + playerAndScoreRanked);
-
-        // sort playerAndScoreRanked by score (descending) without using lambda expressions
-        try {
-            for (int i = 0; i < playerAndScoreRanked.size(); i++) {
-                for (int j = i + 1; j < playerAndScoreRanked.size(); j++) {
-                    if (Integer.parseInt(playerAndScoreRanked.get(i).get(1)) < Integer.parseInt(playerAndScoreRanked.get(j).get(1))) {
-                        List<String> temp = playerAndScoreRanked.get(i);
-                        playerAndScoreRanked.set(i, playerAndScoreRanked.get(j));
-                        playerAndScoreRanked.set(j, temp);
+            // sort playerAndScoreRanked by score (descending) without using lambda expressions
+            for (int i = 0; i < playerAndScoreMessy.size(); i++) {
+                for (int j = i + 1; j < playerAndScoreMessy.size(); j++) {
+                    if (Integer.parseInt(playerAndScoreMessy.get(i).get(1)) < Integer.parseInt(playerAndScoreMessy.get(j).get(1))) {
+                        List<String> temp = playerAndScoreMessy.get(i);
+                        playerAndScoreMessy.set(i, playerAndScoreMessy.get(j));
+                        playerAndScoreMessy.set(j, temp);
                     }
                 }
             }
-        } catch (Exception ignored) {}
-    }
+            this.playerAndScoreRanked = playerAndScoreMessy;
+            Log.i("CommunityAdapter", "playerAndScore sorted: " + playerAndScoreRanked);
+        }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if (inflater == null) {inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);}
-        if (convertView == null) {convertView = inflater.inflate(R.layout.a_player_brief, null);}
+        @NonNull
+        @Override
+        public CommunityViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.a_player_brief, parent, false);
+            return new CommunityViewHolder(view);
+        }
 
-        TextView username = convertView.findViewById(R.id.username);
-        TextView score = convertView.findViewById(R.id.score);
+        @Override
+        public void onBindViewHolder(@NonNull CommunityViewHolder holder, int position) {
+            holder.usernameView.setText(playerAndScoreRanked.get(position).get(0));
+            holder.scoreView.setText(playerAndScoreRanked.get(position).get(1));
+        }
 
-        username.setText(playerAndScoreRanked.get(position).get(0));
-        score.setText(playerAndScoreRanked.get(position).get(1));
+        public static class CommunityViewHolder extends RecyclerView.ViewHolder {
 
-        return convertView;
-    }
+            private TextView usernameView;
+            private TextView scoreView;
 
-    @Override
-    public int getCount() {
-        if (playerAndScoreRanked == null) {return 0;}
-        return playerAndScoreRanked.size();
-    }
-    @Override
-    public Object getItem(int position) {
-        return playerAndScoreRanked.get(position);
-    }
-    @Override
-    public long getItemId(int position) {
-        return (long) Integer.parseInt(playerAndScoreRanked.get(position).get(1));
-    }
+            public CommunityViewHolder(@NonNull View itemView) {
+                super(itemView);
+                usernameView = itemView.findViewById(R.id.username);
+                scoreView = itemView.findViewById(R.id.score);
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return playerAndScoreRanked.size();
+        }
+
+        // update data if their is a change
+        public void update(HashMap<String, String> playerAndScore) {
+            playerAndScoreRanked.clear();
+            List<List<String>> playerAndScoreMessy = new ArrayList<>();
+            for (String key: playerAndScore.keySet()) {
+                List<String> aPlayerAndScore = Arrays.asList(key, playerAndScore.get(key));
+                playerAndScoreMessy.add(aPlayerAndScore);
+            }
+
+            // sort playerAndScoreRanked by score (descending) without using lambda expressions
+            for (int i = 0; i < playerAndScoreMessy.size(); i++) {
+                for (int j = i + 1; j < playerAndScoreMessy.size(); j++) {
+                    if (Integer.parseInt(playerAndScoreMessy.get(i).get(1)) < Integer.parseInt(playerAndScoreMessy.get(j).get(1))) {
+                        List<String> temp = playerAndScoreMessy.get(i);
+                        playerAndScoreMessy.set(i, playerAndScoreMessy.get(j));
+                        playerAndScoreMessy.set(j, temp);
+                    }
+                }
+            }
+            this.playerAndScoreRanked = playerAndScoreMessy;
+            notifyDataSetChanged();
+        }
 }
