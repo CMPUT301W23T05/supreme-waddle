@@ -27,8 +27,16 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 
-// TODO: Fix data getting
-// - For some reason, data only shows up after leaving the fragment and coming back???
+/**
+ * Fragment for the Community tab. Displays an ordered list of all players and their scores,
+ * and lets the user search for a specific player. Currently, there is a button that takes the
+ * user to a sample library of codes of another user.
+ *
+ * @author Franco Bonilla
+ * @version 1.0 2023/03/12
+ * @see CommunityAdapter
+ * @see OtherUsersCodes
+ */
 public class CommunityFragment extends Fragment {
     private FirebaseFirestore qrkyDB = FirebaseFirestore.getInstance();
     private CollectionReference playersCollection = qrkyDB.collection("Players");
@@ -40,20 +48,24 @@ public class CommunityFragment extends Fragment {
     private HashMap<String, String> playerAndScore = new HashMap<>();  // username and score
     private HashMap<String, String> matchingPlayerAndScore = new HashMap<>();  // username and score that match the search query
 
-
+    /**
+     * Constructor (empty) for CommunityFragment.
+     *
+     * @since 1.0
+     */
     public CommunityFragment() {
         // Required empty public constructor
     }
 
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        Log.i("CommunityFragment", "Looking at Community Fragment");
-//        super.onCreate(savedInstanceState);
-//
-//        // call ViewModels
-////        communityVM = new ViewModelProvider(requireActivity()).get(CommunityViewModel.class);
-//    }
-
+    /**
+     * Creates the view for the CommunityFragment.
+     *
+     * @param inflater The LayoutInflater object for inflating the view(s) in the fragment.
+     * @param container Parent view that the fragment's UI should be attached to (if not null).
+     * @param savedInstanceState Past saved state of the fragment (if not null).
+     * @return View for the CommunityFragment
+     * @since 1.0
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -94,14 +106,24 @@ public class CommunityFragment extends Fragment {
         return view;
     }
 
-    public void setPrettyFont() {
+    /**
+     * Sets the font of the search bar to Josefin Sans Semibold.
+     *
+     * @since 1.0
+     */
+    private void setPrettyFont() {
         int id = playersSearch.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
         TextView searchText = playersSearch.findViewById(id);
         Typeface myCustomFont = ResourcesCompat.getFont(requireActivity(), R.font.josefin_sans_semibold);
         searchText.setTypeface(myCustomFont);
     }
 
-    public void getAllPlayersAndScores() {
+    /**
+     * Gets all players and their scores from the database and updates the adapter.
+     *
+     * @since 1.0
+     */
+    private void getAllPlayersAndScores() {
         playersCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -116,7 +138,12 @@ public class CommunityFragment extends Fragment {
         Log.i("CommunityFragment", "All players and scores: " + playerAndScore.toString());
     }
 
-    public void searchAPlayer() {
+    /**
+     * Searches for a player in the leaderboard and updates the adapter to match the search query.
+     *
+     * @since 1.0
+     */
+    private void searchAPlayer() {
         playersSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {return false;}
