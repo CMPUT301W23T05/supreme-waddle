@@ -33,7 +33,7 @@
         tools:layout="@layout/fragment_user_profile" />
     <fragment
         android:id="@+id/communityFragment"
-        android:name="com.example.qrky.communityFragment"
+        android:name="com.example.qrky.CommunityFragment"
         android:label="fragment_community"
         tools:layout="@layout/fragment_community" />
     <fragment
