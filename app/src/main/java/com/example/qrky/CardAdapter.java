@@ -22,6 +22,18 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
+/**
+
+ The CardAdapter class is an adapter for the RecyclerView that displays a list of CardData objects.
+ It creates and binds views for CardData objects, and provides methods for adding new cards and deleting existing cards.
+ The class contains a private List of CardData objects to be displayed in the RecyclerView, and a FirebaseFirestore instance for interacting with the Firebase Firestore database.
+ The class extends RecyclerView.Adapter and implements the necessary methods for creating, binding, and updating views for CardData objects.
+ The class also includes a nested CardViewHolder class, which extends RecyclerView.ViewHolder and represents a single view for a CardData object. This class sets up and handles click events for the delete button on each CardData view.
+ The addCard method is used to add a new CardData object to the list of filteredCards and update the RecyclerView.
+ @author Aaron Binoy
+ @version 1.0
+
+ */
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
 
     private List<CardData> filteredCards;

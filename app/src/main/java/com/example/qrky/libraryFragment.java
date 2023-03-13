@@ -23,7 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
 
+ A Fragment that displays a list of CardData objects in a RecyclerView, with search functionality.
+ @author Aaron Binoy
+ @version 1.0
+ */
 public class libraryFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -37,8 +42,20 @@ public class libraryFragment extends Fragment {
         // Required empty public constructor
     }
 
-    //...
+    /**
 
+     Inflates the layout for the fragment and initializes the RecyclerView, adapter, and search view.
+
+     Retrieves data from Firebase and generates a list of CardData objects to display in the RecyclerView.
+
+     @param inflater The LayoutInflater object that can be used to inflate any views in the fragment
+
+     @param container The parent view that the fragment UI should be attached to
+
+     @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+
+     @return The View for the fragment's UI, or null.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
