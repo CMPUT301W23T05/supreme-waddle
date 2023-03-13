@@ -1,5 +1,6 @@
 package com.example.qrky;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -14,27 +15,48 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.*;
 
+import static java.security.AccessController.getContext;
+
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.location.LocationManager;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
-
+import android.Manifest;
 public class MapTest {
 
+    private MapsFragment fragment;
     private SupportMapFragment mapFragment;
     private GoogleMap googleMap;
+    private FusedLocationProviderClient locationProviderClient;
+    private Context context;
 
     @Before
     public void setUp() {
-        mapFragment = new SupportMapFragment();
+        context = mock(Context.class);
+        when(context.checkSelfPermission(eq(Manifest.permission.ACCESS_FINE_LOCATION)))
+                .thenReturn(PackageManager.PERMISSION_GRANTED);
+        when(context.getPackageManager()).thenReturn(mock(PackageManager.class));
+        when(context.getSystemService(eq(Context.LOCATION_SERVICE)))
+                .thenReturn(mock(LocationManager.class));
+        when(context.getResources()).thenReturn(mock(Resources.class));
+
+        fragment = new MapsFragment();
+        mapFragment = mock(SupportMapFragment.class);
+        googleMap = mock(GoogleMap.class);
+        locationProviderClient = mock(FusedLocationProviderClient.class);
     }
 
     @Test
     public void testMapFragmentIsInitialized() {
-        assertNotNull(mapFragment);
+        MapsFragment mapsFragment = new MapsFragment();
+        assertNotNull(mapsFragment);
     }
 
     @Test
@@ -45,6 +67,8 @@ public class MapTest {
         // check if the mock object is not null
         assertNotNull(googleMap);
     }
+
+
 }
 
 
