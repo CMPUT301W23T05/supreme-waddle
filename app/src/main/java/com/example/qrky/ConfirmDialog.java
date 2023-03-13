@@ -20,13 +20,6 @@ public class ConfirmDialog extends DialogFragment {
     private Button btnConfirm;
     private Button btnCancel;
 
-    /**
-     *
-     * @param title
-     * @param confirm
-     * @param cancel
-     * @return
-     */
     public static ConfirmDialog newInstance(String title, String confirm, String cancel) {
         ConfirmDialog dialog = new ConfirmDialog();
         Bundle bundle = new Bundle();
@@ -47,7 +40,6 @@ public class ConfirmDialog extends DialogFragment {
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
      *The onCreateView method is responsible for inflating the dialog's layout file and returning the root view. It returns the inflated dialog_confirm layout.
-     * @return
      */
     @Nullable
     @Override

@@ -49,10 +49,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.List;
 
 /**
-
- A fragment class that displays a map with QR code markers retrieved from Firebase Firestore.
- @author Aaron Binoy
- @version 1.0
+ *
+ *A fragment class that displays a map with QR code markers retrieved from Firebase Firestore.
+ * @author Aaron Binoy
+ * @version 1.0
  */
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
@@ -76,10 +76,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Button nearbyCodesButton;
     /**
-
-     Called when the fragment is being created.
-     Initializes the mFusedLocationProviderClient.
-     @param savedInstanceState The saved instance state of the fragment.
+     * Called when the fragment is being created.
+     * Initializes the mFusedLocationProviderClient.
+     * @param savedInstanceState The saved instance state of the fragment.
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,20 +86,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
     }
     /**
-
-     Called to create the view hierarchy associated with the fragment.
-
-     Initializes the map fragment, checks location permission, and sets the click listener for nearbyCodesButton.
-
-     Starts a handler to refresh the data every 5 minutes.
-
-     @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
-
-     @param container The parent view that the fragment's UI should be attached to.
-
-     @param savedInstanceState The saved instance state of the fragment.
-
-     @return The View for the fragment's UI, or null.
+     * Called to create the view hierarchy associated with the fragment.
+     * Initializes the map fragment, checks location permission, and sets the click listener for nearbyCodesButton.
+     * Starts a handler to refresh the data every 5 minutes.
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container The parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState The saved instance state of the fragment.
+     * @return The View for the fragment's UI, or null.
      */
     @Nullable
     @Override
@@ -145,12 +137,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
 
     /**
-
-     Called when the map is ready to be used.
-     Initializes the map and sets the click listener for the current location button.
-     Enables the current location layer if permission is granted.
-     Loads QR code markers from Firebase Firestore.
-     @param googleMap The GoogleMap object representing the map.
+     * Called when the map is ready to be used.
+     * Initializes the map and sets the click listener for the current location button.
+     * Enables the current location layer if permission is granted.
+     * Loads QR code markers from Firebase Firestore.
+     * @param googleMap The GoogleMap object representing the map.
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -195,11 +186,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         loadQRCodesFromFirebase();
     }
     /**
-
-     Called when the user responds to a permission request.
-     @param requestCode The request code passed in requestPermissions(android.app.Activity, String[], int)
-     @param permissions The requested permissions. Never null.
-     @param grantResults The grant results for the corresponding permissions which is either PERMISSION_GRANTED or PERMISSION_DENIED. Never null.
+     * Called when the user responds to a permission request.
+     * @param requestCode The request code passed in requestPermissions(android.app.Activity, String[], int)
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions which is either PERMISSION_GRANTED or PERMISSION_DENIED. Never null.
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -217,8 +207,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
     /**
-
-     Load QR codes from Firebase Firestore and display them on the map.
+     * Load QR codes from Firebase Firestore and display them on the map.
      */
     private void loadQRCodesFromFirebase() {
         // Access the Firestore instance

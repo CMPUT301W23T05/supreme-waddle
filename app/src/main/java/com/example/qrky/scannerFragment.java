@@ -72,7 +72,6 @@ public class scannerFragment extends CaptureFragment {
 
     /**
      *onViewCreated method initializes the necessary UI components and starts the location service.
-     * @param view The View returned by {@link @onCreateView(LayoutInflater, ViewGroup, Bundle)}.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
      */
@@ -89,9 +88,7 @@ public class scannerFragment extends CaptureFragment {
     }
 
     /**
-     *The onScanResultCallback method is called when a barcode is successfully scanned. It stops the camera and confirms whether the user wants to track their location.
-     * @param result
-     * @return
+     *The onScanResultCallback method is called when a barcode is successfully scanned. It stops the camera and confirms whether the user wants to track their location
      */
     @Override
     public boolean onScanResultCallback(Result result) {
@@ -233,7 +230,7 @@ public class scannerFragment extends CaptureFragment {
 
     /**
      *getLayoutId returns an integer representing the layout resource ID for the associated ScannerFragment.
-     * @return
+     *
      */
 
     @Override
@@ -244,7 +241,7 @@ public class scannerFragment extends CaptureFragment {
 
     /**
      *getPreviewViewId returns the resource ID of a preview view.
-     * @return
+     *
      */
 
     @Override
@@ -255,7 +252,7 @@ public class scannerFragment extends CaptureFragment {
 
     /**
      *getViewfinderViewId returns the ID of the view that will be used as the viewfinder for the QR code scanner.
-     * @return
+     *
      */
     @Override
     public int getViewfinderViewId() {
