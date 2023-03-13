@@ -31,12 +31,12 @@ import java.util.Map;
  */
 public class libraryFragment extends Fragment {
 
-    private RecyclerView recyclerView;
-    private CardAdapter adapter;
+    RecyclerView recyclerView;
+    CardAdapter adapter;
 
-    private List<CardData> allCards;
-    private List<CardData> filteredCards;
-    private SearchView searchView;
+    List<CardData> allCards;
+    List<CardData> filteredCards;
+    SearchView searchView;
 
     public libraryFragment() {
         // Required empty public constructor
@@ -116,18 +116,7 @@ public class libraryFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                filteredCards.clear();
-                if (allCards == null || allCards.isEmpty()) {
-                    // handle case where allCards is null or empty
-                } else if (newText.isEmpty()) {
-                    filteredCards.addAll(allCards);
-                } else {
-                    for (CardData card : allCards) {
-                        if (card.getTitle().toLowerCase().contains(newText.toLowerCase())) {
-                            filteredCards.add(card);
-                        }
-                    }
-                }
+                filterCards(newText);
                 adapter.notifyDataSetChanged();
                 return true;
             }
@@ -135,8 +124,42 @@ public class libraryFragment extends Fragment {
 
         return view;
     }
-
-
+    /**
+     * Adds a CardData object to the list of all cards.
+     *
+     * @param card The CardData object to add to the list.
+     */
+    public void addToAllCards(CardData card) {
+        allCards.add(card);
+    }
+    /**
+     * Adds a CardData object to the list of filtered cards.
+     *
+     * @param card The CardData object to add to the list.
+     */
+    public void addToFilteredCards(CardData card) {
+        filteredCards.add(card);
+    }
+    /**
+     * Filters the list of all cards based on the given query string, and populates the
+     * list of filtered cards with the matching cards.
+     *
+     * @param query The query string to filter the cards by.
+     */
+    void filterCards(String query) {
+        filteredCards.clear();
+        if (allCards == null || allCards.isEmpty()) {
+            // handle case where allCards is null or empty
+        } else if (query.isEmpty()) {
+            filteredCards.addAll(allCards);
+        } else {
+            for (CardData card : allCards) {
+                if (card.getTitle().toLowerCase().contains(query.toLowerCase())) {
+                    filteredCards.add(card);
+                }
+            }
+        }
+    }
 
 
 }
