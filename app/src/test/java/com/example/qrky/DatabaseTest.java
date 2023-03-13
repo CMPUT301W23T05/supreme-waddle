@@ -1,20 +1,34 @@
 package com.example.qrky;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
-import org.junit.Assert;
 import org.junit.Test;
 
+
+/**
+ * Database Unit Test.
+ * This class is used to test the Database class
+ * @author Ahmed
+ */
 public class DatabaseTest {
-    private byte[] bytes= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    @Test
+    public void testGetScore() {
+
+        Database mockDb = mock(Database.class);
+        doReturn(8).when(mockDb).getScore("90236548d872e262cf06bc671bf3e7424e7f8e5deb37ed59fe0e89dbf064114d");
+        assertEquals(8, mockDb.getScore("90236548d872e262cf06bc671bf3e7424e7f8e5deb37ed59fe0e89dbf064114d"));
+
+    }
 
     @Test
-    public void testDatabaseStore() {
-        Database testDatabase = new Database();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        Assert.assertNotNull(testDatabase);
-        testDatabase.goSaveLibrary(true, "06827919", new GeoPoint(53.5444, -113.4909), (bytes));
-//        Assert.assertNotNull(db.collection("QR Codes").document("
+    public void testMakeName() {
+        Database mockDb = mock(Database.class);
+        doReturn("Quiet Far Fast Empty Old Strong ").when(mockDb).makeName("90236548d872e262cf06bc671bf3e7424e7f8e5deb37ed59fe0e89dbf064114d");
+        System.out.println("testGetUsername " + mockDb.makeName("90236548d872e262cf06bc671bf3e7424e7f8e5deb37ed59fe0e89dbf064114d"));
+        assertEquals("Quiet Far Fast Empty Old Strong ", mockDb.makeName("90236548d872e262cf06bc671bf3e7424e7f8e5deb37ed59fe0e89dbf064114d"));
     }
+
+
 }
