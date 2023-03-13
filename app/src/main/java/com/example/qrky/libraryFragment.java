@@ -13,8 +13,15 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class libraryFragment extends Fragment {
@@ -30,8 +37,7 @@ public class libraryFragment extends Fragment {
         // Required empty public constructor
     }
 
-
-//...
+    //...
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,9 +47,7 @@ public class libraryFragment extends Fragment {
         recyclerView = view.findViewById(R.id.normal_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
-        allCards = cards();
-        filteredCards = new ArrayList<>(allCards);
-
+        filteredCards = new ArrayList<>();
         adapter = new CardAdapter(filteredCards);
         recyclerView.setAdapter(adapter);
 
@@ -58,6 +62,35 @@ public class libraryFragment extends Fragment {
             }
         });
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+// Retrieve data from the Firebase database
+        db.collection("QR Codes")
+                .whereArrayContains("playerID", "playerID1")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        // Generate the list of cards with name and score fields
+                        List<CardData> cards = new ArrayList<>();
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                            String name = (String) document.get("name");
+                            Long scoreLong = document.getLong("score");
+                            Integer score = (scoreLong != null) ? scoreLong.intValue() : null;
+
+                            // Only add the card to the list if the playerID field contains "playerID1"
+                            List<String> playerIds = (List<String>) document.get("playerID");
+                            if (name != null && score != null && playerIds != null && playerIds.contains("playerID1")) {
+                                cards.add(new CardData(name, score));
+                            }
+                        }
+
+                        allCards = cards;
+                        filteredCards.addAll(cards);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -67,7 +100,9 @@ public class libraryFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 filteredCards.clear();
-                if (newText.isEmpty()) {
+                if (allCards == null || allCards.isEmpty()) {
+                    // handle case where allCards is null or empty
+                } else if (newText.isEmpty()) {
                     filteredCards.addAll(allCards);
                 } else {
                     for (CardData card : allCards) {
@@ -82,26 +117,6 @@ public class libraryFragment extends Fragment {
         });
 
         return view;
-    }
-
-
-    private List<CardData> cards() {
-        List<CardData> cards = new ArrayList<>();
-        String[] titles = {"QR Code 1", "QR Code 2", "QR Code 3", "QR Code 4"};
-
-        for (int i = 0; i < titles.length; i++) {
-            String title = titles[i];
-            int score = 0;
-            for (int j = 0; j < title.length(); j++) {
-                char c = title.charAt(j);
-                if (Character.isLetter(c)) {
-                    score += (int) c;
-                }
-            }
-            cards.add(new CardData(title, score));
-        }
-
-        return cards;
     }
 
 
