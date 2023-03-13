@@ -42,7 +42,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A fragment representing a list of nearby QR codes.
+
+ A fragment that displays a list of nearby QR codes based on the user's current location.
+
+ Uses a RecyclerView and an adapter to display the list.
+ @author Aaron Binoy
+ @version 1.0
  */
 public class nearbyCodesFragment extends Fragment implements LocationListener {
 
@@ -58,7 +63,22 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
     private Button mapsButton;
     private SearchView mSearchView;
     public nearbyCodesFragment() {}
+    /**
 
+     Called when the Fragment is created.
+
+     Sets up the RecyclerView and adapter, location manager, search view, and maps button.
+
+     Checks for location permission and requests it if necessary.
+
+     @param inflater LayoutInflater object used to inflate the Fragment's layout
+
+     @param container ViewGroup object containing the Fragment's layout
+
+     @param savedInstanceState Bundle object containing any saved state information
+
+     @return the View object containing the Fragment's layout
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nearby_codes, container, false);
@@ -107,6 +127,15 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
 
         return view;
     }
+    /**
+
+     Callback method to handle the result of a permission request. If the requested permission is granted,
+     the method requests location updates using GPS_PROVIDER. If the requested permission is denied, a toast
+     message is displayed to inform the user.
+     @param requestCode The code for the requested permission
+     @param permissions The requested permissions
+     @param grantResults The grant results for the corresponding permissions
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -127,7 +156,18 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
         }
     }
 
+    /**
 
+     Method to query the Firestore database for QR codes within a certain radius of the user's location.
+
+     The results are added to a list and the adapter is notified of the changes.
+
+     @param latitude The latitude of the user's current location
+
+     @param longitude The longitude of the user's current location
+
+     @param radius The radius in kilometers to search within
+     */
     private void queryNearbyCodes(double latitude, double longitude, double radius) {
         mValues.clear(); // Clear the list before adding new items
         qrCodesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -157,7 +197,14 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
             }
         });
     }
+    /**
 
+     Callback method to handle location updates. The method calls the queryNearbyCodes method with the user's
+
+     current location and a specified search radius.
+
+     @param location The user's current location
+     */
     @Override
     public void onLocationChanged(Location location) {
         double latitude = location.getLatitude();
@@ -167,6 +214,12 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
         queryNearbyCodes(latitude, longitude, radius);
 
     }
+    /**
+
+     Callback method called when the fragment's view is destroyed. The method removes location updates to conserve
+
+     resources when the fragment is no longer in view.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

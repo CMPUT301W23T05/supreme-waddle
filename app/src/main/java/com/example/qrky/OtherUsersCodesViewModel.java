@@ -30,6 +30,19 @@ import java.util.Objects;
 //     3. System makes card for each code in library
 //     4. System displays cards in a grid (3 columns)
 //     5. Player sees OtherUser's code library (goal)
+
+/**
+ * ViewModel for OtherUsersCodes. Gets the code library of another user from the database. Stores the
+ * components of each code in a list. codeNames stores the names of the codes, codeScores stores the
+ * scores of the codes, and codeDrawings stores the drawings of the codes. The drawings are stored
+ * as a list of strings, where the first string is the eyes, the second string is the nose, and the
+ * third string is the mouth. Currently, the codes are not ordered, but they will be ordered in future
+ * iterations.
+ *
+ * @author Franco Bonilla
+ * @version 1.0 2023/03/07
+ * @see OtherUsersCodes
+ */
 public class OtherUsersCodesViewModel extends ViewModel {
     // - currently no ordering of codes; order chronologically for part 4
     //   - maybe use a hashmap to store codes and their timestamps
@@ -44,6 +57,12 @@ public class OtherUsersCodesViewModel extends ViewModel {
     // TODO: get code library from database
     // get username from community fragment
     // get hashes from database using username
+
+    /**
+     * Gets list of hashes from database based on username. Stores hashes in playerHashes.
+     *
+     * @since 1.0
+     */
     public void getOtherUsersHashes() {
         CollectionReference playersCollection = qrkyDB.collection("Players");
 
@@ -70,7 +89,15 @@ public class OtherUsersCodesViewModel extends ViewModel {
             Log.i("OtherUsersCodesVM", "Hashes found!");
         }
     }
+
     // for each hash, get code from database
+    /**
+     * Gets library of codes from the database. Uses the hashes of the codes from the player document
+     * to get the codes from the QR Codes collection. Stores the names, scores, and drawings of the
+     * codes in codeNames, codeScores, and codeDrawings. Currently does not update the adapter.
+     *
+     * @since 1.0
+     */
     public void getOtherUsersCodes() {
         getOtherUsersHashes();
         CollectionReference qrCodesCollection = qrkyDB.collection("QR Codes");
@@ -109,7 +136,10 @@ public class OtherUsersCodesViewModel extends ViewModel {
         }
     }
 
-    // TODO: Move to testing class
+    /**
+     * Makes test data for the code library. This is used for testing purposes.
+     * Adds three codes to the code library.
+     */
     public void getTestData() {
         codeNames.clear();
         codeScores.clear();

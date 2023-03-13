@@ -13,8 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-
 
 // US 02.03.01: As a player, I want to be able to browse QR codes that other players have scanned.
 // Artist: Franco Bonilla
@@ -30,17 +28,34 @@ import com.google.firebase.firestore.FirebaseFirestore;
 //     4. System displays cards in a grid (3 columns)
 //     5. Player sees OtherUser's code library (goal)
 
+/**
+ * Fragment for the OtherUser's codes. Displays a grid of cards with the codes that the OtherUser
+ * has scanned. The cards should be clickable to see more info, but that functionality is not
+ * implemented yet.
+ *
+ * @author Franco Bonilla
+ * @version 1.0 2023/03/07
+ * @see OtherUsersLibraryAdapter
+ */
 public class OtherUsersCodes extends Fragment {
     private OtherUsersCodesViewModel otherUsersCodeVM;
     private GridView gridOfCodes;
     private ImageButton backBttn;
-    private final FirebaseFirestore qrkyDB = FirebaseFirestore.getInstance();
 
+    /**
+     * Constructor (empty) for OtherUsersCodes.
+     *
+     * @since 1.0
+     */
     public OtherUsersCodes() {}
-    public static OtherUsersCodes newInstance() {
-        return new OtherUsersCodes();
-    }
 
+    /**
+     * Creates the fragment and hides the bottom navigation bar. Calls the ViewModel to get the
+     * data for the grid of cards.
+     *
+     * @param savedInstanceState Past saved state of the fragment (if not null).
+     * @since 1.0
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i("OtherUsersCodes", "Looking at OtherUser's codes");
@@ -57,6 +72,14 @@ public class OtherUsersCodes extends Fragment {
         otherUsersCodeVM.getTestData();  // add test data
     }
 
+    /**
+     * Creates the view for the fragment. Creates the grid of cards with the OtherUser's codes.
+     *
+     * @param inflater inflater for the fragment.
+     * @param container The parent view that the fragment's UI should be attached to (if not null).
+     * @param savedInstanceState Past saved state of the fragment (if not null).
+     * @return Return the View for the other user's library (fragment UI)
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -64,7 +87,7 @@ public class OtherUsersCodes extends Fragment {
 
         // create grid of OtherUser's codes
         gridOfCodes = (GridView) view.findViewById(R.id.otherUsersCodes);
-        OtherUsersLibraryAdapter adapter = new OtherUsersLibraryAdapter(OtherUsersCodes.this.getContext(), otherUsersCodeVM.codeNames, otherUsersCodeVM.codeScores, otherUsersCodeVM.codeDrawings);
+        OtherUsersLibraryAdapter adapter = new OtherUsersLibraryAdapter(requireActivity(), otherUsersCodeVM.codeNames, otherUsersCodeVM.codeScores, otherUsersCodeVM.codeDrawings);
         gridOfCodes.setAdapter(adapter);
 
         // go back to the OtherUser Profile
