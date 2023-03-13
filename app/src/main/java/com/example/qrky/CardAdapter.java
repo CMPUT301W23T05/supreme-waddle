@@ -39,29 +39,62 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     private List<CardData> filteredCards;
     private FirebaseFirestore db;
 
+    /**
+     public CardAdapter(List<CardData> filteredCards)
+
+     Constructor for the CardAdapter class. Initializes the filteredCards list with the provided list and gets an instance of the FirebaseFirestore class.
+
+     @param filteredCards The list of CardData objects to be displayed in the RecyclerView.
+     */
     public CardAdapter(List<CardData> filteredCards) {
         this.filteredCards = filteredCards;
         db = FirebaseFirestore.getInstance();
     }
 
+    /**
+     public int getItemCount()
+
+     Gets the number of items in the filteredCards list.
+
+     @return The number of items in the filteredCards list.
+     */
     @Override
     public int getItemCount() {
         return filteredCards.size();
     }
 
+    /**
+     public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+
+     Creates a new CardViewHolder object that represents a single item in the RecyclerView.
+
+     @param parent The ViewGroup that the new CardViewHolder will be added to after it is created.
+
+     @param viewType An integer that represents the type of view to be created (not used in this implementation).
+
+     @return A new CardViewHolder object that represents a single item in the RecyclerView.
+     */
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card, parent, false);
         return new CardViewHolder(view);
     }
 
+    /**
+     public void onBindViewHolder(CardViewHolder holder, int position)
+
+     Binds the data from a CardData object to a CardViewHolder object.
+
+     @param holder The CardViewHolder object that will display the data.
+
+     @param position The position of the CardData object in the filteredCards list.
+     */
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
         CardData card = filteredCards.get(position);
         holder.title.setText(card.getTitle());
         holder.score.setText(String.valueOf(card.getScore())); // convert int to String
     }
-
     public class CardViewHolder extends RecyclerView.ViewHolder {
 
         private TextView title;
@@ -75,6 +108,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             deleteButton = itemView.findViewById(R.id.button_delete);
 
             deleteButton.setOnClickListener(new View.OnClickListener() {
+                /**
+                 *public void onClick(View view)
+                 *
+                 * The onClick method for the deleteButton UI element in the CardViewHolder. Deletes a player from a QR code in the Firebase database and removes the corresponding CardData object from the filteredCards list.
+                 *
+                 * @param view The View object that represents the UI element that was clicked.
+                 */
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
@@ -125,6 +165,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     }
 
+    /**
+     public void addCard(CardData card)
+
+     Adds a new CardData object to the filteredCards list and notifies the RecyclerView that the data set has changed.
+
+     @param card The new CardData object to add to the list.
+     */
     // This method can be called from the fragment after a new card is added to the database
     public void addCard(CardData card) {
         filteredCards.add(card);
