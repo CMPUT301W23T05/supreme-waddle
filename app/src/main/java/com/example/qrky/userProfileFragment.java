@@ -24,8 +24,6 @@ import androidx.fragment.app.DialogFragment;
  * Represents an instance of user profile
  */
 public class userProfileFragment extends DialogFragment {
-
-
     private String Username = "@toBFrank";
     private String Email;
     private String Password;
@@ -36,13 +34,21 @@ public class userProfileFragment extends DialogFragment {
     public userProfileFragment() {
         // empty constructor
     }
+
+    /**
+     * creates instance of userProfileFragment
+     * @return userProfileFragment
+     */
     @SuppressWarnings("unused")
+
     public static userProfileFragment newInstance() {
        userProfileFragment fragment = new userProfileFragment();
        return fragment;
     }
     /**
-     * java docs
+     * creating profile dialog displaying user information
+     * @param savedInstanceState -  reference to a Bundle object
+     * @return builder view
      */
 
     @NonNull
@@ -74,29 +80,7 @@ public class userProfileFragment extends DialogFragment {
 
     }
 
+    
 
 
-    public int getRank() {
-        return Rank;
-    }
-
-    public void setRank(int rank) {
-        Rank = rank;
-    }
-
-    public int getCardsCollected() {
-        return cardsCollected;
-    }
-
-    public void setCardsCollected(int cardsCollected) {
-        this.cardsCollected = cardsCollected;
-    }
-
-    public int getTotalPoints() {
-        return totalPoints;
-    }
-
-    public void setTotalPoints(int totalPoints) {
-        this.totalPoints = totalPoints;
-    }
 }
