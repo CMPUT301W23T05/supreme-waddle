@@ -38,7 +38,7 @@ import androidx.lifecycle.ViewModelProvider;
  * @see OtherUsersLibraryAdapter
  */
 public class OtherUsersCodes extends Fragment {
-    private OtherUsersCodesViewModel otherUsersCodeVM;
+    public OtherUsersCodesViewModel otherUsersCodeVM;
     private GridView gridOfCodes;
     private ImageButton backBttn;
 

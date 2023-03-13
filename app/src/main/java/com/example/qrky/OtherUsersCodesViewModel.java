@@ -173,4 +173,20 @@ public class OtherUsersCodesViewModel extends ViewModel {
         Log.i("OtherUsersCodesViewModel", "Test data added!");
     }
 
+    public List<String> getCodeNames() {
+        return codeNames;
+    }
+
+    public List<Integer> getCodeScores() {
+        return codeScores;
+    }
+
+    public List<List<String>> getCodeDrawings() {
+        return codeDrawings;
+    }
+
+    public int getLibrarySize() {
+        return codeNames.size();
+    }
+
 }
