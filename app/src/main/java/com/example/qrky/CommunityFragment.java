@@ -2,7 +2,6 @@ package com.example.qrky;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,15 +37,15 @@ import java.util.HashMap;
  * @see OtherUsersCodes
  */
 public class CommunityFragment extends Fragment {
-    private FirebaseFirestore qrkyDB = FirebaseFirestore.getInstance();
-    private CollectionReference playersCollection = qrkyDB.collection("Players");
-    private CommunityAdapter commAdapter;
-//    private OtherUsersCodesViewModel otherUsersCodesVM;
-//   CommunityViewModel communityVM;
-    private SearchView playersSearch;
-    private RecyclerView playersBriefList;
-    private HashMap<String, String> playerAndScore = new HashMap<>();  // username and score
-    private HashMap<String, String> matchingPlayerAndScore = new HashMap<>();  // username and score that match the search query
+    FirebaseFirestore qrkyDB;
+    CollectionReference playersCollection;
+    CommunityAdapter commAdapter;
+//  private OtherUsersCodesViewModel otherUsersCodesVM;
+//  CommunityViewModel communityVM;
+    SearchView playersSearch;
+    RecyclerView playersBriefList;
+    HashMap<String, String> playerAndScore = new HashMap<>();  // username and score
+    HashMap<String, String> matchingPlayerAndScore = new HashMap<>();  // username and score that match the search query
 
     /**
      * Constructor (empty) for CommunityFragment.
@@ -72,6 +71,9 @@ public class CommunityFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_community, container, false);
 //        otherUsersCodesVM = new ViewModelProvider(requireActivity()).get(OtherUsersCodesViewModel.class);
+
+        qrkyDB = FirebaseFirestore.getInstance();
+        playersCollection = qrkyDB.collection("Players");
 
         // make list of all players and scores
         // - set up adapter
@@ -123,7 +125,7 @@ public class CommunityFragment extends Fragment {
      *
      * @since 1.0
      */
-    private void getAllPlayersAndScores() {
+    public void getAllPlayersAndScores() {
         playersCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -135,7 +137,7 @@ public class CommunityFragment extends Fragment {
                 commAdapter.update(playerAndScore);
             }
         });
-        Log.i("CommunityFragment", "All players and scores: " + playerAndScore.toString());
+//        Log.i("CommunityFragment", "All players and scores: " + playerAndScore.toString());
     }
 
     /**
@@ -143,7 +145,7 @@ public class CommunityFragment extends Fragment {
      *
      * @since 1.0
      */
-    private void searchAPlayer() {
+    public void searchAPlayer() {
         playersSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {return false;}
@@ -159,8 +161,8 @@ public class CommunityFragment extends Fragment {
                         }
                     }
                 }
-                Log.i("CommunityFragment", "Search query: " + newText);
-                Log.i("CommunityFragment", "Matching players: " + matchingPlayerAndScore.toString());
+//                Log.i("CommunityFragment", "Search query: " + newText);
+//                Log.i("CommunityFragment", "Matching players: " + matchingPlayerAndScore.toString());
                 commAdapter.update(matchingPlayerAndScore);
                 return false;
             }

@@ -1,7 +1,6 @@
 package com.example.qrky;
 
 import android.Manifest;
-import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
