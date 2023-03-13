@@ -71,7 +71,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.4.2')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-firestore:24.4.4'
-
+    //implementation files('C:\\Users\\Aaron Geo Binoy\\AppData\\Local\\Android\\Sdk\\platforms\\android-33\\android.jar')
     implementation 'com.firebase:geofire-android:3.2.0'
     implementation 'com.firebase:geofire-android-common:3.2.0'
     implementation 'com.google.firebase:firebase-common:20.3.1'
