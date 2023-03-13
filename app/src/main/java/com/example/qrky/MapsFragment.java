@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -47,25 +48,60 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 
+/**
 
+ A fragment class that displays a map with QR code markers retrieved from Firebase Firestore.
+ @author Aaron Binoy
+ @version 1.0
+ */
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
-
-
-
-
 
     private static final int PERMISSION_REQUEST_CODE = 1;
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 123;
 
+    private FragmentManager parentFragmentManager;
+    /**
+
+     Called when the fragment is attached to the activity.
+     Sets the parentFragmentManager.
+     @param context The context in which the fragment is attached.
+     */
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        parentFragmentManager = getActivity().getSupportFragmentManager();
+    }
+
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Button nearbyCodesButton;
+    /**
+
+     Called when the fragment is being created.
+     Initializes the mFusedLocationProviderClient.
+     @param savedInstanceState The saved instance state of the fragment.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
     }
+    /**
 
+     Called to create the view hierarchy associated with the fragment.
+
+     Initializes the map fragment, checks location permission, and sets the click listener for nearbyCodesButton.
+
+     Starts a handler to refresh the data every 5 minutes.
+
+     @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+
+     @param container The parent view that the fragment's UI should be attached to.
+
+     @param savedInstanceState The saved instance state of the fragment.
+
+     @return The View for the fragment's UI, or null.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -108,11 +144,19 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
 
+     Called when the map is ready to be used.
+     Initializes the map and sets the click listener for the current location button.
+     Enables the current location layer if permission is granted.
+     Loads QR code markers from Firebase Firestore.
+     @param googleMap The GoogleMap object representing the map.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
         // Set current location button listener
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
@@ -150,7 +194,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         loadQRCodesFromFirebase();
     }
+    /**
 
+     Called when the user responds to a permission request.
+     @param requestCode The request code passed in requestPermissions(android.app.Activity, String[], int)
+     @param permissions The requested permissions. Never null.
+     @param grantResults The grant results for the corresponding permissions which is either PERMISSION_GRANTED or PERMISSION_DENIED. Never null.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PERMISSION_REQUEST_CODE) {
@@ -166,7 +216,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             }
         }
     }
+    /**
 
+     Load QR codes from Firebase Firestore and display them on the map.
+     */
     private void loadQRCodesFromFirebase() {
         // Access the Firestore instance
         FirebaseFirestore db = FirebaseFirestore.getInstance();
