@@ -26,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -232,17 +233,22 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             // Loop through the documents and add markers to the map
             for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                 GeoPoint location = document.getGeoPoint("location");
+
                 if (location != null) {
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-                    mMap.addMarker(new MarkerOptions().position(latLng));
+                    String name = document.getString("name");
+                    mMap.addMarker(new MarkerOptions().position(latLng).title(name));
                 }
             }
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    String name = marker.getTitle(); // Get the name of the QR code
+                    Toast.makeText(requireContext(), name, Toast.LENGTH_SHORT).show(); // Display the name in a toast
+                    return true;
+                }
+            });
         });
+
     }
-
-
-
-
-
 }
