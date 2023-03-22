@@ -1,27 +1,34 @@
 package com.example.qrky;
 
-import static com.google.firebase.firestore.FieldValue.arrayUnion;
+import static com.google.android.gms.tasks.Tasks.await;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.Image;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
@@ -35,36 +42,54 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.zxing.Result;
 import com.king.zxing.CaptureFragment;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
+/**
+ *This code is implementing a barcode scanner functionality that allows the user to scan a barcode and capture an image.
+ */
 public class scannerFragment extends CaptureFragment {
 
+    private static final String TAG = "SW.ScannerF";
     private ProcessCameraProvider mCameraProvider;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private ImageCapture mImageCapture;
     private ImageButton mIbTakePicture;
     private LocationHelper mLocationHelper;
-
+    private ImageView mIvPhoto;
+    private Database mDatabase;
     private String mCode;
     private GeoPoint mGeoPoint;
-    private final String mImageUrl = "";
-    private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
+    byte[] bytes;
 
+
+    /**
+     *onViewCreated method initializes the necessary UI components and starts the location service.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mIbTakePicture = view.findViewById(R.id.ib_take_picture);
+        mIvPhoto = view.findViewById(R.id.iv_photo);
         mIbTakePicture.setVisibility(View.GONE);
         mIbTakePicture.setOnClickListener(v -> takePicture());
         mLocationHelper = new LocationHelper(requireContext(), getViewLifecycleOwner());
+        mDatabase = new Database();
         startLocation();
     }
 
+    /**
+     *The onScanResultCallback method is called when a barcode is successfully scanned. It stops the camera and confirms whether the user wants to track their location
+     */
     @Override
     public boolean onScanResultCallback(Result result) {
         if (!TextUtils.isEmpty(result.getText())) {
@@ -76,7 +101,12 @@ public class scannerFragment extends CaptureFragment {
         return super.onScanResultCallback(result);
     }
 
-    private void goSaveLibrary(boolean isLocationRequired) {
+    /**
+     *goSaveLibrary method is responsible for saving the specified data to a database or performing other actions related to storing data.
+     * @param isLocationRequired
+     */
+    @OptIn(markerClass = ExperimentalGetImage.class)
+    private void goSaveLibrary(boolean isLocationRequired, byte[] bytes) {
         if (TextUtils.isEmpty(mCode)) {
             Toast.makeText(requireContext(), "Code not valid.", Toast.LENGTH_SHORT).show();
             return;
@@ -85,55 +115,28 @@ public class scannerFragment extends CaptureFragment {
             Toast.makeText(requireContext(), "Wait for location succeed.", Toast.LENGTH_SHORT).show();
             return;
         }
+        mDatabase.goSaveLibrary(true, mCode, mGeoPoint, bytes);
 
-        final Map<String, Object> map = new HashMap<>();
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        byte[] encodedhash = digest.digest(
-                mCode.getBytes(StandardCharsets.UTF_8));
-        StringBuilder hexString = new StringBuilder(2 * encodedhash.length);
-        for (int i = 0; i < encodedhash.length; i++) {
-            String hex = Integer.toHexString(0xff & encodedhash[i]);
-            if(hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
-        }
-        if (mDb.collection("QR Codes").document(hexString.toString()).get().isSuccessful(
-        )) {
-            mDb.collection("QR Codes").document(hexString.toString()).update("playerID", arrayUnion("playerID"));
-            return;
-        }
-        map.put("hash", hexString.toString());
-        if(isLocationRequired) {
-            map.put("location", mGeoPoint);
-        }
-        map.put("imageUrl", mImageUrl);
-        map.put("timestamp", Timestamp.now());
-        Log.d("TAGTAG", "goSaveLibrary: ");
-        mDb.collection("QR Codes").add(map);
-        MainActivity activity = (MainActivity) requireActivity();
-        activity.switchTab(R.id.libraryFragment);
+
     }
 
+    /**
+     * confirmTrackLocation method shows a dialogue to the user and, based on their response, either starts the camera to capture an image or saves the scanned barcode data to the database.
+     */
     private void confirmTrackLocation() {
-        getParentFragmentManager().setFragmentResultListener(
-                ConfirmDialog.class.getSimpleName(), getViewLifecycleOwner(),
-                (requestKey, result) -> {
-                    Log.d("TAGTAG", "confirmTrackLocation: ");
-                    boolean confirm = result.getBoolean("confirm", false);
-                    if (confirm) {
-                        useCameraForTakingPicture();
-                        tryStartLocation(true);
-                    } else {
-                        getCameraScan().startCamera();
-                        goSaveLibrary(false);
-                    }
-                });
+    getParentFragmentManager().setFragmentResultListener(
+            ConfirmDialog.class.getSimpleName(), getViewLifecycleOwner(),
+            (requestKey, result) -> {
+                Log.d("TAG", "confirmTrackLocation: ");
+                boolean confirm = result.getBoolean("confirm", false);
+                if (confirm) {
+                    useCameraForTakingPicture();
+                    tryStartLocation(true);
+                } else {
+                    getCameraScan().startCamera();
+                    goSaveLibrary(false, bytes);
+                }
+            });
         ConfirmDialog.newInstance(
                 getString(R.string.confirm_track_location_title),
                 getString(R.string.confirm_track_location_confirm),
@@ -141,6 +144,9 @@ public class scannerFragment extends CaptureFragment {
         ).show(getParentFragmentManager(), ConfirmDialog.class.getSimpleName());
     }
 
+    /**
+     *useCameraForTakingPicture method initializes the CameraX library and starts the camera to capture an image.
+     */
     private void useCameraForTakingPicture() {
         viewfinderView.setVisibility(View.GONE);
         mIbTakePicture.setVisibility(View.VISIBLE);
@@ -159,39 +165,98 @@ public class scannerFragment extends CaptureFragment {
                         .build();
 
                 preview.setSurfaceProvider(previewView.getSurfaceProvider());
-                Camera camera = mCameraProvider.bindToLifecycle(
+                mCameraProvider.bindToLifecycle(
                         getViewLifecycleOwner(), cameraSelector, preview, mImageCapture);
             } catch (Exception ignored) {}
         }, ContextCompat.getMainExecutor(requireContext()));
     }
 
+    @OptIn(markerClass = ExperimentalGetImage.class)
+    /**
+     *takePicture method captures an image using the initialized camera and saves the image and the scanned barcode data to the database.
+     */
     private void takePicture() {
+        if (Objects.isNull(mGeoPoint)) {
+            Toast.makeText(requireContext(), "Wait for location succeed.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         mImageCapture.takePicture(ContextCompat.getMainExecutor(requireContext()),
                 new ImageCapture.OnImageCapturedCallback() {
                     @Override
                     public void onCaptureSuccess(@NonNull ImageProxy image) {
-                        super.onCaptureSuccess(image);
+                        Log.d(TAG, "onCaptureSuccess: ");
+                        savePhoto(image);
+                        goSaveLibrary(true, bytes);
+                        bytes = null;
+                        mCameraProvider.unbindAll();
+                    }
+
+                    @Override
+                    public void onError(@NonNull ImageCaptureException exception) {
+                        Log.e(TAG, "onError: ", exception);
                     }
                 });
         getRootView().postDelayed(() -> {
             getRootView().setForeground(new ColorDrawable(Color.WHITE));
             getRootView().postDelayed(() -> getRootView().setForeground(null), 50);
         }, 100);
-        goSaveLibrary(true);
+        goSaveLibrary(true, bytes);
+        mIvPhoto.setVisibility(View.VISIBLE);
     }
+
+    /**
+     * savePhoto is to extract the image data from the ImageProxy object and display it in an ImageView object with ID mIvPhoto.
+     * @param image
+     */
+    private void savePhoto(ImageProxy image) {
+
+        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+        buffer.rewind();
+        bytes = new byte[buffer.capacity()];
+        buffer.get(bytes);
+        byte[] clonedBytes = bytes.clone();
+        Bitmap mIvPhotoBitmap = BitmapFactory.decodeByteArray(clonedBytes, 0, clonedBytes.length);
+        mIvPhoto.setImageBitmap(mIvPhotoBitmap);
+    }
+
+    /**
+     * This code overrides the onDestroyView method of a fragment class
+     */
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    /**
+     *getLayoutId returns an integer representing the layout resource ID for the associated ScannerFragment.
+     *
+     */
 
     @Override
     public int getLayoutId() {
+
         return R.layout.fragment_scanner;
     }
 
+    /**
+     *getPreviewViewId returns the resource ID of a preview view.
+     *
+     */
+
     @Override
     public int getPreviewViewId() {
+
         return R.id.preview_view;
     }
 
+    /**
+     *getViewfinderViewId returns the ID of the view that will be used as the viewfinder for the QR code scanner.
+     *
+     */
     @Override
     public int getViewfinderViewId() {
+
         return R.id.viewfinder_view;
     }
 
@@ -205,6 +270,10 @@ public class scannerFragment extends CaptureFragment {
                     new ActivityResultContracts.RequestMultiplePermissions(),
                     result -> tryStartLocation(false));
 
+    /**
+     *tryStartLocation attempts to start location updates if the required location permissions are granted.
+     * @param shouldRequest
+     */
     private void tryStartLocation(boolean shouldRequest) {
         if (ActivityCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -216,6 +285,9 @@ public class scannerFragment extends CaptureFragment {
         }
     }
 
+    /**
+     *startLocation defines a private method startLocation() which is used to start retrieving the device's location.
+     */
     private void startLocation() {
         mLocationHelper.startLocation(
                 LocationManager.GPS_PROVIDER, new LocationHelper.LocationCallback() {

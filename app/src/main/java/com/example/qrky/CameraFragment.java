@@ -18,6 +18,9 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.common.util.concurrent.ListenableFuture;
+/**
+ * This CameraFragment is extending from the Fragment class. It is responsible for setting up and managing the camera preview in an Android app.
+ */
 
 public class CameraFragment extends Fragment {
 
@@ -25,6 +28,17 @@ public class CameraFragment extends Fragment {
     private ProcessCameraProvider mCameraProvider;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
 
+    /**
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *onCreateView method is responsible for inflating the fragment's layout file and returning the root view
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -32,6 +46,13 @@ public class CameraFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_camera, container, false);
     }
 
+    /**
+     * onViewCreated method is called after the view is created and is responsible for setting up the camera preview.
+     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -52,6 +73,9 @@ public class CameraFragment extends Fragment {
         }, ContextCompat.getMainExecutor(requireContext()));
     }
 
+    /**
+     * onPause method is called when the fragment is paused and is responsible for releasing the camera resources.
+     */
     @Override
     public void onPause() {
         super.onPause();
