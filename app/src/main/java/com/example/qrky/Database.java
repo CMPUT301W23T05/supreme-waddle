@@ -120,7 +120,7 @@ public class Database {
         if (Photo != null) {
 
             final String[] path = new String[1];
-//            storage of image from https://www.geeksforgeeks.org/android-how-to-upload-an-image-on-firebase-storage/
+//          storage of image from https://www.geeksforgeeks.org/android-how-to-upload-an-image-on-firebase-storage/
             StorageReference ref
                     = storageRef
                     .child(
@@ -158,7 +158,7 @@ public class Database {
      */
     String makeName(String str) {
         String[] strArr = str.split("");
-        String[] wordArr = new String[6];
+        String[] wordArr = new String[8];
         String binary = "";
         if (strArr[0].equals("0")) {
             binary += "0000";
@@ -193,69 +193,87 @@ public class Database {
         } else if (strArr[0].equals("f")) {
             binary += "1111";
         }
-        if (strArr[1].equals("4")) {
-            binary += "01";
+        if (strArr[1].equals("0")) {
+            binary += "0000";
+        } else if (strArr[1].equals("1")) {
+            binary += "0001";
+        } else if (strArr[1].equals("2")) {
+            binary += "0010";
+        } else if (strArr[1].equals("3")) {
+            binary += "0011";
+        } else if (strArr[1].equals("4")) {
+            binary += "0100";
         } else if (strArr[1].equals("5")) {
-            binary += "01";
+            binary += "0101";
         } else if (strArr[1].equals("6")) {
-            binary += "01";
+            binary += "0110";
         } else if (strArr[1].equals("7")) {
-            binary += "01";
-        } else if (strArr[0].equals("8")) {
-            binary += "10";
-        } else if (strArr[0].equals("9")) {
-            binary += "10";
-        } else if (strArr[0].equals("a")) {
-            binary += "10";
-        } else if (strArr[0].equals("b")) {
-            binary += "10";
-        } else if (strArr[0].equals("c")) {
-            binary += "11";
-        } else if (strArr[0].equals("d")) {
-            binary += "11";
-        } else if (strArr[0].equals("e")) {
-            binary += "11";
-        } else if (strArr[0].equals("f")) {
-            binary += "11";
-        } else {
-            binary += "00";
+            binary += "0111";
+        } else if (strArr[1].equals("8")) {
+            binary += "1000";
+        } else if (strArr[1].equals("9")) {
+            binary += "1001";
+        } else if (strArr[1].equals("a")) {
+            binary += "1010";
+        } else if (strArr[1].equals("b")) {
+            binary += "1011";
+        } else if (strArr[1].equals("c")) {
+            binary += "1100";
+        } else if (strArr[1].equals("d")) {
+            binary += "1101";
+        } else if (strArr[1].equals("e")) {
+            binary += "1110";
+        } else if (strArr[1].equals("f")) {
+            binary += "1111";
         }
 
         strArr = binary.split("");
         String result = "";
 
         if((strArr[0].equals("0"))){
-            wordArr[0] = "Loud ";
+            wordArr[0] = "Friendly ";
         }else{
-            wordArr[0] = "Quiet ";
+            wordArr[0] = "Hostile ";
         }
         if((strArr[1].equals("0"))){
-            wordArr[1] = "Far";
+            wordArr[1] = "Lovely ";
         }else{
-            wordArr[1] = "Near";
+            wordArr[1] = "Ugly ";
         }
         if((strArr[2].equals("0"))){
-            wordArr[2] = "Fast";
+            wordArr[2] = "Small ";
         }else{
-            wordArr[2] = "Slow";
+            wordArr[2] = "Big ";
         }
         if((strArr[3].equals("0"))){
-            wordArr[3] = "Full";
+            wordArr[3] = "Noisy ";
         }else{
-            wordArr[3] = "Empty";
+            wordArr[3] = "Quite ";
         }
         if((strArr[4].equals("0"))){
-            wordArr[4] = "Young";
+            wordArr[4] = "Young ";
         }else{
-            wordArr[4] = "Old";
+            wordArr[4] = "Old ";
         }
         if((strArr[5].equals("0"))){
-            wordArr[5] = "Strong";
+            wordArr[5] = "Tidy ";
         }else{
-            wordArr[5] = "Weak";
+            wordArr[5] = "Messy ";
         }
-        for (int i = 0; i < 6; i++) {
-            result += wordArr[i] + " ";
+        if((strArr[6].equals("0"))){
+            wordArr[6] = "Young ";
+        }else{
+            wordArr[6] = "Old ";
+        }
+        if((strArr[7].equals("0"))){
+            wordArr[7] = "Drake";
+        }else{
+            wordArr[7] = "Duck";
+        }
+
+
+        for (int i = 0; i < 8; i++) {
+            result += wordArr[i];
         }
 
         return result;
