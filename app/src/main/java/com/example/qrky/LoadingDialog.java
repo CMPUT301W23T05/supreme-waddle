@@ -29,7 +29,6 @@ public class LoadingDialog extends DialogFragment {
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
      *
-     * @return
      */
     @Nullable
     @Override

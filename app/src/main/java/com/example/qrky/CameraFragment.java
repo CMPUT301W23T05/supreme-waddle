@@ -37,8 +37,7 @@ public class CameraFragment extends Fragment {
      * but this can be used to generate the LayoutParams of the view.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
-     *onCreateView method is responsible for inflating the fragment's layout file and returning the root view.
-     * @return
+     *onCreateView method is responsible for inflating the fragment's layout file and returning the root view
      */
     @Nullable
     @Override
