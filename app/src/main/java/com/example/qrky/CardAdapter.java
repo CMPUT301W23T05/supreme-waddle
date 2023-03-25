@@ -23,16 +23,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 /**
-
- The CardAdapter class is an adapter for the RecyclerView that displays a list of CardData objects.
- It creates and binds views for CardData objects, and provides methods for adding new cards and deleting existing cards.
- The class contains a private List of CardData objects to be displayed in the RecyclerView, and a FirebaseFirestore instance for interacting with the Firebase Firestore database.
- The class extends RecyclerView.Adapter and implements the necessary methods for creating, binding, and updating views for CardData objects.
- The class also includes a nested CardViewHolder class, which extends RecyclerView.ViewHolder and represents a single view for a CardData object. This class sets up and handles click events for the delete button on each CardData view.
- The addCard method is used to add a new CardData object to the list of filteredCards and update the RecyclerView.
- @author Aaron Binoy
- @version 1.0
-
+ * The CardAdapter class is an adapter for the RecyclerView that displays a list of CardData objects.
+ * It creates and binds views for CardData objects, and provides methods for adding new cards and deleting existing cards.The class contains a private List of CardData objects to be displayed in the RecyclerView, and a FirebaseFirestore instance for interacting with the Firebase Firestore database.
+ * The class extends RecyclerView.Adapter and implements the necessary methods for creating, binding, and updating views for CardData objects.
+ * The class also includes a nested CardViewHolder class, which extends RecyclerView.ViewHolder and represents a single view for a CardData object. This class sets up and handles click events for the delete button on each CardData view.
+ * The addCard method is used to add a new CardData object to the list of filteredCards and update the RecyclerView.
+ * @author Aaron Binoy
+ * @version 1.0
  */
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
 
@@ -40,11 +37,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     private FirebaseFirestore db;
 
     /**
-     public CardAdapter(List<CardData> filteredCards)
-
-     Constructor for the CardAdapter class. Initializes the filteredCards list with the provided list and gets an instance of the FirebaseFirestore class.
-
-     @param filteredCards The list of CardData objects to be displayed in the RecyclerView.
+     * Constructor for the CardAdapter class. Initializes the filteredCards list with the provided list and gets an instance of the FirebaseFirestore class.
+     * @param filteredCards The list of CardData objects to be displayed in the RecyclerView.
      */
     public CardAdapter(List<CardData> filteredCards) {
         this.filteredCards = filteredCards;
@@ -52,11 +46,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     }
 
     /**
-     public int getItemCount()
-
-     Gets the number of items in the filteredCards list.
-
-     @return The number of items in the filteredCards list.
+     * public int getItemCount()
+     * Gets the number of items in the filteredCards list.
+     * @return The number of items in the filteredCards list.
      */
     @Override
     public int getItemCount() {
@@ -64,15 +56,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     }
 
     /**
-     public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
-
-     Creates a new CardViewHolder object that represents a single item in the RecyclerView.
-
-     @param parent The ViewGroup that the new CardViewHolder will be added to after it is created.
-
-     @param viewType An integer that represents the type of view to be created (not used in this implementation).
-
-     @return A new CardViewHolder object that represents a single item in the RecyclerView.
+     * public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+     * Creates a new CardViewHolder object that represents a single item in the RecyclerView.
+     * @param parent The ViewGroup that the new CardViewHolder will be added to after it is created.
+     * @param viewType An integer that represents the type of view to be created (not used in this implementation).
+     * @return A new CardViewHolder object that represents a single item in the RecyclerView.
      */
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -81,13 +69,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     }
 
     /**
-     public void onBindViewHolder(CardViewHolder holder, int position)
-
-     Binds the data from a CardData object to a CardViewHolder object.
-
-     @param holder The CardViewHolder object that will display the data.
-
-     @param position The position of the CardData object in the filteredCards list.
+     * public void onBindViewHolder(CardViewHolder holder, int position)
+     * Binds the data from a CardData object to a CardViewHolder object.
+     * @param holder The CardViewHolder object that will display the data.
+     * @param position The position of the CardData object in the filteredCards list.
      */
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
@@ -97,8 +82,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     }
     public class CardViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView title;
-        private TextView score;
+        TextView title;
+        TextView score;
         private Button deleteButton;
 
         public CardViewHolder(@NonNull View itemView) {
@@ -109,7 +94,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 /**
-                 *public void onClick(View view)
+                 * public void onClick(View view)
                  *
                  * The onClick method for the deleteButton UI element in the CardViewHolder. Deletes a player from a QR code in the Firebase database and removes the corresponding CardData object from the filteredCards list.
                  *
@@ -166,11 +151,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     }
 
     /**
-     public void addCard(CardData card)
-
-     Adds a new CardData object to the filteredCards list and notifies the RecyclerView that the data set has changed.
-
-     @param card The new CardData object to add to the list.
+     * public void addCard(CardData card)
+     * Adds a new CardData object to the filteredCards list and notifies the RecyclerView that the data set has changed.
+     * @param card The new CardData object to add to the list.
      */
     // This method can be called from the fragment after a new card is added to the database
     public void addCard(CardData card) {
