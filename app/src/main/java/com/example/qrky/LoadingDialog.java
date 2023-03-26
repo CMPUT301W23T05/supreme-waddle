@@ -1,5 +1,4 @@
 package com.example.qrky;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.Color;
