@@ -15,6 +15,7 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -38,10 +39,11 @@ public class Database {
      * @param isLocationRequired whether or not the location is required
      * @param mCode the code to be saved
      * @param mGeoPoint the recorded location of user who last scanned code
-     * @param Photo byte array of the photo taken
+     * @param photoInputStream input stream of the photo taken
      */
     @ExperimentalGetImage
-    public void goSaveLibrary(boolean isLocationRequired, String mCode, GeoPoint mGeoPoint, byte[] Photo) {
+    public void goSaveLibrary(boolean isLocationRequired, String mCode, GeoPoint mGeoPoint,
+                              InputStream photoInputStream) {
 
         MessageDigest digest;
         try {
@@ -59,7 +61,7 @@ public class Database {
             }
             hexString.append(hex);
         }
-            Log.d("goSaveLibrary", "create new");
+        Log.d("goSaveLibrary", "create new");
         try {
             mDb.collection("QR Codes").document(hexString.toString()).set(new HashMap<String, Object>(), SetOptions.merge());
         } catch (Exception e) {
@@ -67,7 +69,7 @@ public class Database {
         }
 
         Log.d("goSaveLibrary", "before uploadImage ");
-        uploadImage(Photo, hexString.toString());
+        uploadImage(photoInputStream, hexString.toString());
 
         if (isLocationRequired) {
             mDb.collection("QR Codes").document(hexString.toString()).update("location", mGeoPoint);
@@ -79,6 +81,7 @@ public class Database {
         mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID1"));
         mDb.collection("QR Codes").document(hexString.toString()).update("score", getScore(hexString.toString()));
     }
+
 
 
     /**
@@ -111,13 +114,13 @@ public class Database {
 
     /**
      * This method is used to upload an image to the firebase storage
-     * @param Photo byte array of photo to be uploaded
+     * @param photoInputStream byte array of photo to be uploaded
      * @param mCode the hash of the QR Code
      */
     @ExperimentalGetImage
-    private void uploadImage(byte[] Photo, String mCode) {
+    private void uploadImage(InputStream photoInputStream, String mCode) {
 
-        if (Photo != null) {
+        if (photoInputStream != null) {
 
             final String[] path = new String[1];
 //          storage of image from https://www.geeksforgeeks.org/android-how-to-upload-an-image-on-firebase-storage/
@@ -126,19 +129,19 @@ public class Database {
                     .child(
                             "QRImages/"
                                     + UUID.randomUUID().toString());
-            ref.putBytes(Photo)
+            ref.putStream(photoInputStream)
                     .addOnFailureListener(exception -> {
                         // Handle unsuccessful uploads
                         // ...
                         Log.d("uploadImage", "onFailure: " + exception.getMessage());
                         path[0] = null;
                     }).addOnSuccessListener(taskSnapshot -> {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                // ...
-                path[0] = ref.getPath();
-                Log.d("uploadImage", "onSuccess: " + path[0]);
-                mDb.collection("QR Codes").document(mCode).update("photo", FieldValue.arrayUnion(path[0]));
-            }).addOnProgressListener(taskSnapshot -> {
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                        // ...
+                        path[0] = ref.getPath();
+                        Log.d("uploadImage", "onSuccess: " + path[0]);
+                        mDb.collection("QR Codes").document(mCode).update("photo", FieldValue.arrayUnion(path[0]));
+                    }).addOnProgressListener(taskSnapshot -> {
                         double progress
                                 = (100.0
                                 * taskSnapshot.getBytesTransferred()
