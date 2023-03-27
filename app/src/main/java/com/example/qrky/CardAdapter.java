@@ -68,14 +68,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         return new CardViewHolder(view);
     }
     public String getRarity(int value) {
-        double percentile = (double) value / 500.0; // assuming values are between 1 and 999
-        if (percentile <= 0.05) {
+        double percentile = (double) value / 1000.0; // assuming values are between 1 and 999
+        if (percentile >= 0.95) {
             return "Ultra Rare";
-        } else if (percentile <= 0.15) {
+        } else if (percentile >= 0.75) {
             return "Very Rare";
-        } else if (percentile <= 0.3) {
+        } else if (percentile >= 0.5) {
             return "Rare";
-        } else if (percentile <= 0.6) {
+        } else if (percentile >= 0.3) {
             return "Uncommon";
         } else {
             return "Common";
