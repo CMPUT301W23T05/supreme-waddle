@@ -29,4 +29,7 @@ public class CardData {
     public int getScore() {
         return score;
     }
+
+    public void setRarity(String rarity) {
+    }
 }
