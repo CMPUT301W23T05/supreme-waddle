@@ -1,11 +1,14 @@
 package com.example.qrky;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
@@ -29,16 +32,36 @@ public class  MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         //Initialize the bottom navigation view
-        //create bottom navigation view object
         bttmNavView = findViewById(R.id.bottom_navigating_view);
         NavHostFragment bttmNavHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_fragment);
         assert bttmNavHostFragment != null;
         NavController bttmNavController = bttmNavHostFragment.getNavController();
         NavigationUI.setupWithNavController(bttmNavView, bttmNavController);
-        bttmNavView.setVisibility(View.VISIBLE);
+
+        bttmNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_fragment);
+                switch (item.getItemId()) {
+                    case R.id.communityFragment:
+                        navController.navigate(R.id.communityFragment);
+                        break;
+                    case R.id.scannerFragment:
+                        navController.navigate(R.id.scannerFragment);
+                        break;
+                    case R.id.mapsFragment:
+                        navController.navigate(R.id.mapsFragment);
+                        break;
+                    case R.id.libraryFragment:
+                        navController.navigate(R.id.libraryFragment);
+                        break;
+                }
+                return true;
+            }
+        });
     }
+
 
     /**
      * Switches between the different tabs in the bottom navigation view.
