@@ -10,6 +10,9 @@ import androidx.fragment.app.Fragment;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,13 +23,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import android.Manifest;
@@ -38,6 +48,7 @@ import androidx.navigation.Navigation;
 
 import android.content.DialogInterface;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -47,6 +58,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
+import com.bumptech.glide.Glide;
+
 
 /**
  *
@@ -58,7 +71,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private static final int PERMISSION_REQUEST_CODE = 1;
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 123;
-
+    private Bitmap mBitmap;
     private FragmentManager parentFragmentManager;
     /**
 
@@ -148,6 +161,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.my_map));
+
         // Set current location button listener
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
@@ -232,17 +247,70 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             // Loop through the documents and add markers to the map
             for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                 GeoPoint location = document.getGeoPoint("location");
+
                 if (location != null) {
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    String name = document.getString("name");
 
-                    mMap.addMarker(new MarkerOptions().position(latLng));
+                    // Calculate the marker size based on the zoom level
+                    float zoom = mMap.getCameraPosition().zoom;
+
+                    int size;
+
+                    switch ((int) zoom) {
+
+                        default:
+                            size = 200;
+                            break;
+                    }
+
+                    // Load the marker image with Glide
+                    Glide.with(requireContext())
+                            .asBitmap()
+                            .load(R.drawable.my_marker_image)
+                            .override(size, size)
+                            .into(new CustomTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                    // Create a BitmapDescriptor from the resized bitmap
+                                    BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(resource);
+
+                                    mMap.addMarker(new MarkerOptions().position(latLng).title(name).icon(bitmapDescriptor));
+                                }
+
+                                @Override
+                                public void onLoadCleared(@Nullable Drawable placeholder) {
+                                }
+                            });
                 }
+            }
+
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    String name = marker.getTitle(); // Get the name of the QR code
+                    Toast.makeText(requireContext(), name, Toast.LENGTH_SHORT).show(); // Display the name in a toast
+                    return true;
+                }
+            });
+        });
+
+        // Add a camera idle listener to update the marker sizes when the zoom level changes
+        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+            @Override
+            public void onCameraIdle() {
+                // Reload the markers to update their sizes
+                query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            loadQRCodesFromFirebase();
+                        }
+                    }
+                });
             }
         });
     }
-
-
-
 
 
 }

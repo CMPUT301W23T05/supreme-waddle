@@ -67,6 +67,21 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card, parent, false);
         return new CardViewHolder(view);
     }
+    public String getRarity(int value) {
+        double percentile = (double) value / 1000.0; // assuming values are between 1 and 999
+        if (percentile >= 0.95) {
+            return "Ultra Rare";
+        } else if (percentile >= 0.75) {
+            return "Very Rare";
+        } else if (percentile >= 0.5) {
+            return "Rare";
+        } else if (percentile >= 0.3) {
+            return "Uncommon";
+        } else {
+            return "Common";
+        }
+    }
+
 
     /**
      * public void onBindViewHolder(CardViewHolder holder, int position)
@@ -78,10 +93,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     public void onBindViewHolder(CardViewHolder holder, int position) {
         CardData card = filteredCards.get(position);
         holder.title.setText(card.getTitle());
-        holder.score.setText(String.valueOf(card.getScore())); // convert int to String
+        holder.score.setText(String.valueOf(card.getScore()));
+        holder.rarity.setText(getRarity(card.getScore()));
     }
-    public class CardViewHolder extends RecyclerView.ViewHolder {
 
+    public class CardViewHolder extends RecyclerView.ViewHolder {
+        TextView rarity;
         TextView title;
         TextView score;
         private Button deleteButton;
@@ -90,6 +107,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             super(itemView);
             title = itemView.findViewById(R.id.card_title);
             score = itemView.findViewById(R.id.score);
+            rarity = itemView.findViewById(R.id.difficulty);
             deleteButton = itemView.findViewById(R.id.button_delete);
 
             deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -157,9 +175,26 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
      */
     // This method can be called from the fragment after a new card is added to the database
     public void addCard(CardData card) {
+        // assign rarity based on card score
+        int score = card.getScore();
+        double percentile = (double) score / 1000.0; // assuming values are between 1 and 999
+        String rarity;
+        if (percentile <= 0.01) {
+            rarity = "Ultra Rare";
+        } else if (percentile <= 0.15) {
+            rarity = "Very Rare";
+        } else if (percentile <= 0.3) {
+            rarity = "Rare";
+        } else if (percentile <= 0.6) {
+            rarity = "Uncommon";
+        } else {
+            rarity = "Common";
+        }
+        card.setRarity(rarity);
         filteredCards.add(card);
         notifyDataSetChanged();
     }
+
 }
 
 
