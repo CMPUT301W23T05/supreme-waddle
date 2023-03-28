@@ -55,7 +55,7 @@ public class userProfileFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_user_profile, null);
-        AlertDialog.Builder  builder = new AlertDialog.Builder((getContext()));
+        AlertDialog.Builder  builder = new AlertDialog.Builder(getContext(),R.style.AlertDialogTheme);
 
 
         // functions add here

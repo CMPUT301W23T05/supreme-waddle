@@ -14,4 +14,8 @@
         <!-- Customize your theme here. -->
         <item name="android:fontFamily">@font/josefin_sans_semibold</item>
     </style>
+
+    <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/black</item>
+    </style>
 </resources>
