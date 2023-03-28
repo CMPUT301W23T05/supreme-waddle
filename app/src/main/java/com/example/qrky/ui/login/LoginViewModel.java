@@ -1,24 +1,32 @@
 package com.example.qrky.ui.login;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import android.util.Log;
 import android.util.Patterns;
+import android.widget.Toast;
 
 import com.example.qrky.data.LoginRepository;
 import com.example.qrky.data.Result;
 import com.example.qrky.data.model.LoggedInUser;
 import com.example.qrky.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginViewModel extends ViewModel {
 
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
     private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
-    private LoginRepository loginRepository;
+    private FirebaseAuth mAuth;
 
     LoginViewModel(LoginRepository loginRepository) {
-        this.loginRepository = loginRepository;
+        this.mAuth = loginRepository;
     }
 
     LiveData<LoginFormState> getLoginFormState() {
@@ -29,17 +37,7 @@ public class LoginViewModel extends ViewModel {
         return loginResult;
     }
 
-    public void login(String username, String password) {
-        // can be launched in a separate asynchronous job
-        Result<LoggedInUser> result = loginRepository.login(username, password);
 
-        if (result instanceof Result.Success) {
-            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
-        } else {
-            loginResult.setValue(new LoginResult(R.string.login_failed));
-        }
-    }
 
     public void loginDataChanged(String username, String password) {
         if (!isUserNameValid(username)) {

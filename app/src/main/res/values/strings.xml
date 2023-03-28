@@ -26,4 +26,6 @@
     <string name="cards_collected">%1$d</string>
     <string name="total_points">%1$d</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="login">Login</string>
+    <string name="username">Username</string>
 </resources>

@@ -2,6 +2,7 @@ package com.example.qrky.ui.login;
 
 import android.app.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -23,14 +25,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.qrky.R;
-import com.example.qrky.ui.login.LoginViewModel;
-import com.example.qrky.ui.login.LoginViewModelFactory;
 import com.example.qrky.databinding.ActivityLoginBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
+    private FirebaseAuth mAuth;
+
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        mAuth = FirebaseAuth.getInstance();
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
@@ -70,18 +84,15 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
                 loadingProgressBar.setVisibility(View.GONE);
-                if (loginResult.getError() != null) {
-                    showLoginFailed(loginResult.getError());
-                }
-                if (loginResult.getSuccess() != null) {
-                    updateUiWithUser(loginResult.getSuccess());
-                }
+
                 setResult(Activity.RESULT_OK);
 
                 //Complete and destroy login activity once successful
                 finish();
             }
         });
+
+
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
@@ -114,6 +125,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,7 +137,73 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void updateUiWithUser(LoggedInUserView model) {
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        updateUiWithUser(currentUser);
+    }
+    public void login(String username, String password) throws NoSuchAlgorithmException {
+        // can be launched in a separate asynchronous job
+        String mCustomToken = null;
+        String passHash;
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+        byte[] encodedhash = digest.digest(
+                password.getBytes(StandardCharsets.UTF_8));
+
+        StringBuilder hexString = new StringBuilder(2 * encodedhash.length);
+        for (int i = 0; i < encodedhash.length; i++) {
+            String hex = Integer.toHexString(0xff & encodedhash[i]);
+            if(hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        passHash = hexString.toString();
+        db.collection("Players").document(username).get().addOnCompleteListener(new OnCompleteListener<com.google.firebase.firestore.DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<com.google.firebase.firestore.DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    com.google.firebase.firestore.DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d("Auth", "DocumentSnapshot data: " + document.getData());
+                        if (document.getData().get("passwordHash").toString() == passHash) {
+                            UUID token = UUID.randomUUID();
+                        } else {
+                            Log.d("Auth", "Wrong password");
+                        }
+                    } else {
+                        Log.d("Auth", "No such document");
+                    }
+                } else {
+                    Log.d("Auth", "get failed with ", task.getException());
+                }
+            }
+        });
+        mAuth.signInWithCustomToken(mCustomToken)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("Auth", "signInWithCustomToken:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUiWithUser(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("Auth", "signInWithCustomToken:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            updateUiWithUser(null);
+                        }
+                    }
+                });
+
+        
+    }
+    private void updateUiWithUser(FirebaseUser model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
