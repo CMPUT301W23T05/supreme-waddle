@@ -20,6 +20,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,7 +65,9 @@ public class OtherUsersCodes extends Fragment {
      *
      * @since 1.0
      */
-    public OtherUsersCodes() {}
+    public OtherUsersCodes(String otherUsername) {
+        this.otherUsername = otherUsername;
+    }
 
     /**
      * Creates the fragment and hides the bottom navigation bar. Calls the ViewModel to get the
@@ -75,7 +78,7 @@ public class OtherUsersCodes extends Fragment {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.i("OtherUsersCodes", "Looking at OtherUser's codes");
+        Log.i("OtherUsersCodes", "Looking at" + otherUsername + "'s codes");
         super.onCreate(savedInstanceState);
 
         // hide bottom navigation bar when viewing OtherUser's codes
@@ -129,32 +132,26 @@ public class OtherUsersCodes extends Fragment {
      *
      * @since 1.0
      */
-    public void getOtherUsersHashes() {
-        CollectionReference playersCollection = qrkyDB.collection("Players");
-
-        playersCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                // clear list before adding new data
-                playerHashes.clear();
-
-                // get list of hashes from database
-                assert value != null;
-                for (QueryDocumentSnapshot doc: value) {
-                    if (Objects.equals(doc.getString("username"), otherUsername)) {
-                        playerHashes = (List<String>) doc.get("codes");
-                        break;
-                    }
-                }
-            }
-        });
+//    public void getOtherUsersHashes() {
+//        CollectionReference codesCollection = qrkyDB.collection("Players");
 //
-//        if (playerHashes.isEmpty()) {
-//            Log.i("OtherUsersCodesVM", "No hashes found");
-//        } else {
-//            Log.i("OtherUsersCodesVM", "Hashes found!");
-//        }
-    }
+//        codesCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+//                // clear list before adding new data
+//                playerHashes.clear();
+//
+//                // get list of hashes from database
+//                assert value != null;
+//                for (QueryDocumentSnapshot doc: value) {
+//                    if (Objects.equals(doc.getString("username"), otherUsername)) {
+//                        playerHashes = (List<String>) doc.get("codes");
+//                        break;
+//                    }
+//                }
+//            }
+//        });
+//    }
 
     // for each hash, get code from database
     /**
@@ -165,10 +162,9 @@ public class OtherUsersCodes extends Fragment {
      * @since 1.0
      */
     public void getOtherUsersCodes() {
-        getOtherUsersHashes();
+//        getOtherUsersHashes();
         CollectionReference qrCodesCollection = qrkyDB.collection("QR Codes");
 
-        for (String hash: playerHashes) {
             qrCodesCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -179,8 +175,8 @@ public class OtherUsersCodes extends Fragment {
 
                     // add new data
                     assert value != null;
-                    for (QueryDocumentSnapshot doc: value) {
-                        if (doc.getId().equals(hash)) {
+                    for (QueryDocumentSnapshot doc : value) {
+                        if (Objects.equals(doc.getString("owner"), otherUsername)) {
                             codeNames.add(doc.getString("name"));
                             codeScores.add(Objects.requireNonNull(doc.getLong("score")).intValue());
                             List<String> codeDrawing = new ArrayList<>();
@@ -192,7 +188,6 @@ public class OtherUsersCodes extends Fragment {
                     }
                 }
             });
-        }
 
 //        if (codeNames.size() > 3) {
 //            Log.i("OtherUsersCodesVM", "Real data added!");
