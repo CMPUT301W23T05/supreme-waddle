@@ -16,6 +16,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -165,7 +166,8 @@ public class OtherUsersCodes extends Fragment {
 //        getOtherUsersHashes();
         CollectionReference qrCodesCollection = qrkyDB.collection("QR Codes");
 
-            qrCodesCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            qrCodesCollection.orderBy("score", Query.Direction.DESCENDING)
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                     // clear lists before adding new data
@@ -176,7 +178,10 @@ public class OtherUsersCodes extends Fragment {
                     // add new data
                     assert value != null;
                     for (QueryDocumentSnapshot doc : value) {
-                        if (Objects.equals(doc.getString("owner"), otherUsername)) {
+                        // use document if otherUsername is in the list of playerID
+                        List<String> playerIDs = (List<String>) doc.get("playerIDs");
+                        assert playerIDs != null;
+                        if (playerIDs.contains(otherUsername)) {
                             codeNames.add(doc.getString("name"));
                             codeScores.add(Objects.requireNonNull(doc.getLong("score")).intValue());
                             List<String> codeDrawing = new ArrayList<>();
@@ -188,13 +193,6 @@ public class OtherUsersCodes extends Fragment {
                     }
                 }
             });
-
-//        if (codeNames.size() > 3) {
-//            Log.i("OtherUsersCodesVM", "Real data added!");
-//            Log.i("OtherUsersCodesVM", "Code names: " + codeNames);
-//        } else {
-//            Log.i("OtherUsersCodesVM", "No codes found");
-//        }
     }
 
     /**
