@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -67,7 +68,6 @@ public class Database {
         } catch (Exception e) {
             Log.d("goSaveLibrary", "error");
         }
-
         Log.d("goSaveLibrary", "before uploadImage ");
         uploadImage(photoInputStream, hexString.toString());
 
@@ -78,11 +78,25 @@ public class Database {
         mDb.collection("QR Codes").document(hexString.toString()).update("name", makeName(hexString.toString()));
         Log.d("goSaveLibrary", "after makeName");
         mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
-        mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID1"));
+        mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion(MainActivity.getuName()));
         mDb.collection("QR Codes").document(hexString.toString()).update("score", getScore(hexString.toString()));
+        mDb.collection("Players").document(MainActivity.getuName()).update("codes", FieldValue.arrayUnion(hexString.toString()));
+        updatePlayer(getScore(hexString.toString()));
     }
 
-
+    private void updatePlayer(int score) {
+        mDb.collection("QR Codes").whereArrayContains("playerID", MainActivity.getuName()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                int size = task.getResult().size();
+                mDb.collection("Players").document(MainActivity.getuName()).update("totalCodes", size);
+                int totalScore = 0;
+                for (int i = 0; i < size; i++) {
+                    totalScore += task.getResult().getDocuments().get(i).getLong("score").intValue();
+                }
+                mDb.collection("Players").document(MainActivity.getuName()).update("score", totalScore);
+            }
+        });
+    }
 
     /**
      * This method is used to generate a score for the QR Code
@@ -107,7 +121,7 @@ public class Database {
                 + Long.valueOf(bytes[16] + bytes[18] + bytes[20] + bytes[22] + bytes[24] + bytes[26], 16)
                 - Long.valueOf(bytes[7] + bytes[9] + bytes[11] + bytes[13] + bytes[15], 16)
                 + Long.valueOf( bytes[17] + bytes[19] + bytes[21] + bytes[23] + bytes[25] + bytes[27], 16))
-                % ((abs(firstBytes) - abs(lastBytes))%1000));
+                % ((abs(firstBytes) - abs(lastBytes))%1000)) + 1;
         Log.d("getScore", "score: " + score);
         return abs(score);
     }

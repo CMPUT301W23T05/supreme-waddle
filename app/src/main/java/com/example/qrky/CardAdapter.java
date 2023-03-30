@@ -22,6 +22,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
+import java.util.Objects;
+
 /**
  * The CardAdapter class is an adapter for the RecyclerView that displays a list of CardData objects.
  * It creates and binds views for CardData objects, and provides methods for adding new cards and deleting existing cards.The class contains a private List of CardData objects to be displayed in the RecyclerView, and a FirebaseFirestore instance for interacting with the Firebase Firestore database.
@@ -131,15 +133,26 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                                     @Override
                                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                         for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                                            String playerId = "playerID1"; // the ID of the player to remove
+                                            String playerId = MainActivity.getuName(); // the ID of the player to remove
                                             List<String> playerIds = (List<String>) documentSnapshot.get("playerID");
                                             if (playerIds != null && playerIds.contains(playerId)) {
                                                 playerIds.remove(playerId);
+                                                int score = Objects.requireNonNull(documentSnapshot.getLong("score")).intValue();
+                                                db.collection("Players")
+                                                        .document(playerId)
+                                                        .update("score", FieldValue.increment(0-score));
+                                                db.collection("Players")
+                                                        .document(playerId)
+                                                        .update("codes", FieldValue.arrayRemove(card.getHash()));
+                                                db.collection("Players")
+                                                        .document(playerId)
+                                                        .update("totalCodes", FieldValue.increment(-1));
                                                 documentSnapshot.getReference().update("playerID", playerIds)
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
                                                                 filteredCards.remove(position);
+
                                                                 notifyItemRemoved(position);
                                                                 notifyItemRangeChanged(position, filteredCards.size());
                                                             }
