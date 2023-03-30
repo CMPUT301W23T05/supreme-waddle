@@ -96,7 +96,7 @@ public class CommunityFragment extends Fragment {
 
         // TODO: move this button to OtherUsers
         Button OtherUsersCodesButton = view.findViewById(R.id.SeeOtherUserCodes);
-        String otherUserUsername = "toBFrank";  // given by OtherUser
+        String otherUserUsername = "ToBFrank";  // given by OtherUser
         OtherUsersCodesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

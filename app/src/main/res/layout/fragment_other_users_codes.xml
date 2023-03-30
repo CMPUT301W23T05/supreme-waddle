@@ -28,9 +28,10 @@
             android:id="@+id/otherUsersLibraryHeader"
             android:layout_width="340dp"
             android:layout_height="65dp"
-            android:text="@[OtherUserUsername]'s Library"
+            android:text="Library"
             android:textAlignment="center"
             android:textSize="24sp"
+            android:paddingTop="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
