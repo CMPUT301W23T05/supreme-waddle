@@ -32,4 +32,7 @@
     <string name="edit_profile_button">edit profile button</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="contact_stuff">username: \nemail: \npassword: ●●●●●●●●●●●</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="email">Email</string>
 </resources>
