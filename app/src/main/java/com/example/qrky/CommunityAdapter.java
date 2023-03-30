@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,16 +42,8 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.Comm
             }
             Log.i("CommunityAdapter", "playerAndScore unsorted: " + playerAndScoreMessy);
 
-            // sort playerAndScoreRanked by score (descending) without using lambda expressions
-            for (int i = 0; i < playerAndScoreMessy.size(); i++) {
-                for (int j = i + 1; j < playerAndScoreMessy.size(); j++) {
-                    if (Integer.parseInt(playerAndScoreMessy.get(i).get(1)) < Integer.parseInt(playerAndScoreMessy.get(j).get(1))) {
-                        List<String> temp = playerAndScoreMessy.get(i);
-                        playerAndScoreMessy.set(i, playerAndScoreMessy.get(j));
-                        playerAndScoreMessy.set(j, temp);
-                    }
-                }
-            }
+            // sort playerAndScoreRanked by score (descending)
+            playerAndScoreMessy.sort((o1, o2) -> Integer.parseInt(o2.get(1)) - Integer.parseInt(o1.get(1)));
             this.playerAndScoreRanked = playerAndScoreMessy;
             Log.i("CommunityAdapter", "playerAndScore sorted: " + playerAndScoreRanked);
         }
@@ -117,21 +110,13 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.Comm
         public void update(HashMap<String, String> playerAndScore) {
             playerAndScoreRanked.clear();
             List<List<String>> playerAndScoreMessy = new ArrayList<>();
-            for (String key: playerAndScore.keySet()) {
-                List<String> aPlayerAndScore = Arrays.asList(key, playerAndScore.get(key));
-                playerAndScoreMessy.add(aPlayerAndScore);
-            }
-
-            // sort playerAndScoreRanked by score (descending) without using lambda expressions
-            for (int i = 0; i < playerAndScoreMessy.size(); i++) {
-                for (int j = i + 1; j < playerAndScoreMessy.size(); j++) {
-                    if (Integer.parseInt(playerAndScoreMessy.get(i).get(1)) < Integer.parseInt(playerAndScoreMessy.get(j).get(1))) {
-                        List<String> temp = playerAndScoreMessy.get(i);
-                        playerAndScoreMessy.set(i, playerAndScoreMessy.get(j));
-                        playerAndScoreMessy.set(j, temp);
-                    }
+            for (String key : playerAndScore.keySet()) {
+                if (key != null) {
+                    List<String> aPlayerAndScore = Arrays.asList(key, playerAndScore.get(key));
+                    playerAndScoreMessy.add(aPlayerAndScore);
                 }
             }
+            playerAndScoreMessy.sort((o1, o2) -> Integer.parseInt(o2.get(1)) - Integer.parseInt(o1.get(1)));
             this.playerAndScoreRanked = playerAndScoreMessy;
             notifyDataSetChanged();
         }
