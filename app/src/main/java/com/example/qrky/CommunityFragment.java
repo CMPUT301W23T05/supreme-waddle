@@ -95,19 +95,19 @@ public class CommunityFragment extends Fragment {
 
 
         // TODO: move this button to OtherUsers
-//        Button OtherUsersCodesButton = view.findViewById(R.id.SeeOtherUserCodes);
-//        String otherUserUsername;  // given by OtherUser
-//        OtherUsersCodesButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Fragment fragment = new OtherUsersCodes(otherUserUsername);
-//                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                fragmentTransaction.replace(R.id.nav_fragment, fragment);
-//                fragmentTransaction.addToBackStack(null);
-//                fragmentTransaction.commit();
-//            }
-//        });
+        Button OtherUsersCodesButton = view.findViewById(R.id.SeeOtherUserCodes);
+        String otherUserUsername = "toBFrank";  // given by OtherUser
+        OtherUsersCodesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new OtherUsersCodes(otherUserUsername);
+                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.nav_fragment, fragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
 
         return view;
     }
@@ -141,6 +141,7 @@ public class CommunityFragment extends Fragment {
                     } catch (NullPointerException e) {
                         playerAndScore.put(doc.getId(), "0");
                     }
+
                 }
                 commAdapter.update(playerAndScore);
             }
