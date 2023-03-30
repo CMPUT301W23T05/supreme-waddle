@@ -111,10 +111,10 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.Comm
             playerAndScoreRanked.clear();
             List<List<String>> playerAndScoreMessy = new ArrayList<>();
             for (String key : playerAndScore.keySet()) {
-                try {
+                if (key != null) {
                     List<String> aPlayerAndScore = Arrays.asList(key, playerAndScore.get(key));
                     playerAndScoreMessy.add(aPlayerAndScore);
-                } catch (Exception ignored) {}
+                }
             }
             playerAndScoreMessy.sort((o1, o2) -> Integer.parseInt(o2.get(1)) - Integer.parseInt(o1.get(1)));
             this.playerAndScoreRanked = playerAndScoreMessy;
