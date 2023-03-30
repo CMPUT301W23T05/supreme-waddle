@@ -44,7 +44,8 @@ public class  MainActivity extends AppCompatActivity {
         assert bttmNavHostFragment != null;
         NavController bttmNavController = bttmNavHostFragment.getNavController();
         NavigationUI.setupWithNavController(bttmNavView, bttmNavController);
-
+        bttmNavView.setVisibility(View.VISIBLE);
+        startActivityForResult(new Intent(this, LoginActivity.class), 1);
         bttmNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
