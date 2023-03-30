@@ -141,6 +141,7 @@ public class CommunityFragment extends Fragment {
                     } catch (NullPointerException e) {
                         playerAndScore.put(doc.getId(), "0");
                     }
+
                 }
                 commAdapter.update(playerAndScore);
             }
