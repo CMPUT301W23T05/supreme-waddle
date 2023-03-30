@@ -108,16 +108,16 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.Comm
          * @since 1.0
          */
         public void update(HashMap<String, String> playerAndScore) {
-            try {
-                playerAndScoreRanked.clear();
-                List<List<String>> playerAndScoreMessy = new ArrayList<>();
-                for (String key : playerAndScore.keySet()) {
+            playerAndScoreRanked.clear();
+            List<List<String>> playerAndScoreMessy = new ArrayList<>();
+            for (String key : playerAndScore.keySet()) {
+                try {
                     List<String> aPlayerAndScore = Arrays.asList(key, playerAndScore.get(key));
                     playerAndScoreMessy.add(aPlayerAndScore);
-                }
-                playerAndScoreMessy.sort((o1, o2) -> Integer.parseInt(o2.get(1)) - Integer.parseInt(o1.get(1)));
-                this.playerAndScoreRanked = playerAndScoreMessy;
-                notifyDataSetChanged();
-            } catch (Exception ignored) {}
+                } catch (Exception ignored) {}
+            }
+            playerAndScoreMessy.sort((o1, o2) -> Integer.parseInt(o2.get(1)) - Integer.parseInt(o1.get(1)));
+            this.playerAndScoreRanked = playerAndScoreMessy;
+            notifyDataSetChanged();
         }
 }
