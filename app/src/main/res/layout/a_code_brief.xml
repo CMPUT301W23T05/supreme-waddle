@@ -14,23 +14,34 @@
 
         <TextView
             android:id="@+id/codeCardName"
+            android:background="@drawable/player_brief_background"
             android:layout_width="79dp"
             android:layout_height="16dp"
+            android:layout_marginRight="2dp"
+            android:paddingHorizontal="2dp"
             android:fontFamily="@font/josefin_sans_semibold"
             android:text="Code Name"
             android:textAlignment="viewStart"
-            android:textSize="12sp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMaxTextSize="10sp"
+            android:autoSizeMinTextSize="4sp"
+            android:autoSizeStepGranularity="1sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/codeCardScore"
+            android:background="@drawable/player_brief_background"
             android:fontFamily="@font/josefin_sans_semibold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="19sp"
+            android:layout_height="16sp"
             android:text="100"
-            android:textSize="12sp"
+            android:textAlignment="center"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMaxTextSize="12sp"
+            android:autoSizeMinTextSize="8sp"
+            android:paddingHorizontal="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

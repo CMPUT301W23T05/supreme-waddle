@@ -10,8 +10,8 @@
 
 
     <LinearLayout
-        android:layout_width="317dp"
-        android:layout_height="363dp"
+        android:layout_width="240dp"
+        android:layout_height="360dp"
         android:orientation="vertical"
         android:gravity="center_horizontal"
         android:background="@drawable/gradient_background"
@@ -28,9 +28,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:paddingStart="4dp"
                 android:layout_weight="1"
-                android:background="@drawable/card_layout_inside"
-                android:textSize="14sp"
+                android:background="@drawable/player_brief_background"
+                android:textSize="12sp"
                 android:layout_gravity="center_vertical"
                 android:textStyle="bold"
                 android:padding="2dp"/>
@@ -39,8 +40,7 @@
                 android:id="@+id/score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
-                android:background="@drawable/card_layout_inside"
+                android:background="@drawable/player_brief_background"
                 android:text="90"
                 android:textSize="18sp"
                 android:layout_gravity="center_vertical"
@@ -63,7 +63,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
-                android:background="@drawable/card_layout_inside"
+                android:background="@drawable/player_brief_background"
                 android:text="Difficulty: 3"
                 android:padding="2dp"/>
 
