@@ -80,21 +80,23 @@ public class Database {
         mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
         mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion(MainActivity.getuName()));
         mDb.collection("QR Codes").document(hexString.toString()).update("score", getScore(hexString.toString()));
+        mDb.collection("Players").document(MainActivity.getuName()).update("codes", FieldValue.arrayUnion(hexString.toString()));
+        updatePlayer(getScore(hexString.toString()));
+    }
+
+    private void updatePlayer(int score) {
         mDb.collection("QR Codes").whereArrayContains("playerID", MainActivity.getuName()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 int size = task.getResult().size();
+                mDb.collection("Players").document(MainActivity.getuName()).update("totalCodes", size);
                 int totalScore = 0;
                 for (int i = 0; i < size; i++) {
-                    totalScore += Objects.requireNonNull(task.getResult().getDocuments().get(i).getLong("score")).intValue();
+                    totalScore += task.getResult().getDocuments().get(i).getLong("score").intValue();
                 }
-                mDb.collection("Players").document(MainActivity.getuName()).update("totalScore", totalScore);
-                mDb.collection("Players").document(MainActivity.getuName()).update("totalCodes", size);
-                mDb.collection("Players").document(MainActivity.getuName()).update("codes", FieldValue.arrayUnion(hexString.toString()));
+                mDb.collection("Players").document(MainActivity.getuName()).update("score", totalScore);
             }
         });
     }
-
-
 
     /**
      * This method is used to generate a score for the QR Code

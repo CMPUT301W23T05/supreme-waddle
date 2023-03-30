@@ -91,11 +91,12 @@ public class libraryFragment extends Fragment {
                             String name = (String) document.get("name");
                             Long scoreLong = document.getLong("score");
                             Integer score = (scoreLong != null) ? scoreLong.intValue() : null;
+                            String hash = (String) document.getId();
 
                             // Only add the card to the list if the playerID field contains "playerID1"
                             List<String> playerIds = (List<String>) document.get("playerID");
-                            if (name != null && score != null && playerIds != null && playerIds.contains("playerID1")) {
-                                cards.add(new CardData(name, score));
+                            if (name != null && score != null && playerIds != null && playerIds.contains(MainActivity.getuName())) {
+                                cards.add(new CardData(name, score, hash));
                             }
                         }
 
