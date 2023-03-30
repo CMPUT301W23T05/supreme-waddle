@@ -21,9 +21,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -41,7 +44,6 @@ public class CommunityFragment extends Fragment {
     CollectionReference playersCollection;
     CommunityAdapter commAdapter;
 //  private OtherUsersCodesViewModel otherUsersCodesVM;
-//  CommunityViewModel communityVM;
     SearchView playersSearch;
     RecyclerView playersBriefList;
     HashMap<String, String> playerAndScore = new HashMap<>();  // username and score
@@ -92,18 +94,19 @@ public class CommunityFragment extends Fragment {
 
 
         // TODO: move this button to OtherUsers
-        Button OtherUsersCodesButton = view.findViewById(R.id.SeeOtherUserCodes);
-        OtherUsersCodesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment fragment = new OtherUsersCodes();
-                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.nav_fragment, fragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
-        });
+//        Button OtherUsersCodesButton = view.findViewById(R.id.SeeOtherUserCodes);
+//        String otherUserUsername;  // given by OtherUser
+//        OtherUsersCodesButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Fragment fragment = new OtherUsersCodes(otherUserUsername);
+//                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                fragmentTransaction.replace(R.id.nav_fragment, fragment);
+//                fragmentTransaction.addToBackStack(null);
+//                fragmentTransaction.commit();
+//            }
+//        });
 
         return view;
     }
