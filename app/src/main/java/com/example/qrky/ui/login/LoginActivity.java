@@ -158,33 +158,30 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        // Check if user is signed in (non-null) and update UI accordingly.
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-//        if (currentUser != null) {
-//            updateUiWithUser(currentUser);
-//        }
-//    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            db.collection("Players").whereEqualTo("email", currentUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<com.google.firebase.firestore.QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<com.google.firebase.firestore.QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        updateUiWithUser(currentUser, task.getResult().getDocuments().get(0).getId());
+                    } else {
+                        Log.d("Auth", "Error getting documents: ", task.getException());
+                    }
+                }
+
+            });
+
+        }
+    }
     public void login(String username, String password) throws NoSuchAlgorithmException {
         // can be launched in a separate asynchronous job
         final UUID[] mCustomToken = new UUID[1];
-//        String passHash;
-//        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-//
-//        byte[] encodedHash = digest.digest(
-//                password.getBytes(StandardCharsets.UTF_8));
-//
-//        StringBuilder hexString = new StringBuilder(2 * encodedHash.length);
-//        for (int i = 0; i < encodedHash.length; i++) {
-//            String hex = Integer.toHexString(0xff & encodedHash[i]);
-//            if(hex.length() == 1) {
-//                hexString.append('0');
-//            }
-//            hexString.append(hex);
-//        }
-//        passHash = hexString.toString();
+
         db.collection("Players").document(username).get().addOnCompleteListener(new OnCompleteListener<com.google.firebase.firestore.DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<com.google.firebase.firestore.DocumentSnapshot> task) {
