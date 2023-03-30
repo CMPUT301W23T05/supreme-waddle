@@ -5,13 +5,15 @@ package com.example.qrky;
  */
 public class CardData {
     private String title;
+    private String hash;
     private int score;
     /**
      * Constructs a new CardData object with the given title and score.
      * @param title the title of the card
      * @param score the score of the card
      */
-    public CardData(String title, int score) {
+    public CardData(String title, int score, String hash) {
+        this.hash = hash;
         this.title = title;
         this.score = score;
     }
@@ -31,5 +33,9 @@ public class CardData {
     }
 
     public void setRarity(String rarity) {
+    }
+
+    public String getHash() {
+        return hash;
     }
 }

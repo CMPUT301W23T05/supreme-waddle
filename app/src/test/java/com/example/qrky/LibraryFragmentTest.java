@@ -40,8 +40,8 @@ public class LibraryFragmentTest {
 
         // Set up the card data lists
         allCards = new ArrayList<>();
-        allCards.add(new CardData("Card 1", 100));
-        allCards.add(new CardData("Card 2", 200));
+        allCards.add(new CardData("Card 1", 100, ""));
+        allCards.add(new CardData("Card 2", 200, ""));
         filteredCards = new ArrayList<>();
         filteredCards.addAll(allCards);
         fragment.allCards = allCards;
@@ -51,7 +51,7 @@ public class LibraryFragmentTest {
     @Test
     public void testAddToAllCards() {
         // Add a new card to the allCards list
-        CardData newCard = new CardData("Card 3", 300);
+        CardData newCard = new CardData("Card 3", 300, "");
         fragment.addToAllCards(newCard);
 
         // Verify that the new card is added to the allCards list and the adapter is notified
@@ -61,7 +61,7 @@ public class LibraryFragmentTest {
     @Test
     public void testAddToFilteredCards() {
         // Add a new card to the filteredCards list
-        CardData newCard = new CardData("Card 3", 300);
+        CardData newCard = new CardData("Card 3", 300, "");
         fragment.addToFilteredCards(newCard);
 
         // Verify that the new card is added to the filteredCards list and the adapter is notified
@@ -91,9 +91,9 @@ public class LibraryFragmentTest {
 
     @Test
     public void testFilteringCards() {
-        CardData card1 = new CardData("Card 1", 100);
-        CardData card2 = new CardData("Card 2", 200);
-        CardData card3 = new CardData("Card 3", 300);
+        CardData card1 = new CardData("Card 1", 100, "");
+        CardData card2 = new CardData("Card 2", 200, "");
+        CardData card3 = new CardData("Card 3", 300, "");
         fragment.allCards = new ArrayList<>();
         fragment.allCards.add(card1);
         fragment.allCards.add(card2);
@@ -104,8 +104,8 @@ public class LibraryFragmentTest {
     }
     @Test
     public void testDeletingCard() {
-        CardData card1 = new CardData("Card 1", 100);
-        CardData card2 = new CardData("Card 2", 200);
+        CardData card1 = new CardData("Card 1", 100, "");
+        CardData card2 = new CardData("Card 2", 200, "");
         fragment.filteredCards = new ArrayList<>();
         fragment.filteredCards.add(card1);
         fragment.filteredCards.add(card2);

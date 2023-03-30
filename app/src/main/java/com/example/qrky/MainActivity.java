@@ -1,6 +1,8 @@
 package com.example.qrky;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,7 +11,9 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.qrky.ui.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseUser;
 
 
 /**
@@ -22,7 +26,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
  */
 public class  MainActivity extends AppCompatActivity {
     BottomNavigationView bttmNavView;
-
+    public static final String REQUEST_RESULT="REQUEST_RESULT";
+    private static String uName;
+    private FirebaseUser user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -38,8 +44,19 @@ public class  MainActivity extends AppCompatActivity {
         NavController bttmNavController = bttmNavHostFragment.getNavController();
         NavigationUI.setupWithNavController(bttmNavView, bttmNavController);
         bttmNavView.setVisibility(View.VISIBLE);
-    }
+        startActivityForResult(new Intent(this, LoginActivity.class), 1);
 
+    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (RESULT_OK == resultCode) {
+                user = data.getParcelableExtra("user");
+                uName = data.getStringExtra("username");
+                Log.d("MainActivity", "onActivityResult: " + uName);
+                Log.d("MainActivity", "onActivityResult: " + user.getUid());
+
+        }
+    }
     /**
      * Switches between the different tabs in the bottom navigation view.
      * @param id the id of the tab to switch to
@@ -57,5 +74,13 @@ public class  MainActivity extends AppCompatActivity {
             getSupportFragmentManager().popBackStack();
             bttmNavView.setVisibility(View.VISIBLE);
         }
+    }
+
+    public static String getuName() {
+        return uName;
+    }
+
+    public FirebaseUser getUser() {
+        return user;
     }
 }
