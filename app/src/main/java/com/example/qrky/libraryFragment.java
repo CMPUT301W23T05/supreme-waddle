@@ -1,13 +1,16 @@
 package com.example.qrky;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.SearchView;
+import android.widget.TextView;
 
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -68,6 +71,7 @@ public class libraryFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         searchView = view.findViewById(R.id.search_view);
+        setPrettyFont();
 
         Button profileButton =  view.findViewById(R.id.profile_button);
         profileButton.setOnClickListener(new View.OnClickListener() {
@@ -160,6 +164,17 @@ public class libraryFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets the font of the search bar to Josefin Sans Semibold.
+     *
+     * @since 2.0
+     */
+    private void setPrettyFont() {
+        int id = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+        TextView searchText = searchView.findViewById(id);
+        Typeface myCustomFont = ResourcesCompat.getFont(requireActivity(), R.font.josefin_sans_semibold);
+        searchText.setTypeface(myCustomFont);
+    }
 
 }
 
