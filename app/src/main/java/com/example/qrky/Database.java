@@ -172,7 +172,7 @@ public class Database {
     /**
      * This method takes a QR Code hash and converts it to a name
      * @param str
-     * @return name: a 6 word name for a QR Code
+     * @return name: an 8 word name for a QR Code
      */
     String makeName(String str) {
         String[] strArr = str.split("");
