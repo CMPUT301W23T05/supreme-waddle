@@ -135,7 +135,7 @@ public class CommunityFragment extends Fragment {
                 playerAndScore.clear();  // clear list before adding new data
                 assert value != null;
                 for (QueryDocumentSnapshot doc: value) {
-                    playerAndScore.put(doc.getString("username"), doc.getString("score"));
+                    playerAndScore.put(doc.getString("username"), String.valueOf(doc.getLong("score")));
                 }
                 commAdapter.update(playerAndScore);
             }
