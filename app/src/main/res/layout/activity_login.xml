@@ -33,6 +33,7 @@
         android:background="@drawable/input_field"
         android:fontFamily="@font/advent_pro_medium"
         android:hint="@string/username"
+        android:textColor="@color/black"
         android:inputType="text"
         android:padding="10dp"
 
@@ -52,6 +53,7 @@
         android:autofillHints="@string/prompt_password"
         android:background="@drawable/input_field"
         android:fontFamily="@font/advent_pro_medium"
+        android:textColor="@color/black"
         android:hint="@string/prompt_password"
         android:imeActionLabel="@string/action_sign_in_short"
         android:imeOptions="actionDone"

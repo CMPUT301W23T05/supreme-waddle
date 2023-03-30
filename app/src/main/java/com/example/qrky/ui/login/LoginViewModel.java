@@ -25,7 +25,7 @@ public class LoginViewModel extends ViewModel {
     private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
     private FirebaseAuth mAuth;
 
-    LoginViewModel(LoginRepository loginRepository) {
+    LoginViewModel(FirebaseAuth loginRepository) {
         this.mAuth = loginRepository;
     }
 

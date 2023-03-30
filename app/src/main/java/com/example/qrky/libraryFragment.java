@@ -80,7 +80,7 @@ public class libraryFragment extends Fragment {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 // Retrieve data from the Firebase database
         db.collection("QR Codes")
-                .whereArrayContains("playerID", "playerID1")
+                .whereArrayContains("playerID", MainActivity.getuName())
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
