@@ -5,18 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -33,15 +29,18 @@ import java.util.List;
  */
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
 
+    private CommentFragment commentFragment;
     private List<CardData> filteredCards;
     private FirebaseFirestore db;
 
     /**
      * Constructor for the CardAdapter class. Initializes the filteredCards list with the provided list and gets an instance of the FirebaseFirestore class.
      * @param filteredCards The list of CardData objects to be displayed in the RecyclerView.
+     * @param commentFragment
      */
-    public CardAdapter(List<CardData> filteredCards) {
+    public CardAdapter(List<CardData> filteredCards, CommentFragment commentFragment) {
         this.filteredCards = filteredCards;
+        this.commentFragment = commentFragment;
         db = FirebaseFirestore.getInstance();
     }
 
@@ -85,6 +84,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         TextView title;
         TextView score;
         private Button deleteButton;
+        public Button comments;
+
 
         public CardViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -145,7 +146,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                     }
                 }
             });
-
+            comments = itemView.findViewById(R.id.button_comment);
+            comments.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CommentFragment commentFragment = CommentFragment.newInstance();
+                    commentFragment.getChildFragmentManager();
+                }
+            });
         }
 
     }

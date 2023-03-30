@@ -39,7 +39,6 @@
                 android:id="@+id/score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:background="@drawable/card_layout_inside"
                 android:text="90"
                 android:textSize="18sp"
@@ -73,7 +72,18 @@
             android:id="@+id/button_delete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="Delete"
+            android:background="@drawable/list_shape"
+            android:padding="2dp"/>
+
+
+        <Button
+            android:id="@+id/button_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="COMMENT"
+            android:layout_marginTop="10dp"
             android:background="@drawable/list_shape"
             android:padding="2dp"/>
 

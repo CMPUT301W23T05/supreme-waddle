@@ -35,6 +35,7 @@ public class libraryFragment extends Fragment {
 
     List<CardData> allCards;
     List<CardData> filteredCards;
+    CommentFragment commentFragment;
     SearchView searchView;
 
     public libraryFragment() {
@@ -63,7 +64,8 @@ public class libraryFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         filteredCards = new ArrayList<>();
-        adapter = new CardAdapter(filteredCards);
+        commentFragment = new CommentFragment();
+        adapter = new CardAdapter(filteredCards, commentFragment);
         recyclerView.setAdapter(adapter);
 
         searchView = view.findViewById(R.id.search_view);

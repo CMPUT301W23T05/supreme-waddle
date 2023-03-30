@@ -270,12 +270,9 @@ public class Database {
         }else{
             wordArr[7] = "Duck";
         }
-
-
         for (int i = 0; i < 8; i++) {
             result += wordArr[i];
         }
-
         return result;
     }
 }
