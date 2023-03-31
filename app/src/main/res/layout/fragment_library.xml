@@ -113,7 +113,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|center_horizontal"
         android:layout_marginTop="16dp"
-        android:gravity="center_horizontal"
+        android:gravity="right"
+        android:layout_marginEnd="20dp"
         android:orientation="horizontal">
 
 
@@ -125,7 +126,7 @@
             android:layout_margin="10dp"
             android:background="@drawable/button_background"
             android:backgroundTint="#e3d4d6"
-            android:text="Profile"
+            android:text="@string/profile"
             android:textColor="#06000A" />
 
     </LinearLayout>

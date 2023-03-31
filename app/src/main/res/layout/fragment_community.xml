@@ -61,10 +61,10 @@
         android:id="@+id/community_codes_list"
         android:background="@drawable/leaderboard_background"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="match_parent"
         android:scrollbars="none"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="100dp"
         tools:listitem="@layout/a_player_brief" />
 
         <!--TODO: Move button to other users' profiles-->
