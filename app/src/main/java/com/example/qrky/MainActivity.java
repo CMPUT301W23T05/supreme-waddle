@@ -74,16 +74,7 @@ public class  MainActivity extends AppCompatActivity {
         });
     }
 
-//    public static void signedOut(Context context, Intent nextIntent) {
-//        Intent intent = new Intent(context, MainActivity.class);
-//        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-//        intent.putExtra(KEY_RESTART_INTENT, nextIntent);
-//        context.startActivity(intent);
-//        if (context instanceof Activity) {
-//            ((Activity) context).finish();
-//        }
-//        Runtime.getRuntime().exit(0);
-//    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (RESULT_OK == resultCode) {

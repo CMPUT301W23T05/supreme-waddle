@@ -13,79 +13,107 @@
     android:background="@drawable/gradient_background">
 
     <TextView
+        android:id="@+id/page_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/advent_pro_medium"
         android:text="@string/login"
-        android:textSize="100sp"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/username"
+        android:textSize="100sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"> </TextView>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.17000002"> </TextView>
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:autofillHints="@string/prompt_email"
+        android:background="@drawable/input_field"
+        android:fontFamily="@font/advent_pro_medium"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
+        android:padding="10dp"
+        android:selectAllOnFocus="true"
+
+        android:textColor="@color/black"
+        android:textFontWeight="600"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/page_title"
+        app:layout_constraintVertical_bias="0.06999999" />
 
     <EditText
         android:id="@+id/username"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="180dp"
         android:autofillHints="@string/prompt_email"
         android:background="@drawable/input_field"
         android:fontFamily="@font/advent_pro_medium"
         android:hint="@string/username"
-        android:textColor="@color/black"
         android:inputType="text"
         android:padding="10dp"
-
         android:selectAllOnFocus="true"
+
+        android:textColor="@color/black"
         android:textFontWeight="600"
         android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/email"
+        app:layout_constraintVertical_bias="0.06999999" />
 
     <EditText
         android:id="@+id/password"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
         android:autofillHints="@string/prompt_password"
         android:background="@drawable/input_field"
         android:fontFamily="@font/advent_pro_medium"
-        android:textColor="@color/black"
         android:hint="@string/prompt_password"
         android:imeActionLabel="@string/action_sign_in_short"
         android:imeOptions="actionDone"
         android:inputType="textPassword"
         android:padding="10dp"
         android:selectAllOnFocus="true"
+        android:textColor="@color/black"
         android:textFontWeight="600"
         android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
+        app:layout_constraintTop_toBottomOf="@+id/username"
+        app:layout_constraintVertical_bias="0.07999998" />
+
+
 
     <Button
         android:id="@+id/login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/button_background"
-        android:textColor="@color/black"
-        android:padding="10dp"
         android:layout_gravity="start"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="64dp"
+        android:background="@drawable/button_background"
         android:enabled="false"
         android:fontFamily="@font/advent_pro_medium"
+        android:padding="10dp"
         android:text="@string/action_sign_in"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password"
-        app:layout_constraintVertical_bias="0.2"
-        />
+        app:layout_constraintVertical_bias="0.9" />
 
     <ProgressBar
         android:id="@+id/loading"
