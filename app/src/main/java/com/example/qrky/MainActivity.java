@@ -1,5 +1,9 @@
 package com.example.qrky;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +32,7 @@ import com.google.firebase.auth.FirebaseUser;
  *
  */
 public class  MainActivity extends AppCompatActivity {
+    private static final String KEY_RESTART_INTENT = "RESTART_INTENT";
     BottomNavigationView bttmNavView;
     public static final String REQUEST_RESULT="REQUEST_RESULT";
     private static String uName;
@@ -68,6 +73,17 @@ public class  MainActivity extends AppCompatActivity {
             }
         });
     }
+
+//    public static void signedOut(Context context, Intent nextIntent) {
+//        Intent intent = new Intent(context, MainActivity.class);
+//        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+//        intent.putExtra(KEY_RESTART_INTENT, nextIntent);
+//        context.startActivity(intent);
+//        if (context instanceof Activity) {
+//            ((Activity) context).finish();
+//        }
+//        Runtime.getRuntime().exit(0);
+//    }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (RESULT_OK == resultCode) {

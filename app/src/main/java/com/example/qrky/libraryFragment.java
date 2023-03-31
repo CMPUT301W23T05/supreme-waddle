@@ -1,5 +1,6 @@
 package com.example.qrky;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,8 +73,7 @@ public class libraryFragment extends Fragment {
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userProfileFragment userFragment = userProfileFragment.newInstance();
-                userFragment.show(getChildFragmentManager(),"ss");
+                startActivity(new Intent(getActivity(), UserProfileActivity.class));
             }
         });
 
