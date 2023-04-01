@@ -12,7 +12,7 @@
     <color name="common">#FFFFFF</color>
     <color name="uncommon">#01CF3B</color>
     <color name="rare">#0081FD</color>
-    <color name="very_rare">#FFD700</color>
-    <color name="ultra_rare">#C20000</color>
+    <color name="very_rare">#DB00FF</color>
+    <color name="ultra_rare">#FFD700</color>
 
 </resources>
