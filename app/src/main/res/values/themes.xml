@@ -13,5 +13,7 @@
         <item name="android:statusBarColor">#FFE2BA</item>
         <!-- Customize your theme here. -->
         <item name="android:fontFamily">@font/josefin_sans_semibold</item>
+        <!-- set all text to lowercase -->
+        <item name="android:textAllCaps">false</item>
     </style>
 </resources>

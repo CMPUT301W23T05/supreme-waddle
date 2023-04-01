@@ -8,6 +8,22 @@
     tools:context=".CommunityFragment"
     android:background="@drawable/app_background">
 
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/communityTabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/playersTab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Players" />
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/codesTab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Codes" />
+    </com.google.android.material.tabs.TabLayout>
+    
     <SearchView
         android:id="@+id/playersSearch"
         android:layout_width="match_parent"
