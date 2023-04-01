@@ -177,6 +177,5 @@ public class libraryFragment extends Fragment {
         Typeface myCustomFont = ResourcesCompat.getFont(requireActivity(), R.font.josefin_sans_semibold);
         searchText.setTypeface(myCustomFont);
     }
-
 }
 
