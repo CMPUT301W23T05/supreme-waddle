@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -67,7 +68,6 @@ public class Database {
         } catch (Exception e) {
             Log.d("goSaveLibrary", "error");
         }
-
         Log.d("goSaveLibrary", "before uploadImage ");
         uploadImage(photoInputStream, hexString.toString());
 
@@ -78,11 +78,26 @@ public class Database {
         mDb.collection("QR Codes").document(hexString.toString()).update("name", makeName(hexString.toString()));
         Log.d("goSaveLibrary", "after makeName");
         mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
-        mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion("playerID1"));
+        mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion(MainActivity.getuName()));
         mDb.collection("QR Codes").document(hexString.toString()).update("score", getScore(hexString.toString()));
+        mDb.collection("Players").document(MainActivity.getuName()).update("codes", FieldValue.arrayUnion(hexString.toString()));
+        updatePlayer(getScore(hexString.toString()));
     }
 
-
+    private void updatePlayer(int score) {
+        mDb.collection("QR Codes").whereArrayContains("playerID", MainActivity.getuName()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                int size = task.getResult().size();
+                Log.d("updatePlayer", "size: " + size);
+                mDb.collection("Players").document(MainActivity.getuName()).update("totalCodes", size);
+                int totalScore = 0;
+                for (int i = 0; i < size; i++) {
+                    totalScore += task.getResult().getDocuments().get(i).getLong("score").intValue();
+                }
+                mDb.collection("Players").document(MainActivity.getuName()).update("score", totalScore);
+            }
+        });
+    }
 
     /**
      * This method is used to generate a score for the QR Code
@@ -107,7 +122,7 @@ public class Database {
                 + Long.valueOf(bytes[16] + bytes[18] + bytes[20] + bytes[22] + bytes[24] + bytes[26], 16)
                 - Long.valueOf(bytes[7] + bytes[9] + bytes[11] + bytes[13] + bytes[15], 16)
                 + Long.valueOf( bytes[17] + bytes[19] + bytes[21] + bytes[23] + bytes[25] + bytes[27], 16))
-                % ((abs(firstBytes) - abs(lastBytes))%1000));
+                % ((abs(firstBytes) - abs(lastBytes))%1000)) + 1;
         Log.d("getScore", "score: " + score);
         return abs(score);
     }
@@ -157,121 +172,186 @@ public class Database {
     /**
      * This method takes a QR Code hash and converts it to a name
      * @param str
-     * @return name: a 6 word name for a QR Code
+     * @return name: an 8 word name for a QR Code
      */
     String makeName(String str) {
         String[] strArr = str.split("");
         String[] wordArr = new String[8];
         String binary = "";
-        if (strArr[0].equals("0")) {
-            binary += "0000";
-        } else if (strArr[0].equals("1")) {
-            binary += "0001";
-        } else if (strArr[0].equals("2")) {
-            binary += "0010";
-        } else if (strArr[0].equals("3")) {
-            binary += "0011";
-        } else if (strArr[0].equals("4")) {
-            binary += "0100";
-        } else if (strArr[0].equals("5")) {
-            binary += "0101";
-        } else if (strArr[0].equals("6")) {
-            binary += "0110";
-        } else if (strArr[0].equals("7")) {
-            binary += "0111";
-        } else if (strArr[0].equals("8")) {
-            binary += "1000";
-        } else if (strArr[0].equals("9")) {
-            binary += "1001";
-        } else if (strArr[0].equals("a")) {
-            binary += "1010";
-        } else if (strArr[0].equals("b")) {
-            binary += "1011";
-        } else if (strArr[0].equals("c")) {
-            binary += "1100";
-        } else if (strArr[0].equals("d")) {
-            binary += "1101";
-        } else if (strArr[0].equals("e")) {
-            binary += "1110";
-        } else if (strArr[0].equals("f")) {
-            binary += "1111";
+        for (int i = 0; i < 4; i++) {
+            switch (strArr[i]) {
+                case "0":
+                    binary += "00";
+                    break;
+                case "1":
+                    binary += "01";
+                    break;
+                case "2":
+                    binary += "02";
+                    break;
+                case "3":
+                    binary += "03";
+                    break;
+                case "4":
+                    binary += "10";
+                    break;
+                case "5":
+                    binary += "11";
+                    break;
+                case "6":
+                    binary += "12";
+                    break;
+                case "7":
+                    binary += "13";
+                    break;
+                case "8":
+                    binary += "20";
+                    break;
+                case "9":
+                    binary += "21";
+                    break;
+                case "a":
+                    binary += "22";
+                    break;
+                case "b":
+                    binary += "23";
+                    break;
+                case "c":
+                    binary += "30";
+                    break;
+                case "d":
+                    binary += "31";
+                    break;
+                case "e":
+                    binary += "32";
+                    break;
+                case "f":
+                    binary += "33";
+                    break;
+            }
         }
-        if (strArr[1].equals("0")) {
-            binary += "0000";
-        } else if (strArr[1].equals("1")) {
-            binary += "0001";
-        } else if (strArr[1].equals("2")) {
-            binary += "0010";
-        } else if (strArr[1].equals("3")) {
-            binary += "0011";
-        } else if (strArr[1].equals("4")) {
-            binary += "0100";
-        } else if (strArr[1].equals("5")) {
-            binary += "0101";
-        } else if (strArr[1].equals("6")) {
-            binary += "0110";
-        } else if (strArr[1].equals("7")) {
-            binary += "0111";
-        } else if (strArr[1].equals("8")) {
-            binary += "1000";
-        } else if (strArr[1].equals("9")) {
-            binary += "1001";
-        } else if (strArr[1].equals("a")) {
-            binary += "1010";
-        } else if (strArr[1].equals("b")) {
-            binary += "1011";
-        } else if (strArr[1].equals("c")) {
-            binary += "1100";
-        } else if (strArr[1].equals("d")) {
-            binary += "1101";
-        } else if (strArr[1].equals("e")) {
-            binary += "1110";
-        } else if (strArr[1].equals("f")) {
-            binary += "1111";
-        }
+
 
         strArr = binary.split("");
         String result = "";
 
-        if((strArr[0].equals("0"))){
-            wordArr[0] = "Friendly ";
-        }else{
-            wordArr[0] = "Hostile ";
+        switch (strArr[0]) {
+            case "0":
+                wordArr[0] = "Friendly ";
+                break;
+            case "1":
+                wordArr[0] = "Hostile ";
+                break;
+            case "2":
+                wordArr[0] = "Calm ";
+                break;
+            case "3":
+                wordArr[0] = "Angry ";
+                break;
         }
-        if((strArr[1].equals("0"))){
-            wordArr[1] = "Lovely ";
-        }else{
-            wordArr[1] = "Ugly ";
+
+        switch (strArr[1]) {
+            case "0":
+                wordArr[1] = "Lovely ";
+                break;
+            case "1":
+                wordArr[1] = "Ugly ";
+                break;
+            case "2":
+                wordArr[1] = "Pretty ";
+                break;
+            case "3":
+                wordArr[1] = "Beautiful ";
+                break;
         }
-        if((strArr[2].equals("0"))){
-            wordArr[2] = "Small ";
-        }else{
-            wordArr[2] = "Big ";
+
+        switch (strArr[2]) {
+            case "0":
+                wordArr[2] = "Small ";
+                break;
+            case "1":
+                wordArr[2] = "Big ";
+                break;
+            case "2":
+                wordArr[2] = "Huge ";
+                break;
+            case "3":
+                wordArr[2] = "Giant ";
+                break;
         }
-        if((strArr[3].equals("0"))){
-            wordArr[3] = "Noisy ";
-        }else{
-            wordArr[3] = "Quite ";
+
+
+        switch (strArr[3]) {
+            case "0":
+                wordArr[3] = "Noisy ";
+                break;
+            case "1":
+                wordArr[3] = "Quite ";
+                break;
+            case "2":
+                wordArr[3] = "Silent ";
+                break;
+            case "3":
+                wordArr[3] = "Loud ";
+                break;
         }
-        if((strArr[4].equals("0"))){
-            wordArr[4] = "Young ";
-        }else{
-            wordArr[4] = "Old ";
+
+        switch (strArr[4]) {
+            case "0":
+                wordArr[4] = "Young ";
+                break;
+            case "1":
+                wordArr[4] = "Old ";
+                break;
+            case "2":
+                wordArr[4] = "Baby ";
+                break;
+            case "3":
+                wordArr[4] = "Senior ";
+                break;
         }
-        if((strArr[5].equals("0"))){
-            wordArr[5] = "Tidy ";
-        }else{
-            wordArr[5] = "Messy ";
+
+        switch (strArr[5]) {
+            case "0":
+                wordArr[5] = "Tidy ";
+                break;
+            case "1":
+                wordArr[5] = "Messy ";
+                break;
+            case "2":
+                wordArr[5] = "Clean ";
+                break;
+            case "3":
+                wordArr[5] = "Dirty ";
+                break;
         }
-        if((strArr[6].equals("0"))){
-            wordArr[6] = "Young ";
-        }else{
-            wordArr[6] = "Old ";
+        switch (strArr[6]) {
+            case "0":
+                wordArr[6] = "Fresh ";
+                break;
+            case "1":
+                wordArr[6] = "Drippy ";
+                break;
+            case "2":
+                wordArr[6] = "Iced-Out ";
+                break;
+            case "3":
+                wordArr[6] = "Salty ";
+                break;
         }
-        if((strArr[7].equals("0"))){
-            wordArr[7] = "Drake";
-        }else{
-            wordArr[7] = "Duck";
+        switch (strArr[7]) {
+            case "0":
+                wordArr[7] = "Drake";
+                break;
+            case "1":
+                wordArr[7] = "Duck";
+                break;
+            case "2":
+                wordArr[7] = "Duckling";
+                break;
+            case "3":
+                wordArr[7] = "Swan";
+                break;
         }
 
 

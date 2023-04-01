@@ -101,6 +101,12 @@ dependencies {
     // Add the dependency for the Google services Gradle plugin
 
     debugImplementation 'androidx.fragment:fragment-testing:1.5.5'
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:31.3.0')
+
+    // Add the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-auth'
 
 //    implementation files('C:\\Users\\Franc\\AppData\\Local\\Android\\Sdk\\platforms\\android-33\\android.jar')
 }

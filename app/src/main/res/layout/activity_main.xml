@@ -30,6 +30,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:itemIconSize="48dp"
         app:menu="@menu/bottom_nav_bar"
-        app:itemRippleColor="@android:color/transparent"/>
+        app:itemRippleColor="@android:color/transparent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

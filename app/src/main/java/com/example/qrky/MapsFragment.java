@@ -69,19 +69,17 @@ import com.bumptech.glide.Glide;
  */
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
+    private Context mContext;
     private static final int PERMISSION_REQUEST_CODE = 1;
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 123;
     private Bitmap mBitmap;
     private FragmentManager parentFragmentManager;
-    /**
+    // ...
 
-     Called when the fragment is attached to the activity.
-     Sets the parentFragmentManager.
-     @param context The context in which the fragment is attached.
-     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        mContext = context;
         parentFragmentManager = getActivity().getSupportFragmentManager();
     }
 
@@ -165,6 +163,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.my_map));
 
+
         // Set current location button listener
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
@@ -227,6 +226,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
      * Load QR codes from Firebase Firestore and display them on the map.
      */
     private void loadQRCodesFromFirebase() {
+
         // Access the Firestore instance
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -235,7 +235,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         // Build a query to retrieve documents that have a "Location" attribute with a non-null geopoint value
         Query query = qrCodesRef.whereNotEqualTo("location", null);
-
+        if (!isAdded()) {
+            // Fragment is not attached to a context, cannot load QR codes
+            return;
+        }
+        if (mContext == null) {
+            return;
+        }
         // Add a listener to the query to get real-time updates
         query.addSnapshotListener((querySnapshot, error) -> {
             if (error != null) {

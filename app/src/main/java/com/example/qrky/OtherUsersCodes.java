@@ -16,10 +16,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,13 +60,16 @@ public class OtherUsersCodes extends Fragment {
     List<List<String>> codeDrawings = new ArrayList<>();  // 0 = eyes, 1 = nose, 2 = mouth
     String otherUsername;  // username of other user
     List<String> playerHashes = new ArrayList<>();  // list of hashes from other user
+    OtherUsersLibraryAdapter adapter;
 
     /**
      * Constructor (empty) for OtherUsersCodes.
      *
      * @since 1.0
      */
-    public OtherUsersCodes() {}
+    public OtherUsersCodes(String otherUsername) {
+        this.otherUsername = otherUsername;
+    }
 
     /**
      * Creates the fragment and hides the bottom navigation bar. Calls the ViewModel to get the
@@ -75,7 +80,7 @@ public class OtherUsersCodes extends Fragment {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.i("OtherUsersCodes", "Looking at OtherUser's codes");
+        Log.i("OtherUsersCodes", "Looking at " + otherUsername + "'s codes");
         super.onCreate(savedInstanceState);
 
         // hide bottom navigation bar when viewing OtherUser's codes
@@ -87,8 +92,6 @@ public class OtherUsersCodes extends Fragment {
 
         // call ViewModel
 //        otherUsersCodeVM = new ViewModelProvider(requireActivity()).get(OtherUsersCodesViewModel.class);
-        getOtherUsersCodes();  // add data
-        getTestData();  // add test data
     }
 
     /**
@@ -106,7 +109,9 @@ public class OtherUsersCodes extends Fragment {
 
         // create grid of OtherUser's codes
         gridOfCodes = (GridView) view.findViewById(R.id.otherUsersCodes);
-        OtherUsersLibraryAdapter adapter = new OtherUsersLibraryAdapter(requireActivity(), getCodeNames(), getCodeScores(), getCodeDrawings());
+        adapter = new OtherUsersLibraryAdapter(requireActivity(), getCodeNames(), getCodeScores(), getCodeDrawings());
+        getOtherUsersCodes();  // add data
+//        getTestData();  // add test data
         gridOfCodes.setAdapter(adapter);
 
         // go back to the OtherUser Profile
@@ -129,32 +134,26 @@ public class OtherUsersCodes extends Fragment {
      *
      * @since 1.0
      */
-    public void getOtherUsersHashes() {
-        CollectionReference playersCollection = qrkyDB.collection("Players");
-
-        playersCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                // clear list before adding new data
-                playerHashes.clear();
-
-                // get list of hashes from database
-                assert value != null;
-                for (QueryDocumentSnapshot doc: value) {
-                    if (Objects.equals(doc.getString("username"), otherUsername)) {
-                        playerHashes = (List<String>) doc.get("codes");
-                        break;
-                    }
-                }
-            }
-        });
+//    public void getOtherUsersHashes() {
+//        CollectionReference codesCollection = qrkyDB.collection("Players");
 //
-//        if (playerHashes.isEmpty()) {
-//            Log.i("OtherUsersCodesVM", "No hashes found");
-//        } else {
-//            Log.i("OtherUsersCodesVM", "Hashes found!");
-//        }
-    }
+//        codesCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+//                // clear list before adding new data
+//                playerHashes.clear();
+//
+//                // get list of hashes from database
+//                assert value != null;
+//                for (QueryDocumentSnapshot doc: value) {
+//                    if (Objects.equals(doc.getString("username"), otherUsername)) {
+//                        playerHashes = (List<String>) doc.get("codes");
+//                        break;
+//                    }
+//                }
+//            }
+//        });
+//    }
 
     // for each hash, get code from database
     /**
@@ -165,11 +164,11 @@ public class OtherUsersCodes extends Fragment {
      * @since 1.0
      */
     public void getOtherUsersCodes() {
-        getOtherUsersHashes();
+//        getOtherUsersHashes();
         CollectionReference qrCodesCollection = qrkyDB.collection("QR Codes");
 
-        for (String hash: playerHashes) {
-            qrCodesCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            qrCodesCollection.orderBy("score", Query.Direction.DESCENDING)
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                     // clear lists before adding new data
@@ -179,8 +178,12 @@ public class OtherUsersCodes extends Fragment {
 
                     // add new data
                     assert value != null;
-                    for (QueryDocumentSnapshot doc: value) {
-                        if (doc.getId().equals(hash)) {
+                    for (QueryDocumentSnapshot doc : value) {
+                        // get list of strings in the documents array of playerIDs
+                        List<String> playerIDs = (List<String>) doc.get("playerID");
+                        Log.i("OtherUsersCodes", "playerIDs: " + playerIDs);
+                        if (playerIDs!=null && playerIDs.contains(otherUsername)) {
+                            Log.i("OtherUsersCodes", "Found " + otherUsername + "!");
                             codeNames.add(doc.getString("name"));
                             codeScores.add(Objects.requireNonNull(doc.getLong("score")).intValue());
                             List<String> codeDrawing = new ArrayList<>();
@@ -190,16 +193,9 @@ public class OtherUsersCodes extends Fragment {
                             codeDrawings.add(codeDrawing);
                         }
                     }
+                    adapter.notifyDataSetChanged();
                 }
             });
-        }
-
-//        if (codeNames.size() > 3) {
-//            Log.i("OtherUsersCodesVM", "Real data added!");
-//            Log.i("OtherUsersCodesVM", "Code names: " + codeNames);
-//        } else {
-//            Log.i("OtherUsersCodesVM", "No codes found");
-//        }
     }
 
     /**

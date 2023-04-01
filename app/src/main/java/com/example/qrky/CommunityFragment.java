@@ -21,9 +21,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -42,7 +45,6 @@ public class CommunityFragment extends Fragment {
     CollectionReference playersCollection;
     CommunityAdapter commAdapter;
 //  private OtherUsersCodesViewModel otherUsersCodesVM;
-//  CommunityViewModel communityVM;
     SearchView playersSearch;
     RecyclerView playersBriefList;
     HashMap<String, String> playerAndScore = new HashMap<>();  // username and score
@@ -94,10 +96,11 @@ public class CommunityFragment extends Fragment {
 
         // TODO: move this button to OtherUsers
         Button OtherUsersCodesButton = view.findViewById(R.id.SeeOtherUserCodes);
+        String otherUserUsername = "ToBFrank";  // given by OtherUser
         OtherUsersCodesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = new OtherUsersCodes();
+                Fragment fragment = new OtherUsersCodes(otherUserUsername);
                 FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.nav_fragment, fragment);
@@ -138,6 +141,8 @@ public class CommunityFragment extends Fragment {
                     } catch (NullPointerException e) {
                         playerAndScore.put(doc.getId(), "0");
                     }
+
+
                 }
                 commAdapter.update(playerAndScore);
             }

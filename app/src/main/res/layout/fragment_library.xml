@@ -113,25 +113,20 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|center_horizontal"
         android:layout_marginTop="16dp"
-        android:gravity="center_horizontal"
+        android:gravity="right"
+        android:layout_marginEnd="20dp"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/library_button"
-            android:layout_width="133dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:backgroundTint="#FFF4E5"
-            android:text="Library"
-            android:textColor="#06000A" />
 
         <Button
             android:id="@+id/profile_button"
             android:layout_width="133dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="right"
             android:layout_margin="10dp"
-            android:backgroundTint="#FFF4E5"
-            android:text="Profile"
+            android:background="@drawable/button_background"
+            android:backgroundTint="#e3d4d6"
+            android:text="@string/profile"
             android:textColor="#06000A" />
 
     </LinearLayout>
