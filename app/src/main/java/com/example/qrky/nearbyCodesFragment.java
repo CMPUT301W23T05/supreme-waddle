@@ -50,7 +50,7 @@ import java.util.List;
  @version 1.0
  */
 public class nearbyCodesFragment extends Fragment implements LocationListener {
-
+    private boolean fromMapsFragment = false;
     private RecyclerView mRecyclerView;
     private MyItemRecyclerViewAdapter mAdapter;
     private List<PlaceholderContent.PlaceholderItem> mValues = new ArrayList<>();
@@ -62,6 +62,14 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
     private Button mapsButton;
     private SearchView mSearchView;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            fromMapsFragment = getArguments().getBoolean("fromMapsFragment", false); // default value is false
+        }
+    }
+
     public nearbyCodesFragment() {}
     /**
 
@@ -120,10 +128,16 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
         mapsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_fragment);
-                navController.navigate(R.id.mapsFragment);
+                if (fromMapsFragment) {
+                    // navigate back to MapsFragment
+                    Navigation.findNavController(view).popBackStack();
+                } else {
+                    // navigate to MapsFragment
+                    Navigation.findNavController(view).navigate(R.id.mapsFragment);
+                }
             }
         });
+
 
         return view;
     }
@@ -227,5 +241,6 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
         // Stop location updates when the fragment is destroyed
         locationManager.removeUpdates(this);
     }
+
 }
 

@@ -142,11 +142,11 @@ public class CommunityFragment extends Fragment {
                         playerAndScore.put(doc.getId(), "0");
                     }
 
+
                 }
                 commAdapter.update(playerAndScore);
             }
         });
-//        Log.i("CommunityFragment", "All players and scores: " + playerAndScore.toString());
     }
 
     /**
