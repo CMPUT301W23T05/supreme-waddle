@@ -12,15 +12,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -125,6 +121,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         TextView score;
         private Button deleteButton;
 
+
+
         public CardViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.card_title);
@@ -197,6 +195,18 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                 }
             });
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        CardData card = filteredCards.get(position);
+                        String cardTitle = card.getTitle();
+                        CardDetailsFragment fragment = CardDetailsFragment.newInstance(cardTitle);
+                        fragment.show(((FragmentActivity) view.getContext()).getSupportFragmentManager(), "card_details");
+                    }
+                }
+            });
         }
 
     }

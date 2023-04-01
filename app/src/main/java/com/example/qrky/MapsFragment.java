@@ -127,8 +127,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         nearbyCodesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_fragment);
-                navController.navigate(R.id.nearbyCodesFragment);
+                NavController navController = Navigation.findNavController(view);
+                Bundle args = new Bundle();
+                args.putBoolean("fromMapsFragment", true); // set the boolean variable to true
+                navController.navigate(R.id.nearbyCodesFragment, args);
             }
         });
 
