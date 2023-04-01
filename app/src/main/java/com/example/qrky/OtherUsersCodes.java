@@ -115,7 +115,7 @@ public class OtherUsersCodes extends Fragment {
         gridOfCodes.setAdapter(adapter);
 
         // go back to the OtherUser Profile
-        backBttn = (ImageButton) view.findViewById(R.id.backBttn);
+        backBttn = view.findViewById(R.id.backBttn);
         backBttn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,33 +129,6 @@ public class OtherUsersCodes extends Fragment {
         return view;
     }
 
-    /**
-     * Gets list of hashes from database based on username. Stores hashes in playerHashes.
-     *
-     * @since 1.0
-     */
-//    public void getOtherUsersHashes() {
-//        CollectionReference codesCollection = qrkyDB.collection("Players");
-//
-//        codesCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-//                // clear list before adding new data
-//                playerHashes.clear();
-//
-//                // get list of hashes from database
-//                assert value != null;
-//                for (QueryDocumentSnapshot doc: value) {
-//                    if (Objects.equals(doc.getString("username"), otherUsername)) {
-//                        playerHashes = (List<String>) doc.get("codes");
-//                        break;
-//                    }
-//                }
-//            }
-//        });
-//    }
-
-    // for each hash, get code from database
     /**
      * Gets library of codes from the database. Uses the hashes of the codes from the player document
      * to get the codes from the QR Codes collection. Stores the names, scores, and drawings of the
