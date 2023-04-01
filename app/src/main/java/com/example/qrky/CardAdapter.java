@@ -173,9 +173,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                         fragment.show(((FragmentActivity) view.getContext()).getSupportFragmentManager(), "card_details");
                     }
                 }
-
             });
-
         }
 
     }

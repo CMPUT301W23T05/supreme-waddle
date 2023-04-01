@@ -158,7 +158,5 @@ public class libraryFragment extends Fragment {
             }
         }
     }
-
-
 }
 

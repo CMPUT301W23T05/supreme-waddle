@@ -25,6 +25,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Fragment for the Community tab. Displays an ordered list of all players and their scores,
@@ -132,12 +133,15 @@ public class CommunityFragment extends Fragment {
                 playerAndScore.clear();  // clear list before adding new data
                 assert value != null;
                 for (QueryDocumentSnapshot doc: value) {
-                    playerAndScore.put(doc.getString("username"), doc.getString("score"));
+                    try {
+                        playerAndScore.put(doc.getId(), Objects.requireNonNull(doc.get("score")).toString());
+                    } catch (NullPointerException e) {
+                        playerAndScore.put(doc.getId(), "0");
+                    }
                 }
                 commAdapter.update(playerAndScore);
             }
         });
-//        Log.i("CommunityFragment", "All players and scores: " + playerAndScore.toString());
     }
 
     /**
