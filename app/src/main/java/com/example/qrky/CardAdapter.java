@@ -1,5 +1,8 @@
 package com.example.qrky;
 
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -92,8 +96,24 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         CardData card = filteredCards.get(position);
         holder.title.setText(card.getTitle());
         holder.score.setText(String.valueOf(card.getScore()));
-        holder.rarity.setText(getRarity(card.getScore()));
+        String rarity = getRarity(card.getScore());
+        holder.rarity.setText(rarity);
+
+        int backgroundColor = ContextCompat.getColor(holder.itemView.getContext(), getBackgroundColor(rarity));
+        Drawable circularBackground = ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.circular_background);
+        GradientDrawable gradientDrawable = new GradientDrawable();
+        gradientDrawable.setColor(backgroundColor);
+        gradientDrawable.setCornerRadius(16);
+
+        Drawable[] layers = new Drawable[2];
+        layers[0] = circularBackground;
+        layers[1] = gradientDrawable;
+        LayerDrawable layerDrawable = new LayerDrawable(layers);
+
+        holder.rarity.setBackground(layerDrawable);
     }
+
+
 
     public class CardViewHolder extends RecyclerView.ViewHolder {
         TextView rarity;
@@ -190,7 +210,21 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         }
 
     }
-
+    private int getBackgroundColor(String rarity) {
+        switch (rarity) {
+            case "Ultra Rare":
+                return R.color.ultra_rare;
+            case "Very Rare":
+                return R.color.very_rare;
+            case "Rare":
+                return R.color.rare;
+            case "Uncommon":
+                return R.color.uncommon;
+            case "Common":
+            default:
+                return R.color.common;
+        }
+    }
     /**
      * public void addCard(CardData card)
      * Adds a new CardData object to the filteredCards list and notifies the RecyclerView that the data set has changed.
