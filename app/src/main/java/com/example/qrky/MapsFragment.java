@@ -224,7 +224,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
      * Load QR codes from Firebase Firestore and display them on the map.
      */
     private void loadQRCodesFromFirebase() {
-
         // Access the Firestore instance
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -233,13 +232,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         // Build a query to retrieve documents that have a "Location" attribute with a non-null geopoint value
         Query query = qrCodesRef.whereNotEqualTo("location", null);
-        if (!isAdded()) {
-            // Fragment is not attached to a context, cannot load QR codes
-            return;
-        }
-        if (mContext == null) {
-            return;
-        }
+
         // Add a listener to the query to get real-time updates
         query.addSnapshotListener((querySnapshot, error) -> {
             if (error != null) {
@@ -257,14 +250,37 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 if (location != null) {
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     String name = document.getString("name");
+                    Long scoreObj = document.getLong("score");
+                    int score = (scoreObj != null) ? scoreObj.intValue() : 0; // Retrieve the score from the DocumentSnapshot, defaulting to 0 if it is null
+
+
+                    // Derive the rarity from the score using the getRarity method of the CardAdapter class
+                    String rarity = CardAdapter.getRarity(score);
+
+                    // Load the appropriate marker image based on the rarity
+                    int markerImageResourceId;
+                    switch (rarity) {
+                        case "Ultra Rare":
+                            markerImageResourceId = R.drawable.ultrarare_qr;
+                            break;
+                        case "Very Rare":
+                            markerImageResourceId = R.drawable.veryrare_qr;
+                            break;
+                        case "Rare":
+                            markerImageResourceId = R.drawable.rare_qr;
+                            break;
+                        case "Uncommon":
+                            markerImageResourceId = R.drawable.uncommon_qr;
+                            break;
+                        default:
+                            markerImageResourceId = R.drawable.common_qr;
+                            break;
+                    }
 
                     // Calculate the marker size based on the zoom level
                     float zoom = mMap.getCameraPosition().zoom;
-
                     int size;
-
                     switch ((int) zoom) {
-
                         default:
                             size = 200;
                             break;
@@ -273,7 +289,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                     // Load the marker image with Glide
                     Glide.with(requireContext())
                             .asBitmap()
-                            .load(R.drawable.my_marker_image)
+                            .load(markerImageResourceId)
                             .override(size, size)
                             .into(new CustomTarget<Bitmap>() {
                                 @Override
@@ -301,6 +317,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             });
         });
 
+
         // Add a camera idle listener to update the marker sizes when the zoom level changes
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
@@ -317,6 +334,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             }
         });
     }
+
 
 
 }

@@ -73,7 +73,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card, parent, false);
         return new CardViewHolder(view);
     }
-    public String getRarity(int value) {
+    public static String getRarity(int value) {
         double percentile = (double) value / 1000.0; // assuming values are between 1 and 999
         if (percentile >= 0.95) {
             return "Ultra Rare";
