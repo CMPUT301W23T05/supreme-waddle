@@ -52,10 +52,10 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#F47373"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
-            android:padding="2dp">
+            android:padding="2dp"
+            android:background="@drawable/circular_background">
 
             <TextView
                 android:id="@+id/difficulty"
@@ -63,9 +63,13 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
-                android:background="@drawable/player_brief_background"
+                android:padding="2dp"
                 android:text="Difficulty: 3"
-                android:padding="2dp"/>
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:background="@drawable/circular_background"/>
+
+
 
         </LinearLayout>
 
