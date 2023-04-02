@@ -48,6 +48,7 @@ public class UserProfileActivity extends AppCompatActivity {
         contactInfo = findViewById(R.id.contact_info);
         cards_collected = findViewById(R.id.cards_collected);
         total_points = findViewById(R.id.total_points);
+        updateProfile(user);
         if (intent.getBooleanExtra("viewOther", false)) {
             uName = intent.getStringExtra("username");
             logout_button.setVisibility(View.GONE);
@@ -58,6 +59,7 @@ public class UserProfileActivity extends AppCompatActivity {
             logout_button.setVisibility(View.VISIBLE);
             contactInfo.setVisibility(View.VISIBLE);
         }
+        username.setText(uName);
         db.collection("Players").document(uName).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
@@ -70,7 +72,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 }
             }
         });
-        updateProfile(user);
+
 
 
         back_button.setOnClickListener(new View.OnClickListener() {

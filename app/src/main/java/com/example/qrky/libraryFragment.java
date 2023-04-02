@@ -79,7 +79,9 @@ public class libraryFragment extends Fragment {
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), UserProfileActivity.class));
+                Intent viewProfile = new Intent(getActivity(), UserProfileActivity.class);
+                startActivity(viewProfile);
+
             }
         });
 
