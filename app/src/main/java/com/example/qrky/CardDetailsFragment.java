@@ -21,12 +21,19 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +60,8 @@ public class CardDetailsFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         String title = getArguments().getString(ARG_TITLE);
 
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference(ARG_TITLE);
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        CollectionReference qrCodesCollection = firestore.collection("QR Codes");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
@@ -70,37 +77,49 @@ public class CardDetailsFragment extends DialogFragment {
         EditText commentInput = view.findViewById(R.id.comment_input);
         Button submitButton = view.findViewById(R.id.submit_button);
         ListView listView = view.findViewById(R.id.comments_list);
+
+        qrCodesCollection.whereEqualTo("name", title)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                List<String> comments = (List<String>) document.get("comments");
+                                if (comments != null) {
+                                    commentsArray.addAll(comments);
+                                    commentsAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        }
+                    }
+                });
+
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String comment = commentInput.getText().toString();
                 if (!comment.isEmpty()) {
                     commentsArray.add(comment);
-                    databaseReference.child("comments").push().setValue(comment);
                     commentsAdapter.notifyDataSetChanged();
                     commentInput.getText().clear();
+
+                    qrCodesCollection.whereEqualTo("name", title)
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            qrCodesCollection.document(document.getId())
+                                                    .update("comments", FieldValue.arrayUnion(comment));
+                                        }
+                                    }
+                                }
+                            });
                 }
             }
         });
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                commentsAdapter.clear();
-                for(DataSnapshot dataSnapshot: snapshot.getChildren()) {
-                    String sValue = dataSnapshot.child("comments").getValue(String.class);
-                    commentsArray.add(sValue);
-                    commentsAdapter.add(sValue);
-                }
-                commentsAdapter.notifyDataSetChanged();
-                listView.setSelection(commentsAdapter.getCount()-1);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-
 
         builder.setView(view);
 
@@ -112,6 +131,7 @@ public class CardDetailsFragment extends DialogFragment {
 
         return dialog;
     }
+
 
     @Override
     public void onStart() {
