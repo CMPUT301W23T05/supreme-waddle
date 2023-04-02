@@ -102,7 +102,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         holder.rarity.setText(rarity);
 
         int backgroundColor = ContextCompat.getColor(holder.itemView.getContext(), getBackgroundColor(rarity));
-        Drawable circularBackground = ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.circular_background);
+        Drawable circularBackground = ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.circular_border_background);
         GradientDrawable gradientDrawable = new GradientDrawable();
         gradientDrawable.setColor(backgroundColor);
         gradientDrawable.setCornerRadius(16);

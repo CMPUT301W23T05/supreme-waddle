@@ -48,19 +48,53 @@
         android:searchIcon="@drawable/search"
         android:queryBackground="@null"/>/>
 
+    <LinearLayout
+        android:id="@+id/headings_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/search_view"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/codeLabel"
+            android:layout_width="164dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/josefin_sans_semibold"
+            android:text="Code"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/kmsLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/josefin_sans_semibold"
+            android:text="Kms"
+            android:textSize="22sp"/>
+    </LinearLayout>
+
     <TextView
         android:id="@+id/nearby_codes_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/search_view"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
         android:textColor="@android:color/black"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:layout_below="@id/search_view"
-        android:layout_margin="5dp"/>
+        android:textStyle="bold" />
 
     <View
         android:id="@+id/nearby_codes_divider"
@@ -69,12 +103,13 @@
         android:background="#CCCCCC"
         android:layout_below="@id/nearby_codes_title"/>
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/nearby_codes_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/search_view"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="50dp"
         android:layout_marginBottom="60dp"
         android:background="@drawable/radius_recycleriew"
         android:clipToPadding="false"
@@ -82,5 +117,11 @@
         android:paddingTop="16dp"
         android:paddingEnd="16dp"
         android:paddingBottom="16dp" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
 </RelativeLayout>
