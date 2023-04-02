@@ -17,7 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Objects;
 
 public class UserProfileActivity extends AppCompatActivity {
-    private String uName = MainActivity.getuName();
+    private String uName;
     private String Email;
     private int cardsCollected;
     private int totalPoints;
@@ -36,6 +36,8 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+
         user = MainActivity.getUser();
         setContentView(R.layout.activity_user_profile);
         username = findViewById(R.id.username);
@@ -46,7 +48,16 @@ public class UserProfileActivity extends AppCompatActivity {
         contactInfo = findViewById(R.id.contact_info);
         cards_collected = findViewById(R.id.cards_collected);
         total_points = findViewById(R.id.total_points);
-
+        if (intent.getBooleanExtra("viewOther", false)) {
+            uName = intent.getStringExtra("username");
+            logout_button.setVisibility(View.GONE);
+            contactInfo.setVisibility(View.GONE);
+        }
+        else {
+            uName = user.getDisplayName();
+            logout_button.setVisibility(View.VISIBLE);
+            contactInfo.setVisibility(View.VISIBLE);
+        }
         db.collection("Players").document(uName).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();

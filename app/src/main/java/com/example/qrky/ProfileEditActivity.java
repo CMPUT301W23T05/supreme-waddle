@@ -13,8 +13,11 @@ import android.widget.EditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.List;
 import java.util.Objects;
 
 public class ProfileEditActivity extends AppCompatActivity {
@@ -99,6 +102,20 @@ public class ProfileEditActivity extends AppCompatActivity {
                                 db.collection("Players").document(newUName).set(Objects.requireNonNull(task.getResult().getData()));
                                 db.collection("Players").document(oldName).delete();
 
+                                db.collection("QR Codes").whereArrayContains("playerID", oldName).addSnapshotListener((value, error) -> {
+                                    if (error != null) {
+                                        Log.d("updateUsername", "Listen failed.", error);
+                                        return;
+                                    }
+
+                                    List<DocumentSnapshot> documents = value.getDocuments();
+                                    for (DocumentSnapshot document : documents) {
+                                        db.collection("QR Codes").document(document.getId()).update("playerID", FieldValue.arrayRemove(oldName));
+                                        db.collection("QR Codes").document(document.getId()).update("playerID", FieldValue.arrayUnion(newUName));
+                                    }
+                                });
+//
+
                                 Log.d("updateUsername", "Username updated");
 
                             } else {
@@ -175,8 +192,11 @@ public class ProfileEditActivity extends AppCompatActivity {
     }
 
     private void finishUpdate() {
-        setResult(Activity.RESULT_OK, resultIntent);
         user.reload();
+        resultIntent.putExtra("changed", changed);
+        resultIntent.putExtra("user", user);
+        setResult(Activity.RESULT_OK, resultIntent);
+
         if (changed) {
             startActivity(new Intent(ProfileEditActivity.this, MainActivity.class));
         }
