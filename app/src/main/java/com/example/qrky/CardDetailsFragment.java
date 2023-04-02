@@ -2,6 +2,7 @@ package com.example.qrky;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -20,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -38,7 +40,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CardDetailsFragment extends DialogFragment {
+public class CardDetailsFragment extends DialogFragment  {
 
     private static final String ARG_TITLE = "title";
 
@@ -46,7 +48,10 @@ public class CardDetailsFragment extends DialogFragment {
     private ArrayAdapter<String> commentsAdapter;
     private List<String> commentsArray = new ArrayList<>();
 
+    private final int pop2upFragment = 1;
 
+
+    public CardDetailsFragment(){}
     public static CardDetailsFragment newInstance(String title) {
         CardDetailsFragment fragment = new CardDetailsFragment();
         Bundle args = new Bundle();
@@ -121,6 +126,15 @@ public class CardDetailsFragment extends DialogFragment {
             }
         });
 
+        Button seeButton =  view.findViewById(R.id.button2);
+        seeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), pop2up.class));
+            }
+        });
+
+
         builder.setView(view);
 
         Dialog dialog = builder.create();
@@ -143,5 +157,4 @@ public class CardDetailsFragment extends DialogFragment {
             }
         }
     }
-
 }

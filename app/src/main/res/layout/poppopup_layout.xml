@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pplFragment"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/gradient_background">
+
+    <TextView
+        android:id="@+id/item_details_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Collected by"
+        android:fontFamily="@font/advent_pro_medium"
+        android:textStyle="bold"
+        android:padding="15dp"
+        android:textColor="@color/white"
+        android:textSize="30sp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="681dp"
+        android:orientation="vertical"
+        android:padding="100dp"
+        android:textColor="@color/white">
+
+        <ListView
+            android:id="@+id/ppl_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/advent_pro_medium" />
+
+    </ScrollView>
+
+</FrameLayout>
