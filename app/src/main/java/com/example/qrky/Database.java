@@ -169,14 +169,9 @@ public class Database {
 
 
     }
-    /**
-     * This method takes a QR Code hash and converts it to a name
-     * @param str
-     * @return name: an 8 word name for a QR Code
-     */
-    String makeName(String str) {
+
+    private String extractBinary(String str) {
         String[] strArr = str.split("");
-        String[] wordArr = new String[8];
         String binary = "";
         for (int i = 0; i < 4; i++) {
             switch (strArr[i]) {
@@ -231,8 +226,19 @@ public class Database {
             }
         }
 
+        return str;
+    }
+    /**
+     * This method takes a QR Code hash and converts it to a name
+     * @param str
+     * @return name: an 8 word name for a QR Code
+     */
+    String makeName(String str) {
 
-        strArr = binary.split("");
+        String[] wordArr = new String[8];
+        String[] strArr;
+
+        strArr = str.split("");
         String result = "";
 
         switch (strArr[0]) {

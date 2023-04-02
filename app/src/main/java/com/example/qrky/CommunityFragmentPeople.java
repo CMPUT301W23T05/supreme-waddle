@@ -1,5 +1,6 @@
 package com.example.qrky;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -91,6 +92,21 @@ public class CommunityFragmentPeople extends Fragment {
         matchingPlayerAndScore.putAll(playerAndScore);
         commAdapter.update(matchingPlayerAndScore);
 
+        playersBriefList.addOnItemTouchListener(new RecyclerItemClickListener(requireActivity(), playersBriefList, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(requireActivity(), UserProfileActivity.class);
+                intent.putExtra("username", commAdapter.getPlayer(position));
+                intent.putExtra("viewOther", true);
+                startActivity(intent);
+
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+
+            }
+        }));
         // get the search bar
         playersSearch = view.findViewById(R.id.playersSearch);
         setPrettyFont();

@@ -136,4 +136,8 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.Comm
             this.playerAndScoreRanked = playerAndScoreMessy;
             notifyDataSetChanged();
         }
+
+        public String getPlayer(int position) {
+            return playerAndScoreRanked.get(position).get(0);
+        }
 }
