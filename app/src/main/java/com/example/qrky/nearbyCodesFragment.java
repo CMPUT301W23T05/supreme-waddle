@@ -3,6 +3,7 @@ package com.example.qrky;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -14,12 +15,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -65,7 +68,6 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
     CollectionReference qrCodesRef = db.collection("QR Codes");
     private ProgressBar mProgressBar;
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
-    private Button mapsButton;
     private SearchView mSearchView;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,6 +110,7 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
         // Set up location manager
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         mSearchView = view.findViewById(R.id.search_view);
+        setPrettyFont();
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -133,21 +136,6 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
             // Request location permission
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
         }
-        mapsButton = view.findViewById(R.id.maps_button);
-        mapsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (fromMapsFragment) {
-                    // navigate back to MapsFragment
-                    Navigation.findNavController(view).popBackStack();
-                } else {
-                    // navigate to MapsFragment
-                    Navigation.findNavController(view).navigate(R.id.mapsFragment);
-                }
-            }
-        });
-
-
         return view;
     }
     /**
@@ -269,6 +257,18 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
 
         // Stop location updates when the fragment is destroyed
         locationManager.removeUpdates(this);
+    }
+
+    /**
+     * Sets the font of the search bar to Josefin Sans Semibold.
+     *
+     * @since 2.0
+     */
+    private void setPrettyFont() {
+        int id = mSearchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+        TextView searchText = mSearchView.findViewById(id);
+        Typeface myCustomFont = ResourcesCompat.getFont(requireActivity(), R.font.josefin_sans_semibold);
+        searchText.setTypeface(myCustomFont);
     }
 
 }
