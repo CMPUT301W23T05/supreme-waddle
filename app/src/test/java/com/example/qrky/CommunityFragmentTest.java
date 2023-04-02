@@ -22,7 +22,7 @@ import java.util.HashMap;
  * @author Franco Bonilla
  */
 public class CommunityFragmentTest {
-    private CommunityFragment fragment;
+    private CommunityFragmentPeople fragment;
     private FirebaseFirestore db;
     private CollectionReference collRef;
     private CommunityAdapter adapter;
@@ -34,7 +34,7 @@ public class CommunityFragmentTest {
 
     @Before
     public void setUp() {
-        fragment = new CommunityFragment();
+        fragment = new CommunityFragmentPeople();
         db = mock(FirebaseFirestore.class);
         collRef = mock(CollectionReference.class);
         adapter = mock(CommunityAdapter.class);

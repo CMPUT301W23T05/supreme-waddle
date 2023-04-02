@@ -99,6 +99,7 @@ public class CommunityFragmentQrs extends Fragment {
                     try {
                         codesAndScore.put(Objects.requireNonNull(doc.get("name")).toString(), Objects.requireNonNull(doc.get("score")).toString());
                     } catch (NullPointerException e) {
+                        // if name is not null
                         codesAndScore.put(Objects.requireNonNull(doc.get("name")).toString(), "0");
                     }
 
