@@ -253,7 +253,7 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
         double longitude = location.getLongitude();
 
         // Query nearby QR codes
-        queryNearbyCodes(latitude, longitude, 5.0); // Change the radius value as per your requirement
+        queryNearbyCodes(latitude, longitude, 5.0);
     }
 
 
