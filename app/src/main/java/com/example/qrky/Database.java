@@ -92,7 +92,11 @@ public class Database {
                 mDb.collection("Players").document(MainActivity.getuName()).update("totalCodes", size);
                 int totalScore = 0;
                 for (int i = 0; i < size; i++) {
-                    totalScore += task.getResult().getDocuments().get(i).getLong("score").intValue();
+                    try {
+                        totalScore += Objects.requireNonNull(task.getResult().getDocuments().get(i).getLong("score")).intValue();
+                    } catch (Exception e) {
+                        Log.d("updatePlayer", "error: " + e);
+                    }
                 }
                 mDb.collection("Players").document(MainActivity.getuName()).update("score", totalScore);
             }
