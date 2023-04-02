@@ -36,4 +36,5 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="email">Email</string>
     <string name="profile">Profile</string>
+    <string name="save_changes">Save Changes</string>
 </resources>

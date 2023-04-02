@@ -32,6 +32,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -42,6 +43,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Activity which displays a login screen to the user, offering registration as
+ * well.
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
@@ -112,7 +117,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -149,7 +153,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,26 +167,13 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            db.collection("Players").whereEqualTo("email", currentUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<com.google.firebase.firestore.QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<com.google.firebase.firestore.QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        updateUiWithUser(currentUser, task.getResult().getDocuments().get(0).getId());
-                    } else {
-                        Log.d("Auth", "Error getting documents: ", task.getException());
-                    }
-                }
 
-            });
-
-        }
-    }
+    /**
+     * logs in the user with the given username and password
+     *
+     * @param username the username of the user
+     * @param password the password of the user
+     */
     public void login(String username, String password) throws NoSuchAlgorithmException {
         // can be launched in a separate asynchronous job
         final UUID[] mCustomToken = new UUID[1];
@@ -206,10 +196,9 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 loadingProgressBar.setVisibility(View.VISIBLE);
-                                try{
-                                register(username, password, emailEditText.getText().toString());
-                                }
-                                catch (Exception e){
+                                try {
+                                    register(username, password, emailEditText.getText().toString());
+                                } catch (Exception e) {
                                     Log.d("Auth", "Error: " + e);
                                     loadingProgressBar.setVisibility(View.GONE);
                                 }
@@ -224,9 +213,14 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-
     }
 
+    /**
+     * registers the user with the given email, username and password
+     *
+     * @param username the username of the user
+     * @param password the password of the user
+     */
     private void register(String username, String password, String email) {
         loadingProgressBar.setVisibility(View.VISIBLE);
         try {
@@ -262,6 +256,9 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * signs into firebase with the given email and password
+     */
     private void signInViaEmail(String uName, String pass) {
         final String[] email = new String[1];
         db.collection("Players").document(uName).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -283,16 +280,28 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-    private void updateUiWithUser(FirebaseUser model, String uName){
+
+    /**
+     * updates the UI with the given user
+     *
+     * @param model the user to update the UI with
+     */
+    private void updateUiWithUser(FirebaseUser model, String uName) {
         loadingProgressBar.setVisibility(View.GONE);
+        model.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(uName).build());
         // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), "Welcome " + uName + "!", Toast.LENGTH_LONG).show();
-        result.putExtra("username", uName);
         result.putExtra("user", model);
         setResult(Activity.RESULT_OK, result);
         finish();
     }
 
+    /**
+     * authorizes the user with the given email and password
+     *
+     * @param email the email of the user
+     * @param pass  the password of the user
+     */
     private void authorize(String email, String pass, String uName) {
         Log.d("Auth", "Signing in with email: " + email + " and password: " + pass);
         mAuth.signInWithEmailAndPassword(email.trim(), pass)
@@ -319,8 +328,5 @@ public class LoginActivity extends AppCompatActivity {
                         // ...
                     }
                 });
-    }
-    private void showLoginFailed(@StringRes Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 }

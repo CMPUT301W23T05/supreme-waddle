@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,8 +20,14 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.qrky.ui.login.LoginActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
 
 
 /**
@@ -35,8 +42,12 @@ public class  MainActivity extends AppCompatActivity {
     private static final String KEY_RESTART_INTENT = "RESTART_INTENT";
     BottomNavigationView bttmNavView;
     public static final String REQUEST_RESULT="REQUEST_RESULT";
-    private static String uName;
-    private FirebaseUser user;
+    private static FirebaseUser user;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -50,7 +61,13 @@ public class  MainActivity extends AppCompatActivity {
         NavController bttmNavController = bttmNavHostFragment.getNavController();
         NavigationUI.setupWithNavController(bttmNavView, bttmNavController);
         bttmNavView.setVisibility(View.VISIBLE);
-        startActivityForResult(new Intent(this, LoginActivity.class), 1);
+        user = mAuth.getCurrentUser();
+        if (user == null) {
+            startActivityForResult(new Intent(this, LoginActivity.class), 1);
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Welcome " + user.getDisplayName() + "!", Toast.LENGTH_LONG).show();
+        }
         bttmNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -74,13 +91,14 @@ public class  MainActivity extends AppCompatActivity {
         });
     }
 
-
+    protected static void userUpdate(FirebaseUser user) {
+        MainActivity.user = user;
+    }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (RESULT_OK == resultCode) {
                 user = data.getParcelableExtra("user");
-                uName = data.getStringExtra("username");
-                Log.d("MainActivity", "onActivityResult: " + uName);
+                Log.d("MainActivity", "onActivityResult: " + user.getDisplayName());
                 Log.d("MainActivity", "onActivityResult: " + user.getUid());
 
         }
@@ -105,10 +123,10 @@ public class  MainActivity extends AppCompatActivity {
     }
 
     public static String getuName() {
-        return uName;
+        return user.getDisplayName();
     }
 
-    public FirebaseUser getUser() {
+    public static FirebaseUser getUser() {
         return user;
     }
 }
