@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nearby_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/app_background"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:id="@+id/button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/maps_button"
+            android:layout_width="133dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Maps"
+            android:backgroundTint="#FFF4E5"
+            android:textColor="#06000A"/>
+
+        <Button
+            android:id="@+id/nearby_codes_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Nearby codes"
+            android:backgroundTint="#FFF4E5"
+            android:textColor="#06000A"/>
+
+    </LinearLayout>
+
+    <SearchView
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_layout"
+        android:backgroundTint="#FFE2BA"
+        android:radius="100dp"
+        android:iconifiedByDefault="false"
+        android:queryHint="Search Codes"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/searchview_background"
+        android:textColor="#06000A"
+        android:searchIcon="@drawable/search"
+        android:queryBackground="@null"/>/>
+
+    <TextView
+        android:id="@+id/nearby_codes_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:layout_below="@id/search_view"
+        android:layout_margin="5dp"/>
+
+    <View
+        android:id="@+id/nearby_codes_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC"
+        android:layout_below="@id/nearby_codes_title"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/nearby_codes_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/search_view"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/radius_recycleriew"
+        android:clipToPadding="false"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp" />
+
+</RelativeLayout>
