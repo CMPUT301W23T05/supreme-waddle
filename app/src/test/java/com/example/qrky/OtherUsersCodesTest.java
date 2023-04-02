@@ -29,7 +29,7 @@ public class OtherUsersCodesTest {
 
     @Before
     public void setUp() {
-        fragment = new OtherUsersCodes();
+        fragment = new OtherUsersCodes("ToBFrank");
         gridView = mock(GridView.class);
         backBttn = mock(ImageButton.class);
         db = mock(FirebaseFirestore.class);

@@ -4,18 +4,22 @@
     <item
         android:title="Home"
         android:id="@+id/communityFragment"
-        android:icon="@drawable/home"/>
+        android:icon="@drawable/home"
+        android:iconTint="#fcb045" />
     <item
         android:title="Scan"
         android:id="@+id/scannerFragment"
-        android:icon="@drawable/qr_scanner" />
+        android:icon="@drawable/qr_scanner"
+        android:iconTint="#fcb045"/>
     <item
         android:title="Nearby"
         android:id="@+id/mapsFragment"
-        android:icon="@drawable/map"/>
+        android:icon="@drawable/map"
+        android:iconTint="#fcb045"/>
     <item
         android:title="Library"
         android:id="@+id/libraryFragment"
-        android:icon="@drawable/library"/>
+        android:icon="@drawable/library"
+        android:iconTint="#fcb045"/>
 
 </menu>

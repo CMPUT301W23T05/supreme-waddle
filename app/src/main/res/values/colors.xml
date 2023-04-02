@@ -9,4 +9,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="grey_lightest">#FCFCFC</color>
     <color name="light_purple">#E0B0FF</color>
+    <color name="common">#A7A7A7</color>
+    <color name="uncommon">#01CF3B</color>
+    <color name="rare">#0081FD</color>
+    <color name="very_rare">#DB00FF</color>
+    <color name="ultra_rare">#FFD700</color>
+
 </resources>

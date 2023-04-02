@@ -9,14 +9,20 @@ import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,150 +37,87 @@ import java.util.HashMap;
 import java.util.Objects;
 
 /**
- * Fragment for the Community tab. Displays an ordered list of all players and their scores,
- * and lets the user search for a specific player. Currently, there is a button that takes the
- * user to a sample library of codes of another user.
+ * Fragment for the Community tab. Holds the tabs for the top players and top codes.
  *
  * @author Franco Bonilla
- * @version 1.0 2023/03/12
- * @see CommunityAdapter
- * @see OtherUsersCodes
+ * @version 2.0 2023/04/01
+ * @see CommunityFragmentPeople
+ * @see CommunityFragmentQrs
  */
 public class CommunityFragment extends Fragment {
-    FirebaseFirestore qrkyDB;
-    CollectionReference playersCollection;
-    CommunityAdapter commAdapter;
-//  private OtherUsersCodesViewModel otherUsersCodesVM;
-    SearchView playersSearch;
-    RecyclerView playersBriefList;
-    HashMap<String, String> playerAndScore = new HashMap<>();  // username and score
-    HashMap<String, String> matchingPlayerAndScore = new HashMap<>();  // username and score that match the search query
-
-    /**
-     * Constructor (empty) for CommunityFragment.
-     *
-     * @since 1.0
-     */
-    public CommunityFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Creates the view for the CommunityFragment.
-     *
-     * @param inflater The LayoutInflater object for inflating the view(s) in the fragment.
-     * @param container Parent view that the fragment's UI should be attached to (if not null).
-     * @param savedInstanceState Past saved state of the fragment (if not null).
-     * @return View for the CommunityFragment
-     * @since 1.0
-     */
+    private RecyclerView mRecyclerView;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_community, container, false);
-//        otherUsersCodesVM = new ViewModelProvider(requireActivity()).get(OtherUsersCodesViewModel.class);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_community, container, false);
+        TabLayout tabLayout = view.findViewById(R.id.communityTabs);
+        final ViewPager viewPager = view.findViewById(R.id.communityViewPager);
+        // mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        //mRecyclerView.setLayoutManager(mLayoutManager);
+        viewPager.setAdapter(new PagerAdapter(requireActivity().getSupportFragmentManager(), tabLayout.getTabCount()));
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
-        qrkyDB = FirebaseFirestore.getInstance();
-        playersCollection = qrkyDB.collection("Players");
+        // set a tab selected listener
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
-        // make list of all players and scores
-        // - set up adapter
-        commAdapter = new CommunityAdapter(matchingPlayerAndScore);
-        playersBriefList = view.findViewById(R.id.community_codes_list);
-        playersBriefList.setLayoutManager(new LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false));
-        getAllPlayersAndScores();
-        playersBriefList.setAdapter(commAdapter);
-        matchingPlayerAndScore.putAll(playerAndScore);
-        commAdapter.update(matchingPlayerAndScore);
-
-        // get the search bar
-        playersSearch = view.findViewById(R.id.playersSearch);
-        setPrettyFont();
-        searchAPlayer();
-
-
-        // TODO: move this button to OtherUsers
-        Button OtherUsersCodesButton = view.findViewById(R.id.SeeOtherUserCodes);
-        String otherUserUsername = "toBFrank";  // given by OtherUser
-        OtherUsersCodesButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Fragment fragment = new OtherUsersCodes(otherUserUsername);
-                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.nav_fragment, fragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
 
         return view;
     }
 
-    /**
-     * Sets the font of the search bar to Josefin Sans Semibold.
-     *
-     * @since 1.0
-     */
-    private void setPrettyFont() {
-        int id = playersSearch.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
-        TextView searchText = playersSearch.findViewById(id);
-        Typeface myCustomFont = ResourcesCompat.getFont(requireActivity(), R.font.josefin_sans_semibold);
-        searchText.setTypeface(myCustomFont);
-    }
 
     /**
-     * Gets all players and their scores from the database and updates the adapter.
+     * PagerAdapter for the CommunityFragment. Holds the fragments for the top players and top codes.
      *
-     * @since 1.0
+     * @author Franco Bonilla
+     * @version 1.0 2023/04/01
+     * @see CommunityFragmentPeople
+     * @see CommunityFragmentQrs
      */
-    public void getAllPlayersAndScores() {
-        playersCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                playerAndScore.clear();  // clear list before adding new data
-                assert value != null;
-                for (QueryDocumentSnapshot doc: value) {
-                    try {
-                        playerAndScore.put(doc.getId(), Objects.requireNonNull(doc.get("score")).toString());
-                    } catch (NullPointerException e) {
-                        playerAndScore.put(doc.getId(), "0");
-                    }
+    public class PagerAdapter extends FragmentStatePagerAdapter {
+        int mNumOfTabs;
+        private String[] tabTitles = new String[]{"Top Players", "Top Codes"};
+        public PagerAdapter(FragmentManager fm, int NumOfTabs) {
+            super(fm);
+            this.mNumOfTabs = NumOfTabs;
+        }
 
-                }
-                commAdapter.update(playerAndScore);
+
+        @NonNull
+        @Override
+        public Fragment getItem(int position) {
+
+            if (position == 1) {
+                return new CommunityFragmentQrs();
             }
-        });
-//        Log.i("CommunityFragment", "All players and scores: " + playerAndScore.toString());
-    }
+            return new CommunityFragmentPeople();
+        }
+        @Override
+        public int getCount() {
+            return mNumOfTabs;
+        }
 
-    /**
-     * Searches for a player in the leaderboard and updates the adapter to match the search query.
-     *
-     * @since 1.0
-     */
-    public void searchAPlayer() {
-        playersSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {return false;}
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                matchingPlayerAndScore.clear();
-                if (newText.isEmpty()) {
-                    matchingPlayerAndScore.putAll(playerAndScore);
-                } else {
-                    for (String player: playerAndScore.keySet()) {
-                        if (player.toLowerCase().contains(newText.toLowerCase())) {
-                            matchingPlayerAndScore.put(player, playerAndScore.get(player));
-                        }
-                    }
-                }
-//                Log.i("CommunityFragment", "Search query: " + newText);
-//                Log.i("CommunityFragment", "Matching players: " + matchingPlayerAndScore.toString());
-                commAdapter.update(matchingPlayerAndScore);
-                return false;
-            }
-        });
+        // overriding getPageTitle()
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabTitles[position];
+        }
     }
 }

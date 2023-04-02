@@ -60,6 +60,7 @@ public class OtherUsersCodes extends Fragment {
     List<List<String>> codeDrawings = new ArrayList<>();  // 0 = eyes, 1 = nose, 2 = mouth
     String otherUsername;  // username of other user
     List<String> playerHashes = new ArrayList<>();  // list of hashes from other user
+    OtherUsersLibraryAdapter adapter;
 
     /**
      * Constructor (empty) for OtherUsersCodes.
@@ -79,7 +80,7 @@ public class OtherUsersCodes extends Fragment {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.i("OtherUsersCodes", "Looking at" + otherUsername + "'s codes");
+        Log.i("OtherUsersCodes", "Looking at " + otherUsername + "'s codes");
         super.onCreate(savedInstanceState);
 
         // hide bottom navigation bar when viewing OtherUser's codes
@@ -91,8 +92,6 @@ public class OtherUsersCodes extends Fragment {
 
         // call ViewModel
 //        otherUsersCodeVM = new ViewModelProvider(requireActivity()).get(OtherUsersCodesViewModel.class);
-        getOtherUsersCodes();  // add data
-        getTestData();  // add test data
     }
 
     /**
@@ -110,11 +109,13 @@ public class OtherUsersCodes extends Fragment {
 
         // create grid of OtherUser's codes
         gridOfCodes = (GridView) view.findViewById(R.id.otherUsersCodes);
-        OtherUsersLibraryAdapter adapter = new OtherUsersLibraryAdapter(requireActivity(), getCodeNames(), getCodeScores(), getCodeDrawings());
+        adapter = new OtherUsersLibraryAdapter(requireActivity(), getCodeNames(), getCodeScores(), getCodeDrawings());
+        getOtherUsersCodes();  // add data
+//        getTestData();  // add test data
         gridOfCodes.setAdapter(adapter);
 
         // go back to the OtherUser Profile
-        backBttn = (ImageButton) view.findViewById(R.id.backBttn);
+        backBttn = view.findViewById(R.id.backBttn);
         backBttn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,33 +129,6 @@ public class OtherUsersCodes extends Fragment {
         return view;
     }
 
-    /**
-     * Gets list of hashes from database based on username. Stores hashes in playerHashes.
-     *
-     * @since 1.0
-     */
-//    public void getOtherUsersHashes() {
-//        CollectionReference codesCollection = qrkyDB.collection("Players");
-//
-//        codesCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-//                // clear list before adding new data
-//                playerHashes.clear();
-//
-//                // get list of hashes from database
-//                assert value != null;
-//                for (QueryDocumentSnapshot doc: value) {
-//                    if (Objects.equals(doc.getString("username"), otherUsername)) {
-//                        playerHashes = (List<String>) doc.get("codes");
-//                        break;
-//                    }
-//                }
-//            }
-//        });
-//    }
-
-    // for each hash, get code from database
     /**
      * Gets library of codes from the database. Uses the hashes of the codes from the player document
      * to get the codes from the QR Codes collection. Stores the names, scores, and drawings of the
@@ -178,10 +152,11 @@ public class OtherUsersCodes extends Fragment {
                     // add new data
                     assert value != null;
                     for (QueryDocumentSnapshot doc : value) {
-                        // use document if otherUsername is in the list of playerID
-                        List<String> playerIDs = (List<String>) doc.get("playerIDs");
-                        assert playerIDs != null;
-                        if (playerIDs.contains(otherUsername)) {
+                        // get list of strings in the documents array of playerIDs
+                        List<String> playerIDs = (List<String>) doc.get("playerID");
+                        Log.i("OtherUsersCodes", "playerIDs: " + playerIDs);
+                        if (playerIDs!=null && playerIDs.contains(otherUsername)) {
+                            Log.i("OtherUsersCodes", "Found " + otherUsername + "!");
                             codeNames.add(doc.getString("name"));
                             codeScores.add(Objects.requireNonNull(doc.getLong("score")).intValue());
                             List<String> codeDrawing = new ArrayList<>();
@@ -191,6 +166,7 @@ public class OtherUsersCodes extends Fragment {
                             codeDrawings.add(codeDrawing);
                         }
                     }
+                    adapter.notifyDataSetChanged();
                 }
             });
     }
