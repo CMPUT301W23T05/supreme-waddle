@@ -65,6 +65,7 @@ public class scannerFragment extends CaptureFragment {
     // Other class members
     private boolean mIsBitmapSaved;
 
+
     /**
      *onViewCreated method initializes the necessary UI components and starts the location service.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
@@ -117,23 +118,29 @@ public class scannerFragment extends CaptureFragment {
             return;
         }
         if (Objects.isNull(mPhotoBitmap)) {
-            Toast.makeText(requireContext(), "Photo is not taken.",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Photo is not taken.", Toast.LENGTH_SHORT).show();
             return;
         }
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int quality = 100;
         int size = mPhotoBitmap.getByteCount();
+
         while (size > 100 * 1024 && quality > 1) {
             quality -= 1;
             size = quality * size / 100;
         }
+
+        if (!mPhotoBitmap.isRecycled()) {
+            mPhotoBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+        }
+
         InputStream photoInputStream = new ByteArrayInputStream(baos.toByteArray());
         mDatabase.goSaveLibrary(true, mCode, mGeoPoint, photoInputStream);
         mIsBitmapSaved = true;
         MainActivity mainActivity = (MainActivity) requireActivity();
         mainActivity.switchTab(R.id.libraryFragment);
+
     }
 
     /**
@@ -257,12 +264,14 @@ public class scannerFragment extends CaptureFragment {
      */
     @Override
     public void onDestroyView() {
-        if (!mIsBitmapSaved && mPhotoBitmap != null) {
+        if (!mIsBitmapSaved && mPhotoBitmap != null && !mPhotoBitmap.isRecycled()) {
             mPhotoBitmap.recycle();
             mPhotoBitmap = null;
         }
         super.onDestroyView();
     }
+
+
 
     /**
      *getLayoutId returns an integer representing the layout resource ID for the associated ScannerFragment.
