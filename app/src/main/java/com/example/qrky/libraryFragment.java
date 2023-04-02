@@ -38,7 +38,7 @@ public class libraryFragment extends Fragment {
 
     RecyclerView recyclerView;
     CardAdapter adapter;
-
+    private TextView totalItemsText;
     List<CardData> allCards;
     List<CardData> filteredCards;
     SearchView searchView;
