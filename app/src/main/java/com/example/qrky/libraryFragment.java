@@ -2,6 +2,7 @@ package com.example.qrky;
 
 import android.content.Intent;
 
+import android.graphics.Color;
 import android.graphics.Typeface;
 
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +41,8 @@ public class libraryFragment extends Fragment {
     RecyclerView recyclerView;
     CardAdapter adapter;
 
+    private int title = 1;
+    private int score = 1;
     List<CardData> allCards;
     List<CardData> filteredCards;
     SearchView searchView;
@@ -71,7 +75,8 @@ public class libraryFragment extends Fragment {
         filteredCards = new ArrayList<>();
         adapter = new CardAdapter(filteredCards);
         recyclerView.setAdapter(adapter);
-
+        Button scoreButton = view.findViewById(R.id.score_button);
+        Button title_sort = view.findViewById(R.id.title_sort);
         searchView = view.findViewById(R.id.search_view);
         setPrettyFont();
 
@@ -82,6 +87,52 @@ public class libraryFragment extends Fragment {
                 Intent viewProfile = new Intent(getActivity(), UserProfileActivity.class);
                 startActivity(viewProfile);
 
+            }
+        });
+
+        scoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.sortCards(3);
+            }
+        });
+
+        scoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                scoreButton.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.button_background, null));
+                title_sort.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.button_background, null));
+                title_sort.setText("Title");
+                if (score == -1) {
+                    adapter.sortCards(2);
+                    scoreButton.setText("Score (>)");
+                }
+                else {
+                    adapter.sortCards(3);
+                    scoreButton.setText("Score (<)");
+                }
+                score *= -1;
+            }
+        });
+
+        title_sort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                scoreButton.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.button_background, null));
+                title_sort.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.button_background, null));
+
+                scoreButton.setText("Score");
+                if (title == -1) {
+                    adapter.sortCards(0);
+                    title_sort.setText("Title (Z-A)");
+                }
+                else {
+                    adapter.sortCards(1);
+                    title_sort.setText("Title (A-Z)");
+                }
+                title *= -1;
             }
         });
 

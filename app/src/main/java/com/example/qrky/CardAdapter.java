@@ -23,6 +23,8 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -249,8 +251,83 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         } else {
             rarity = "Common";
         }
-        card.setRarity(rarity);
+
+        int rareInt;
+        switch (rarity) {
+            case "Ultra Rare":
+                rareInt = 0;
+                break;
+            case "Very Rare":
+                rareInt = 1;
+                break;
+            case "Rare":
+                rareInt = 2;
+                break;
+            case "Uncommon":
+                rareInt = 3;
+                break;
+            case "Common":
+            default:
+                rareInt = 4;
+                break;
+        }
+
+        card.setRarity(rareInt);
         filteredCards.add(card);
+        notifyDataSetChanged();
+    }
+
+    public void sortCards(int method) {
+        switch (method) {
+            case 0:
+                Collections.sort(filteredCards, new Comparator<CardData>() {
+                    @Override
+                    public int compare(CardData card1, CardData card2) {
+                        return card1.getTitle().compareTo(card2.getTitle());
+                    }
+                });
+                break;
+            case 1:
+                Collections.sort(filteredCards, new Comparator<CardData>() {
+                    @Override
+                    public int compare(CardData card1, CardData card2) {
+                        return card2.getTitle().compareTo(card1.getTitle());
+                    }
+                });
+                break;
+            case 2:
+                Collections.sort(filteredCards, new Comparator<CardData>() {
+                    @Override
+                    public int compare(CardData card1, CardData card2) {
+                        return card1.getScore() - card2.getScore();
+                    }
+                });
+                break;
+            case 3:
+                Collections.sort(filteredCards, new Comparator<CardData>() {
+                    @Override
+                    public int compare(CardData card1, CardData card2) {
+                        return card2.getScore() - card1.getScore();
+                    }
+                });
+                break;
+            case 4:
+                Collections.sort(filteredCards, new Comparator<CardData>() {
+                    @Override
+                    public int compare(CardData card1, CardData card2) {
+                        return card2.getRarity()-card1.getRarity();
+                    }
+                });
+                break;
+            case 5:
+                Collections.sort(filteredCards, new Comparator<CardData>() {
+                    @Override
+                    public int compare(CardData card1, CardData card2) {
+                        return -(card2.getRarity()-card1.getRarity());
+                    }
+                });
+                break;
+        }
         notifyDataSetChanged();
     }
 
