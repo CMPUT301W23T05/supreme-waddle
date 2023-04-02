@@ -37,9 +37,11 @@ import java.util.Map;
  *  @version 1.0
  */
 public class libraryFragment extends Fragment {
+    private int totalScore = 0;
 
     RecyclerView recyclerView;
     CardAdapter adapter;
+    TextView totalCodes;
 
     private int title = 1;
     private int score = 1;
@@ -68,6 +70,7 @@ public class libraryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_library, container, false);
+        totalCodes = view.findViewById(R.id.total_codes);
 
         recyclerView = view.findViewById(R.id.normal_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
@@ -156,13 +159,22 @@ public class libraryFragment extends Fragment {
                             List<String> playerIds = (List<String>) document.get("playerID");
                             if (name != null && score != null && playerIds != null && playerIds.contains(MainActivity.getuName())) {
                                 cards.add(new CardData(name, score, hash));
+                                totalScore += score;
                             }
                         }
 
                         allCards = cards;
                         filteredCards.addAll(cards);
                         adapter.notifyDataSetChanged();
+                        totalCodes.setText("Total Codes: " + allCards.size());
+
+                        adapter.notifyDataSetChanged();
+
+                        // set the text of the totalPoints TextView here, after the total score has been calculated
+                        TextView totalPoints = view.findViewById(R.id.total_points);
+                        totalPoints.setText("Full Score: " + totalScore);
                     }
+
                 });
 
 
@@ -179,6 +191,8 @@ public class libraryFragment extends Fragment {
                 return true;
             }
         });
+        TextView totalPoints = view.findViewById(R.id.total_points);
+        totalPoints.setText("Full Score: " + totalScore);
 
         return view;
     }
@@ -217,7 +231,9 @@ public class libraryFragment extends Fragment {
                 }
             }
         }
+        totalCodes.setText("Total Codes: " + filteredCards.size());
     }
+
 
     /**
      * Sets the font of the search bar to Josefin Sans Semibold.
