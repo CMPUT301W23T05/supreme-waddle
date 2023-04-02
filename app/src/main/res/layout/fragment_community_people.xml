@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="66dp"
+    android:orientation="vertical"
+    tools:context=".CommunityFragmentPeople"
+    android:scrollbars="vertical"
+    android:background="@drawable/app_background">
+
+
+    <SearchView
+        android:id="@+id/playersSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/searchview_background"
+        android:queryHint="Search player..."
+        android:padding="5dp"
+        android:gravity="end"
+        android:searchIcon="@drawable/search"
+        android:iconifiedByDefault="false"
+        android:queryBackground="@android:color/transparent"/>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp">
+
+        <TextView
+            android:id="@+id/playerLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefin_sans_semibold"
+            android:text="Player"
+            android:textSize="22sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/crown2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/playerLabel"
+            app:layout_constraintRight_toRightOf="@+id/pointsLabel"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/pointsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefin_sans_semibold"
+            android:text="Pts"
+            android:textSize="22sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/community_codes_list"
+        android:background="@drawable/leaderboard_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.4"
+        android:scrollbars="none"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="12dp"
+        tools:listitem="@layout/a_player_brief" />
+
+<!--    &lt;!&ndash;TODO: Move button to other users' profiles&ndash;&gt;-->
+<!--    <Button-->
+<!--        android:id="@+id/SeeOtherUserCodes"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="12dp"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:text="Other's Library (Only for testing)" />-->
+
+</LinearLayout>
