@@ -75,7 +75,7 @@ public class Database {
             mDb.collection("QR Codes").document(hexString.toString()).update("location", mGeoPoint);
         }
         Log.d("goSaveLibrary", "before makeName");
-        mDb.collection("QR Codes").document(hexString.toString()).update("name", makeName(hexString.toString()));
+        mDb.collection("QR Codes").document(hexString.toString()).update("name", makeName(extractBinary(hexString.toString())));
         Log.d("goSaveLibrary", "after makeName");
         mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
         mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion(MainActivity.getuName()));
@@ -122,7 +122,7 @@ public class Database {
                 + Long.valueOf(bytes[16] + bytes[18] + bytes[20] + bytes[22] + bytes[24] + bytes[26], 16)
                 - Long.valueOf(bytes[7] + bytes[9] + bytes[11] + bytes[13] + bytes[15], 16)
                 + Long.valueOf( bytes[17] + bytes[19] + bytes[21] + bytes[23] + bytes[25] + bytes[27], 16))
-                % ((abs(firstBytes) - abs(lastBytes))%1000)) + 1;
+                % (((abs(firstBytes) - abs(lastBytes))%1000)+1)) + 1;
         Log.d("getScore", "score: " + score);
         return abs(score);
     }
@@ -169,14 +169,9 @@ public class Database {
 
 
     }
-    /**
-     * This method takes a QR Code hash and converts it to a name
-     * @param str
-     * @return name: an 8 word name for a QR Code
-     */
-    String makeName(String str) {
+
+    private String extractBinary(String str) {
         String[] strArr = str.split("");
-        String[] wordArr = new String[8];
         String binary = "";
         for (int i = 0; i < 4; i++) {
             switch (strArr[i]) {
@@ -231,8 +226,19 @@ public class Database {
             }
         }
 
+        return binary;
+    }
+    /**
+     * This method takes a QR Code hash and converts it to a name
+     * @param str
+     * @return name: an 8 word name for a QR Code
+     */
+    String makeName(String str) {
 
-        strArr = binary.split("");
+        String[] wordArr = new String[8];
+        String[] strArr;
+
+        strArr = str.split("");
         String result = "";
 
         switch (strArr[0]) {
