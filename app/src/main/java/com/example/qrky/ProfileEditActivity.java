@@ -54,121 +54,22 @@ public class ProfileEditActivity extends AppCompatActivity {
                 String uName = user.getDisplayName();
                 String email = mEmail.getText().toString();
                 final String[] signedEmail = {user.getEmail()};
+                Boolean nameChanged = false;
+                Boolean emailChanged = false;
+                Boolean passwordChanged = false;
                 String password = mPassword.getText().toString();
                 Log.d("update", "Username: " + username + " Email: " + email + " Password: " + password);
-                final boolean wait[] = new boolean[]{false, false, false, true, true, true};
-                if (!email.isEmpty()) {
-                    Log.d("updateEmail", "Email: " + email);
-                    wait[0] = true;
-
-                    user.updateEmail(email).addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Log.d("updateEmail", "Email updated");
-                            signedEmail[0] = email;
-                            try {
-                            db.collection("Players").document(Objects.requireNonNull(username)).update("email", email);
-                            } catch (Exception e) {
-                                Log.d("updateEmail", "Username not changed");
-                            } try {
-                                db.collection("Players").document(Objects.requireNonNull(uName)).update("email", email);
-                            } catch (Exception e) {
-                                Log.d("updateEmail", "Username not changed");
-                            }
-                            changed = true;
-                        } else {
-                            Log.d("updateEmail", "Email update failed");
-                        }
-                        wait[0] = false;
-                        if (!wait[1] && !wait[2] && !wait[3] && !wait[4] && !wait[5]) {
-                            resultIntent.putExtra("changed", changed);
-                            resultIntent.putExtra("user", user);
-                            setResult(Activity.RESULT_OK, resultIntent);
-                            finish();
-                        }
-                    });
-
-
+                if (!username.equals("")) {
+                    nameChanged = true;
                 }
-                wait[3] = false;
-                if (!password.isEmpty()) {
-                    Log.d("updatePassword", "Password: " + password);
-                    wait[1] = true;
-                    user.updatePassword(password).addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Log.d("updatePassword", "Password updated");
-                            fAuth.signInWithEmailAndPassword(signedEmail[0], password).addOnCompleteListener(task1 -> {
-                                if (task1.isSuccessful()) {
-                                    Log.d("updatePassword", "Password updated");
-                                    changed = true;
-                                } else {
-                                    Log.d("updatePassword", "Password update failed");
-                                }
-                                wait[1] = false;
-                                if (!wait[0] && !wait[2] && !wait[3] && !wait[4] && !wait[5]) {
-                                    resultIntent.putExtra("changed", changed);
-                                    resultIntent.putExtra("user", user);
-                                    setResult(Activity.RESULT_OK, resultIntent);
-                                    finish();
-                                }
-                            });
-                            changed = true;
-                        } else {
-                            Log.d("updatePassword", "Password update failed");
-                        }
-                        wait[1] = false;
-                        if (!wait[0] && !wait[2] && !wait[3] && !wait[4] && !wait[5]) {
-                            resultIntent.putExtra("changed", changed);
-                            resultIntent.putExtra("user", user);
-                            setResult(Activity.RESULT_OK, resultIntent);
-                            finish();
-                        }
-                    });
-
-
+                if (!email.equals("")) {
+                    emailChanged = true;
                 }
-                wait[4] = false;
-                if (!username.isEmpty()) {
-                    wait[2] = true;
-
-                    user.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(username).build()).addOnCompleteListener(updateTask -> {
-                        if (updateTask.isSuccessful()) {
-
-                            db.collection("Players").document(Objects.requireNonNull(uName)).get().addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    changed = true;
-
-                                    Log.d("updateUsername", "DocumentSnapshot data: " + task.getResult().getData());
-                                    if (!uName.equals(username)) {
-                                        db.collection("Players").document(username).set(Objects.requireNonNull(task.getResult().getData()));
-                                        db.collection("Players").document(uName).delete();
-                                    }
-                                    Log.d("updateUsername", "Username updated");
-
-                                } else {
-                                    Log.d("updateUsername", "Username update failed");
-                                }
-                                wait[2] = false;
-                                if (!wait[0] && !wait[1] && !wait[3] && !wait[4] && !wait[5]) {
-                                    resultIntent.putExtra("changed", changed);
-                                    resultIntent.putExtra("user", user);
-                                    setResult(Activity.RESULT_OK, resultIntent);
-                                    finish();
-                                }
-
-                            });
-                        }
-                    });
+                if (!password.equals("")) {
+                    passwordChanged = true;
                 }
-                wait[5] = false;
-                if (!wait[0] && !wait[1] && !wait[2] && !wait[3] && !wait[4] && !wait[5]) {
-                    resultIntent.putExtra("changed", changed);
-                    resultIntent.putExtra("user", user);
-                    setResult(Activity.RESULT_OK, resultIntent);
-                    finish();
-                }
-
+                updateUsername(uName, nameChanged, emailChanged, passwordChanged);
             }
-
         });
 
 
@@ -178,5 +79,107 @@ public class ProfileEditActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+    private void updateUsername(String oldName, Boolean nameChanged, Boolean emailChanged, Boolean passwordChanged) {
+        if (nameChanged) {
+            String newUName = mUsername.getText().toString();
+            if (newUName.equals(oldName)) {
+            Log.d("updateUsername", "Username not changed");
+            updatePassword(mPassword.getText().toString(), oldName, emailChanged, passwordChanged);
+            } else {
+                user.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(newUName).build()).addOnCompleteListener(updateTask -> {
+                    if (updateTask.isSuccessful()) {
+
+                        db.collection("Players").document(Objects.requireNonNull(oldName)).get().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                changed = true;
+
+                                Log.d("updateUsername", "DocumentSnapshot data: " + task.getResult().getData());
+
+                                db.collection("Players").document(newUName).set(Objects.requireNonNull(task.getResult().getData()));
+                                db.collection("Players").document(oldName).delete();
+
+                                Log.d("updateUsername", "Username updated");
+
+                            } else {
+                                Log.d("updateUsername", "Username update failed");
+                            }
+
+                            updatePassword(mPassword.getText().toString(), newUName, emailChanged, passwordChanged);
+
+                        });
+                    }
+                });
+            }
+        } else {
+            updatePassword(mPassword.getText().toString(), oldName, emailChanged, passwordChanged);
+        }
+    }
+
+    private void updateEmail(String email, String username, Boolean emailChanged) {
+        if (emailChanged){
+            user.updateEmail(email).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d("updateEmail", "Email updated");
+                    try {
+                        db.collection("Players").document(Objects.requireNonNull(username)).update("email", email);
+                    } catch (Exception e) {
+                        Log.d("updateEmail", "Username not changed");
+                    }
+                    changed = true;
+                } else {
+                    Log.d("updateEmail", "Email update failed");
+                }
+
+                finishUpdate();
+            });
+        }
+        else {
+            finishUpdate();
+        }
+    }
+
+    private void updatePassword(String password, String username,  Boolean emailChanged, Boolean passwordChanged) {
+        if (passwordChanged) {
+            user.updatePassword(password).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d("updatePassword", "Password updated");
+                    changed = true;
+                    db.collection("Players").document(username).get().addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()) {
+                            fAuth.signInWithEmailAndPassword(Objects.requireNonNull(task1.getResult().get("email")).toString(), password).addOnCompleteListener(task2 -> {
+                                if (task2.isSuccessful()) {
+                                    Log.d("updatePassword", "Signed in");
+                                } else {
+                                    Log.d("updatePassword", "Sign in failed");
+                                }
+                                user = fAuth.getCurrentUser();
+                                updateEmail(mEmail.getText().toString(), username, emailChanged);
+                            });
+                        } else {
+                            Log.d("updatePassword", "Username update failed");
+                            updateEmail(mEmail.getText().toString(), username, emailChanged);
+                        }
+                    });
+                } else {
+                    Log.d("updatePassword", "Password update failed");
+                    updateEmail(mEmail.getText().toString(), username, emailChanged);
+                }
+
+
+            });
+        }
+        else {
+            updateEmail(mEmail.getText().toString(), username, emailChanged);
+        }
+    }
+
+    private void finishUpdate() {
+        setResult(Activity.RESULT_OK, resultIntent);
+        user.reload();
+        if (changed) {
+            startActivity(new Intent(ProfileEditActivity.this, MainActivity.class));
+        }
+        finish();
     }
 }
