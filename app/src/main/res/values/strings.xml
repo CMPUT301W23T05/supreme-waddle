@@ -28,4 +28,15 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="login">Login</string>
     <string name="username">Username</string>
+    <string name="beautiful_profile_image">Beautiful profile image</string>
+    <string name="edit_profile_button">edit profile button</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="contact_stuff">username: \nemail: \npassword: ●●●●●●●●●●●</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="email">Email</string>
+    <string name="profile">Profile</string>
+    <string name="save_changes">Save Changes</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".ui.login.LoginActivity"
+    tools:context=".ProfileEditActivity"
     android:background="@drawable/gradient_background">
 
     <TextView
@@ -17,9 +17,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/advent_pro_medium"
-        android:text="@string/login"
+        android:text="Edit Profile"
         android:textColor="@color/white"
-        android:textSize="100sp"
+        android:textSize="80sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -72,7 +72,7 @@
         app:layout_constraintVertical_bias="0.06999999" />
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/confirm_password"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:autofillHints="@string/prompt_password"
@@ -95,24 +95,42 @@
         app:layout_constraintVertical_bias="0.07999998" />
 
 
-
     <Button
-        android:id="@+id/login"
+        android:id="@+id/backBttn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/button_background"
+        android:backgroundTint="@color/purple_200"
+        android:padding="10dp"
+        android:text="Back"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toTopOf="@+id/page_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.02"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+    <Button
+        android:id="@+id/save_changes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="64dp"
         android:background="@drawable/button_background"
-        android:enabled="false"
+        android:enabled="true"
         android:fontFamily="@font/advent_pro_medium"
         android:padding="10dp"
-        android:text="@string/action_sign_in"
+        android:text="@string/save_changes"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password"
+        app:layout_constraintTop_toBottomOf="@+id/confirm_password"
         app:layout_constraintVertical_bias="0.9" />
 
     <ProgressBar
@@ -124,8 +142,8 @@
         android:layout_marginBottom="64dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/password"
-        app:layout_constraintStart_toStartOf="@+id/password"
+        app:layout_constraintEnd_toEndOf="@+id/confirm_password"
+        app:layout_constraintStart_toStartOf="@+id/confirm_password"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.3" />
 

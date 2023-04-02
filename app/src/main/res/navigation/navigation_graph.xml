@@ -29,7 +29,7 @@
         android:id="@+id/userProfileFragment"
         android:name="com.example.qrky.userProfileFragment"
         android:label="fragment_user_profile"
-        tools:layout="@layout/fragment_user_profile" />
+        tools:layout="@layout/activity_user_profile" />
     <fragment
         android:id="@+id/communityFragment"
         android:name="com.example.qrky.CommunityFragment"

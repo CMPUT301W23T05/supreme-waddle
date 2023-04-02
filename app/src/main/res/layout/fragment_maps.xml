@@ -31,17 +31,49 @@
             android:backgroundTint="#FFF4E5"
             android:text="Nearby codes"
             android:textColor="#06000A" />
+
     </LinearLayout>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="604dp"
+        android:layout_height="match_parent"
+        android:layout_below="@id/info_button_layout"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="60dp"
-        android:paddingBottom="40dp"
-        android:layout_weight = "1"
-        />
+        android:layout_marginTop="70dp"
+        android:layout_marginBottom="50dp"
+        android:layout_weight="1"
+        android:paddingBottom="0dp" />
+
+    <LinearLayout
+        android:id="@+id/info_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:layout_marginTop="70dp"
+        android:orientation="horizontal"
+        android:padding="1dp">
+
+        <Button
+            android:id="@+id/info_button"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="#833AB4"
+            android:elevation="0dp"
+            android:outlineAmbientShadowColor="#00000000"
+            android:outlineSpotShadowColor="#00000000"
+            android:padding="0dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="12dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="12dp"
+            android:stateListAnimator="@null"
+            android:text="i"
+            android:textColor="@color/black"
+            android:translationZ="0dp" />
+
+    </LinearLayout>
 
 </FrameLayout>

@@ -27,6 +27,7 @@ import java.util.List;
  */
 public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.CommunityViewHolder> {
     private List<List<String>> playerAndScoreRanked;
+    private List<String> playerRanks;
 
         /**
          * Constructor for CommunityAdapter.
@@ -66,10 +67,25 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.Comm
 
         @Override
         public void onBindViewHolder(@NonNull CommunityViewHolder holder, int position) {
-            holder.usernameView.setText((position+1)+". "+playerAndScoreRanked.get(position).get(0));
+            getRanks();
+            holder.usernameView.setText(playerRanks.get(position)+". "+playerAndScoreRanked.get(position).get(0));
             holder.scoreView.setText(playerAndScoreRanked.get(position).get(1));
         }
 
+        public void getRanks() {
+            playerRanks = new ArrayList<>();
+            int rank = 1;
+            for (int i = 0; i < playerAndScoreRanked.size(); i++) {
+                if (i == 0) {
+                    playerRanks.add(String.valueOf(rank));
+                } else if (Integer.parseInt(playerAndScoreRanked.get(i).get(1)) == Integer.parseInt(playerAndScoreRanked.get(i-1).get(1))) {
+                    playerRanks.add(String.valueOf(rank));
+                } else {
+                    rank++;
+                    playerRanks.add(String.valueOf(rank));
+                }
+            }
+        }
 
         /**
          * View holder for RecyclerView of leaderboard in CommunityFragment.java
