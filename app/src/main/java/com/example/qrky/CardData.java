@@ -7,6 +7,7 @@ public class CardData {
     private String title;
     private String hash;
     private int score;
+    private int rarity;
     /**
      * Constructs a new CardData object with the given title and score.
      * @param title the title of the card
@@ -32,9 +33,13 @@ public class CardData {
         return score;
     }
 
-    public void setRarity(String rarity) {
+    public void setRarity(int rarity) {
+        this.rarity = rarity;
     }
 
+    public int getRarity() {
+        return this.rarity;
+    }
     public String getHash() {
         return hash;
     }

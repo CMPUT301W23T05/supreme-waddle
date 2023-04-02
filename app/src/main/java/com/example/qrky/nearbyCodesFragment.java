@@ -1,19 +1,23 @@
 package com.example.qrky;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
 import android.Manifest;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -23,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qrky.placeholder.PlaceholderContent;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -58,7 +63,7 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
     private LocationManager locationManager;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference qrCodesRef = db.collection("QR Codes");
-
+    private ProgressBar mProgressBar;
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
     private Button mapsButton;
     private SearchView mSearchView;
@@ -87,9 +92,13 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
 
      @return the View object containing the Fragment's layout
      */
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nearby_codes, container, false);
+        // Initialize the ProgressBar
+        mProgressBar = view.findViewById(R.id.progressBar);
+        mProgressBar.setVisibility(View.VISIBLE);
 
         // Set up the recycler view and adapter
         mRecyclerView = view.findViewById(R.id.nearby_codes_recycler_view);
@@ -184,9 +193,12 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
      */
     private void queryNearbyCodes(double latitude, double longitude, double radius) {
         mValues.clear(); // Clear the list before adding new items
+
         qrCodesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot querySnapshot) {
+                List<PlaceholderContent.PlaceholderItem> items = new ArrayList<>();
+
                 for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
                     // Get the name attribute and location attribute
                     String name = documentSnapshot.getString("name");
@@ -202,15 +214,27 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
                         if (distance[0] <= radius * 1000) {
                             String s = String.format("%.2f", distance[0]/1000.0);
                             PlaceholderContent.PlaceholderItem item = new PlaceholderContent.PlaceholderItem(documentSnapshot.getId(), name, s);
-                            mValues.add(item);
+                            items.add(item);
                         }
                     }
                 }
 
+                mValues.addAll(items);
                 mAdapter.notifyDataSetChanged();
+                mProgressBar.setVisibility(View.GONE);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Handle the failure to query for nearby codes
+                e.printStackTrace();
             }
         });
     }
+
+
+
+
     /**
 
      Callback method to handle location updates. The method calls the queryNearbyCodes method with the user's
@@ -221,13 +245,18 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
      */
     @Override
     public void onLocationChanged(Location location) {
+        // Remove the location update listener
+        locationManager.removeUpdates(this);
+
+        // Get the user's current location
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
-        double radius = 6.0; // Search within a 6km radius
 
-        queryNearbyCodes(latitude, longitude, radius);
-
+        // Query nearby QR codes
+        queryNearbyCodes(latitude, longitude, 5.0);
     }
+
+
     /**
 
      Callback method called when the fragment's view is destroyed. The method removes location updates to conserve
