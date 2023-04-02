@@ -69,6 +69,7 @@
         android:background="#CCCCCC"
         android:layout_below="@id/nearby_codes_title"/>
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/nearby_codes_recycler_view"
         android:layout_width="match_parent"
@@ -82,5 +83,11 @@
         android:paddingTop="16dp"
         android:paddingEnd="16dp"
         android:paddingBottom="16dp" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
 </RelativeLayout>

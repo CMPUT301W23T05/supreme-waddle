@@ -21,6 +21,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.request.target.CustomTarget;
@@ -73,8 +75,20 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private static final int PERMISSION_REQUEST_CODE = 1;
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 123;
     private Bitmap mBitmap;
+    private Button infoButton;
     private FragmentManager parentFragmentManager;
-    // ...
+    private void showInfoDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("QR Icons");
+
+        // Create a custom layout for the dialog box
+        View customLayout = getLayoutInflater().inflate(R.layout.dialog_info, null);
+        builder.setView(customLayout);
+
+        builder.setPositiveButton("OK", null);
+        builder.show();
+    }
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -115,6 +129,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         // Initialize map
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        infoButton = rootView.findViewById(R.id.info_button);
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showInfoDialog();
+            }
+        });
 
         // Check for location permission
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
