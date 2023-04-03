@@ -69,7 +69,7 @@ public class UserProfileActivity extends AppCompatActivity {
             codesRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
             ArrayList<CardData> filteredCards = new ArrayList<>();
-            CardAdapter adapter = new CardAdapter(filteredCards);
+            CardAdapter adapter = new CardAdapter(filteredCards, true);
             codesRecycler.setAdapter(adapter);
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();

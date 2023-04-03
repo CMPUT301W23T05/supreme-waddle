@@ -1,5 +1,8 @@
 package com.example.qrky;
 
+import static android.content.Intent.getIntent;
+
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
@@ -46,12 +49,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     private List<CardData> filteredCards;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
+    private Boolean otherUser;
 
     /**
      * Constructor for the CardAdapter class. Initializes the filteredCards list with the provided list and gets an instance of the FirebaseFirestore class.
      * @param filteredCards The list of CardData objects to be displayed in the RecyclerView.
      */
-    public CardAdapter(List<CardData> filteredCards) {
+    public CardAdapter(List<CardData> filteredCards, Boolean otherUser) {
+        this.otherUser = otherUser;
         this.filteredCards = filteredCards;
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
@@ -114,6 +119,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card, parent, false);
+        if (otherUser) {
+            Button deleteButton = view.findViewById(R.id.button_delete);
+            deleteButton.setVisibility(View.GONE);
+        }
+
         return new CardViewHolder(view);
     }
     public static String getRarity(int value) {
@@ -181,7 +191,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             score = itemView.findViewById(R.id.score);
             rarity = itemView.findViewById(R.id.difficulty);
             deleteButton = itemView.findViewById(R.id.button_delete);
-
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 /**
                  * public void onClick(View view)

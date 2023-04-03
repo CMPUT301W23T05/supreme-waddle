@@ -75,7 +75,7 @@ public class libraryFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         filteredCards = new ArrayList<>();
-        adapter = new CardAdapter(filteredCards);
+        adapter = new CardAdapter(filteredCards, false);
         recyclerView.setAdapter(adapter);
         Button scoreButton = view.findViewById(R.id.score_button);
         Button title_sort = view.findViewById(R.id.title_sort);
