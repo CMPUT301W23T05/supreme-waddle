@@ -27,7 +27,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageReference;
+import android.widget.ImageView;
+import com.bumptech.glide.Glide;
 /**
  * The CardAdapter class is an adapter for the RecyclerView that displays a list of CardData objects.
  * It creates and binds views for CardData objects, and provides methods for adding new cards and deleting existing cards.The class contains a private List of CardData objects to be displayed in the RecyclerView, and a FirebaseFirestore instance for interacting with the Firebase Firestore database.
@@ -41,6 +45,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     private List<CardData> filteredCards;
     private FirebaseFirestore db;
+    private FirebaseStorage storage;
 
     /**
      * Constructor for the CardAdapter class. Initializes the filteredCards list with the provided list and gets an instance of the FirebaseFirestore class.
@@ -49,7 +54,45 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     public CardAdapter(List<CardData> filteredCards) {
         this.filteredCards = filteredCards;
         db = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
     }
+    private void loadImageByTitle(String title, ImageView imageView) {
+        int index = generateIndexFromTitle(title);
+
+        StorageReference cartoonsetRef = storage.getReference().child("cartoonset");
+        cartoonsetRef.listAll()
+                .addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                    @Override
+                    public void onSuccess(ListResult listResult) {
+                        List<StorageReference> items = listResult.getItems();
+                        Log.d("CardAdapter", "Number of items found: " + items.size());
+                        if (index >= 0 && index < items.size()) {
+
+                            GlideApp.with(imageView.getContext())
+                                    .load(items.get(index))
+                                    .into(imageView);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle any errors
+                    }
+                });
+    }
+
+
+    private int generateIndexFromTitle(String title) {
+        int index = 0;
+        for (int i = 0; i < title.length(); i++) {
+            index += title.charAt(i);
+        }
+        return Math.abs(index) % 2427;
+    }
+
+
+
 
     /**
      * public int getItemCount()
@@ -115,7 +158,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         LayerDrawable layerDrawable = new LayerDrawable(layers);
 
         holder.rarity.setBackground(layerDrawable);
+
+        // Load the image based on the title of the card
+        ImageView roboticFace = holder.itemView.findViewById(R.id.robotic_face);
+        loadImageByTitle(card.getTitle(), roboticFace);
     }
+
 
 
 
