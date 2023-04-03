@@ -3,6 +3,7 @@ package com.example.qrky;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
@@ -18,6 +20,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
@@ -51,6 +55,7 @@ public class CommunityFragmentPeople extends Fragment {
     RecyclerView playersBriefList;
     HashMap<String, String> playerAndScore = new HashMap<>();  // username and score
     HashMap<String, String> matchingPlayerAndScore = new HashMap<>();  // username and score that match the search query
+    HashMap<String, String> playerAndRank;  // username and rank
 
     /**
      * Constructor (empty) for CommunityFragment.
@@ -79,18 +84,24 @@ public class CommunityFragmentPeople extends Fragment {
 
         qrkyDB = FirebaseFirestore.getInstance();
         playersCollection = qrkyDB.collection("Players");
+        playerAndRank = storeRanks();
 
+        // get the search bar
+        playersSearch = view.findViewById(R.id.playersSearch);
+        setPrettyFont();
+        searchAPlayer();
 
 
         // make list of all players and scores
         // - set up adapter
-        commAdapter = new CommunityAdapter(matchingPlayerAndScore);
+        commAdapter = new CommunityAdapter(matchingPlayerAndScore, playerAndRank);
         playersBriefList = view.findViewById(R.id.community_codes_list);
         playersBriefList.setLayoutManager(new LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false));
         getAllPlayersAndScores();
         playersBriefList.setAdapter(commAdapter);
+        commAdapter.update(matchingPlayerAndScore, playerAndRank);
         matchingPlayerAndScore.putAll(playerAndScore);
-        commAdapter.update(matchingPlayerAndScore);
+        commAdapter.notifyDataSetChanged();
 
         playersBriefList.addOnItemTouchListener(new RecyclerItemClickListener(requireActivity(), playersBriefList, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
@@ -99,19 +110,10 @@ public class CommunityFragmentPeople extends Fragment {
                 intent.putExtra("username", commAdapter.getPlayer(position));
                 intent.putExtra("viewOther", true);
                 startActivity(intent);
-
             }
-
             @Override
-            public void onLongItemClick(View view, int position) {
-
-            }
+            public void onLongItemClick(View view, int position) {}
         }));
-        // get the search bar
-        playersSearch = view.findViewById(R.id.playersSearch);
-        setPrettyFont();
-        searchAPlayer();
-
 
 //        // TODO: move this button to OtherUsers
 //        Button OtherUsersCodesButton = view.findViewById(R.id.SeeOtherUserCodes);
@@ -162,7 +164,7 @@ public class CommunityFragmentPeople extends Fragment {
                     }
 
                 }
-                commAdapter.update(playerAndScore);
+                commAdapter.update(playerAndScore, playerAndRank);
             }
         });
 //        Log.i("CommunityFragment", "All players and scores: " + playerAndScore.toString());
@@ -191,9 +193,39 @@ public class CommunityFragmentPeople extends Fragment {
                 }
 //                Log.i("CommunityFragment", "Search query: " + newText);
 //                Log.i("CommunityFragment", "Matching players: " + matchingPlayerAndScore.toString());
-                commAdapter.update(matchingPlayerAndScore);
+                commAdapter.update(matchingPlayerAndScore, playerAndRank);
                 return false;
             }
         });
+    }
+
+    public HashMap<String, String> storeRanks() {
+        // TODO: store ranks in database
+        // Rank players starting from 1
+        // give tied players the same rank
+
+        HashMap<String, String> playerAndRank = new HashMap<>();
+        playersCollection.orderBy("score", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    int rank = 1;
+                    int prevScore = -1;
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        int score = Integer.parseInt(document.get("score").toString());
+                        if (score != prevScore && prevScore != -1) {
+                            rank++;
+                        }
+                        prevScore = score;
+                        playerAndRank.put(document.getId(), String.valueOf(rank));
+                        playersCollection.document(document.getId()).update("rank", rank);
+                    }
+                } else {
+                    Log.d("CommunityFragment", "Error getting documents: ", task.getException());
+                }
+                commAdapter.notifyDataSetChanged();
+            }
+        });
+        return playerAndRank;
     }
 }

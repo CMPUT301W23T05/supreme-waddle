@@ -9,11 +9,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * CommunityAdapter.java
@@ -26,8 +36,10 @@ import java.util.List;
  * @see CommunityFragment
  */
 public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.CommunityViewHolder> {
+    CollectionReference aCollectionRef;
+    // make a hashmap of player and rank
+    private HashMap<String, String> playerAndRank = new HashMap<>();
     private List<List<String>> playerAndScoreRanked;
-    private List<String> playerRanks;
 
         /**
          * Constructor for CommunityAdapter.
@@ -35,18 +47,20 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.Comm
          * @param playerAndScore: HashMap of player and score {username: score}
          * @since 1.0
          */
-        public CommunityAdapter(HashMap<String, String> playerAndScore) {
+        public CommunityAdapter(HashMap<String, String> playerAndScore, HashMap<String, String> playerAndRank) {
+            this.playerAndRank = playerAndRank;
             List<List<String>> playerAndScoreMessy = new ArrayList<>();
             for (String key: playerAndScore.keySet()) {
-                List<String> aPlayerAndScore = Arrays.asList(key, playerAndScore.get(key));
+                List<String> aPlayerAndScore = Arrays.asList(key, playerAndScore.get(key), playerAndRank.get(key));
                 playerAndScoreMessy.add(aPlayerAndScore);
             }
-            Log.i("CommunityAdapter", "playerAndScore unsorted: " + playerAndScoreMessy);
+//            Log.i("CommunityAdapter", "playerAndScore unsorted: " + playerAndScoreMessy);
 
             // sort playerAndScoreRanked by score (descending)
             playerAndScoreMessy.sort((o1, o2) -> Integer.parseInt(o2.get(1)) - Integer.parseInt(o1.get(1)));
             this.playerAndScoreRanked = playerAndScoreMessy;
-            Log.i("CommunityAdapter", "playerAndScore sorted: " + playerAndScoreRanked);
+//            Log.i("CommunityAdapter", "playerAndScore sorted: " + playerAndScoreRanked);
+            notifyDataSetChanged();
         }
 
         /**
@@ -67,24 +81,8 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.Comm
 
         @Override
         public void onBindViewHolder(@NonNull CommunityViewHolder holder, int position) {
-            getRanks();
-            holder.usernameView.setText(playerRanks.get(position)+". "+playerAndScoreRanked.get(position).get(0));
+            holder.usernameView.setText(playerAndRank.get(playerAndScoreRanked.get(position).get(0)) +". "+ playerAndScoreRanked.get(position).get(0));
             holder.scoreView.setText(playerAndScoreRanked.get(position).get(1));
-        }
-
-        public void getRanks() {
-            playerRanks = new ArrayList<>();
-            int rank = 1;
-            for (int i = 0; i < playerAndScoreRanked.size(); i++) {
-                if (i == 0) {
-                    playerRanks.add(String.valueOf(rank));
-                } else if (Integer.parseInt(playerAndScoreRanked.get(i).get(1)) == Integer.parseInt(playerAndScoreRanked.get(i-1).get(1))) {
-                    playerRanks.add(String.valueOf(rank));
-                } else {
-                    rank++;
-                    playerRanks.add(String.valueOf(rank));
-                }
-            }
         }
 
         /**
@@ -123,12 +121,13 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.Comm
          * @param playerAndScore The new HashMap of player and score.
          * @since 1.0
          */
-        public void update(HashMap<String, String> playerAndScore) {
+        public void update(HashMap<String, String> playerAndScore, HashMap<String, String> playerAndRank) {
+            this.playerAndRank = playerAndRank;
             playerAndScoreRanked.clear();
             List<List<String>> playerAndScoreMessy = new ArrayList<>();
             for (String key : playerAndScore.keySet()) {
                 if (key != null) {
-                    List<String> aPlayerAndScore = Arrays.asList(key, playerAndScore.get(key));
+                    List<String> aPlayerAndScore = Arrays.asList(key, playerAndScore.get(key), playerAndRank.get(key));
                     playerAndScoreMessy.add(aPlayerAndScore);
                 }
             }
