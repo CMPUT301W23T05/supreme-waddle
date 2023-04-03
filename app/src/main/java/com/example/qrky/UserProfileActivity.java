@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Displays a user's profile
+ */
 public class UserProfileActivity extends AppCompatActivity {
     private String uName;
     private String Email;
@@ -168,6 +171,10 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Updates the profile with the user's information
+     * @param user the user whose information is being displayed
+     */
     private void updateProfile(FirebaseUser user) {
         Log.d("profile", "updateProfile: " + user.getDisplayName());
         String uName = user.getDisplayName();

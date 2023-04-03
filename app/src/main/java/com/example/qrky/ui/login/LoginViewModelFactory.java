@@ -20,7 +20,7 @@ public class LoginViewModelFactory implements ViewModelProvider.Factory {
     @SuppressWarnings("unchecked")
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(LoginViewModel.class)) {
-            return (T) new LoginViewModel(FirebaseAuth.getInstance());
+            return (T) new LoginViewModel();
 
         } else {
             throw new IllegalArgumentException("Unknown ViewModel class");

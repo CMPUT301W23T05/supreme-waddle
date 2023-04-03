@@ -24,16 +24,28 @@ class LoginFormState {
         this.isDataValid = isDataValid;
     }
 
+    /**
+     * Returns username format errors.
+     * @return username format errors.
+     */
     @Nullable
     Integer getUsernameError() {
         return usernameError;
     }
 
+    /**
+     * Returns password errors.
+     * @return password errors.
+     */
     @Nullable
     Integer getPasswordError() {
         return passwordError;
     }
 
+    /**
+     * Checks if the data in the form is valid.
+     * @return true if the data in the form is valid.
+     */
     boolean isDataValid() {
         return isDataValid;
     }

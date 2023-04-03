@@ -139,8 +139,8 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
 
         return view;
     }
-    /**
 
+    /**
      Callback method to handle the result of a permission request. If the requested permission is granted,
      the method requests location updates using GPS_PROVIDER. If the requested permission is denied, a toast
      message is displayed to inform the user.

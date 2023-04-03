@@ -44,7 +44,9 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
 
 
-
+/**
+ * A fragment that displays a map with markers for each nearby QR code
+ */
 public class MapsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -78,6 +80,10 @@ public class MapsFragment extends Fragment {
         return view;
     }
 
+
+    /**
+     * A pager adapter
+     */
     public class PagerAdapter extends FragmentStatePagerAdapter {
         int mNumOfTabs;
         private String[] tabTitles = new String[]{"Maps", "Nearby Codes"};
@@ -87,6 +93,11 @@ public class MapsFragment extends Fragment {
         }
 
 
+        /**
+         * Returns the fragment to display for that page
+         * @param position the position of the tab
+         * @return the fragment to display
+         */
         @NonNull
         @Override
         public Fragment getItem(int position) {
@@ -96,11 +107,21 @@ public class MapsFragment extends Fragment {
             }
             return new MapsFragmentMap();
         }
+
+        /**
+         * Returns the number of tabs
+         * @return the number of tabs
+         */
         @Override
         public int getCount() {
             return mNumOfTabs;
         }
 
+        /**
+         * Returns the title of the tab
+         * @param position the position of the tab
+         * @return the title of the tab
+         */
         // overriding getPageTitle()
         @Override
         public CharSequence getPageTitle(int position) {
