@@ -16,6 +16,7 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -56,7 +57,7 @@ import java.util.List;
  */
 public class CardDetailsFragment extends DialogFragment {
 
-    private static final String ARG_TITLE = "title";
+    static final String ARG_TITLE = "title";
     private ImageView roboticFace;
 
     private ListView commentsList;
@@ -145,7 +146,8 @@ public class CardDetailsFragment extends DialogFragment {
                         }
                     }
                 });
-        Button button1 = view.findViewById(R.id.button1);
+        ImageButton button1 = view.findViewById(R.id.button1);
+
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -180,7 +182,8 @@ public class CardDetailsFragment extends DialogFragment {
             }
         });
 
-        Button seeButton = view.findViewById(R.id.button2);
+        ImageButton seeButton = view.findViewById(R.id.button2);
+
         seeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
