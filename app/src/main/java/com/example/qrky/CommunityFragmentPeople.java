@@ -7,11 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,7 +44,7 @@ public class CommunityFragmentPeople extends Fragment {
     public CollectionReference playersCollection;
     CommunityAdapter commAdapter;
     //  private OtherUsersCodesViewModel otherUsersCodesVM;
-    androidx.appcompat.widget.SearchView playersSearch;
+    SearchView playersSearch;
     RecyclerView playersBriefList;
     HashMap<String, String> playerAndScore = new HashMap<>();  // username and score
     HashMap<String, String> matchingPlayerAndScore = new HashMap<>();  // username and score that match the search query

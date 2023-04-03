@@ -5,17 +5,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.os.Bundle;
-import android.widget.TextView;
+import android.widget.SearchView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.core.Query;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +36,7 @@ public class CommunityFragmentPeopleTest {
     @Mock
     private CommunityAdapter adapter;
     @Mock
-    private androidx.appcompat.widget.SearchView searchView;
+    private SearchView searchView;
     @Mock
     private RecyclerView recyclerView;
     private CommunityFragmentPeople fragment;
@@ -56,14 +51,18 @@ public class CommunityFragmentPeopleTest {
         fragment.playersBriefList = recyclerView;
     }
 
+    /**
+     * Tests getAllPlayersAndScores() method.
+     */
     @Test
     public void testGetAllPlayersAndScores() {
-        when(db.collection(eq("Players"))).thenReturn(collectionReference);
-        when(collectionReference.addSnapshotListener(any())).thenReturn(() -> {});
         fragment.getAllPlayersAndScores();
         verify(collectionReference).addSnapshotListener(any());
     }
 
+    /**
+     * Tests searchAPlayer() method.
+     */
     @Test
     public void testSearchPlayer() {
         String query = "test";
