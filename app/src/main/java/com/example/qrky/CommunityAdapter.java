@@ -50,7 +50,6 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.Comm
             playerAndScoreMessy.sort((o1, o2) -> Integer.parseInt(o2.get(1)) - Integer.parseInt(o1.get(1)));
             this.playerAndScoreRanked = playerAndScoreMessy;
 //            Log.i("CommunityAdapter", "playerAndScore sorted: " + playerAndScoreRanked);
-            notifyDataSetChanged();
         }
 
         /**
