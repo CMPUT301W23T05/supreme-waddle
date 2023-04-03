@@ -1,0 +1,143 @@
+package com.example.qrky;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * CommunityAdapter.java
+ * Adapter for RecyclerView of leaderboard in CommunityFragment. This adapter is used to
+ * display the leaderboard in the CommunityFragment. It is used to display all the players,
+ * ordered by their score. It is also used to display the players that match the search query.
+ *
+ * @author Franco Bonilla
+ * @version 1.0 2023/03/12
+ * @see CommunityFragment
+ */
+public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.CommunityViewHolder> {
+    private List<List<String>> playerAndScoreRanked;
+    private List<String> playerRanks;
+
+        /**
+         * Constructor for CommunityAdapter.
+         *
+         * @param playerAndScore: HashMap of player and score {username: score}
+         * @since 1.0
+         */
+        public CommunityAdapter(HashMap<String, String> playerAndScore) {
+            List<List<String>> playerAndScoreMessy = new ArrayList<>();
+            for (String key: playerAndScore.keySet()) {
+                List<String> aPlayerAndScore = Arrays.asList(key, playerAndScore.get(key));
+                playerAndScoreMessy.add(aPlayerAndScore);
+            }
+            Log.i("CommunityAdapter", "playerAndScore unsorted: " + playerAndScoreMessy);
+
+            // sort playerAndScoreRanked by score (descending)
+            playerAndScoreMessy.sort((o1, o2) -> Integer.parseInt(o2.get(1)) - Integer.parseInt(o1.get(1)));
+            this.playerAndScoreRanked = playerAndScoreMessy;
+            Log.i("CommunityAdapter", "playerAndScore sorted: " + playerAndScoreRanked);
+        }
+
+        /**
+         * Gets the view holder for the RecyclerView.
+         * @param parent   The ViewGroup into which the new View will be added after it is bound to
+         *                 an adapter position.
+         *
+         * @param viewType The view type of the new View as an integer.
+         * @return A new CommunityViewHolder that uses a View of a_player_brief.
+         * @since 1.0
+         */
+        @NonNull
+        @Override
+        public CommunityViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.a_player_brief, parent, false);
+            return new CommunityViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull CommunityViewHolder holder, int position) {
+            getRanks();
+            holder.usernameView.setText(playerRanks.get(position)+". "+playerAndScoreRanked.get(position).get(0));
+            holder.scoreView.setText(playerAndScoreRanked.get(position).get(1));
+        }
+
+        public void getRanks() {
+            playerRanks = new ArrayList<>();
+            int rank = 1;
+            for (int i = 0; i < playerAndScoreRanked.size(); i++) {
+                if (i == 0) {
+                    playerRanks.add(String.valueOf(rank));
+                } else if (Integer.parseInt(playerAndScoreRanked.get(i).get(1)) == Integer.parseInt(playerAndScoreRanked.get(i-1).get(1))) {
+                    playerRanks.add(String.valueOf(rank));
+                } else {
+                    rank++;
+                    playerRanks.add(String.valueOf(rank));
+                }
+            }
+        }
+
+        /**
+         * View holder for RecyclerView of leaderboard in CommunityFragment.java
+         *
+         * @author Franco Bonilla
+         * @version 1.0 2023/03/12
+         * @see CommunityAdapter
+         */
+        public static class CommunityViewHolder extends RecyclerView.ViewHolder {
+
+            private TextView usernameView;
+            private TextView scoreView;
+
+            public CommunityViewHolder(@NonNull View itemView) {
+                super(itemView);
+                usernameView = itemView.findViewById(R.id.username);
+                scoreView = itemView.findViewById(R.id.score);
+            }
+        }
+
+        /**
+         * Gets the number of items in the leaderboard (playerAndScoreRanked).
+         *
+         * @return The number of items in the RecyclerView.
+         * @since 1.0
+         */
+        @Override
+        public int getItemCount() {
+            return playerAndScoreRanked.size();
+        }
+
+        /**
+         * Updates the leaderboard with the new HashMap of player and score.
+         *
+         * @param playerAndScore The new HashMap of player and score.
+         * @since 1.0
+         */
+        public void update(HashMap<String, String> playerAndScore) {
+            playerAndScoreRanked.clear();
+            List<List<String>> playerAndScoreMessy = new ArrayList<>();
+            for (String key : playerAndScore.keySet()) {
+                if (key != null) {
+                    List<String> aPlayerAndScore = Arrays.asList(key, playerAndScore.get(key));
+                    playerAndScoreMessy.add(aPlayerAndScore);
+                }
+            }
+            playerAndScoreMessy.sort((o1, o2) -> Integer.parseInt(o2.get(1)) - Integer.parseInt(o1.get(1)));
+            this.playerAndScoreRanked = playerAndScoreMessy;
+            notifyDataSetChanged();
+        }
+
+        public String getPlayer(int position) {
+            return playerAndScoreRanked.get(position).get(0);
+        }
+}

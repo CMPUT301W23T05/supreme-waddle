@@ -1,30 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="16dp">
-
-
+    android:layout_height="45dp"
+    android:layout_margin="10dp"
+    android:padding="2dp">
 
     <TextView
+        android:background="@drawable/player_brief_background"
         android:id="@+id/item_text"
-        android:layout_width="0dp"
+        android:layout_width="250dp"
         android:layout_height="40dp"
-        android:layout_marginEnd="3dp"
-        android:layout_weight="1"
-        android:background="@drawable/list_shape"
-        android:textSize="18sp"
-        android:gravity="center_vertical"/>
+        android:text="[code]"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMaxTextSize="22sp"
+        android:autoSizeMinTextSize="8sp"
+        android:autoSizeStepGranularity="1sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingTop="5sp"
+        android:paddingLeft="10sp"/>
 
     <TextView
+        android:background="@drawable/player_brief_background"
         android:id="@+id/distance_text"
-        android:layout_width="35dp"
+        android:layout_width="72dp"
         android:layout_height="40dp"
-        android:layout_margin="2dp"
-        android:background="@drawable/list_shape"
-        android:textSize="18sp"
-        android:gravity="center"/>
+        android:text="[dist]"
+        android:textAlignment="center"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="5sp"/>
 
-</LinearLayout>
-
+</androidx.constraintlayout.widget.ConstraintLayout>

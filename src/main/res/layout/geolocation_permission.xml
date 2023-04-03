@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/geoloc_permission_q"
+        android:textAlignment="center"
+        android:textSize="32dp"
+        tools:layout_editor_absoluteX="92dp"
+        tools:layout_editor_absoluteY="5dp" />
+
+    <Button
+        android:id="@+id/geoloc_no"
+        android:layout_width="125dp"
+        android:layout_height="80dp"
+        android:text="No, do not track it."
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="75dp" />
+
+    <Button
+        android:id="@+id/geoloc_yes"
+        android:layout_width="125dp"
+        android:layout_height="80dp"
+        android:text="Yes, track location!"
+        tools:layout_editor_absoluteX="229dp"
+        tools:layout_editor_absoluteY="75dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

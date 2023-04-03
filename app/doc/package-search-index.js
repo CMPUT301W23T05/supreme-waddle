@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.example.qrky"},{"l":"com.example.qrky.placeholder"}]

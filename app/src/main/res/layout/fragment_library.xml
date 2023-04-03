@@ -1,81 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="@drawable/app_background" >
-
+    android:background="@drawable/app_background"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center_horizontal"
-        android:padding="2dp">
-
-        <Button
-            android:id="@+id/library_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#FFF4E5"
-            android:text="Library"
-            android:textColor="#06000A" />
-
-        <Button
-            android:id="@+id/profile_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:backgroundTint="#FFF4E5"
-            android:text="Profile"
-            android:textColor="#06000A" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="-260dp"
+        android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical">
 
         <SearchView
             android:id="@+id/search_view"
-            android:layout_width="match_parent"
+            android:layout_width="370dp"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
-            android:backgroundTint="#FFE2BA"
             android:background="@drawable/searchview_background"
+            android:backgroundTint="#FFE2BA"
             android:iconifiedByDefault="false"
+            android:queryBackground="@null"
             android:queryHint="Search Collection"
             android:radius="100dp"
-            android:textColor="#06000A"
             android:searchIcon="@drawable/search"
-            android:queryBackground="@null"/>
+            android:textColor="#06000A" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/normal_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_card" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/score_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoSizeTextType="uniform"
+                    android:background="@drawable/button_background"
+                    android:backgroundTint="#FFE2BA"
+                    android:padding="8dp"
+                    android:text="Score"
+                    android:textSize="18sp" />
+
+
+                <Button
+                    android:id="@+id/title_sort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:autoSizeTextType="uniform"
+                    android:background="@drawable/button_background"
+                    android:backgroundTint="#FFE2BA"
+                    android:padding="8dp"
+                    android:text="Title"
+                    android:textSize="18sp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/total_codes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:autoSizeTextType="uniform"
+                    android:background="@drawable/searchview_background"
+                    android:padding="8dp"
+                    android:text="Total Codes: 0"
+                    android:textSize="18sp"
+                    android:layout_marginRight="8dp"/>
+
+                <TextView
+                    android:id="@+id/total_points"
+                    android:text="Full Score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:autoSizeTextType="uniform"
+                    android:background="@drawable/searchview_background"
+                    android:padding="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/button_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_marginTop="-30dp"
-        android:gravity="center">
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/normal_recycler"
-            android:layout_width="match_parent"
+
+        <Button
+            android:id="@+id/profile_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal"
-
-            tools:itemCount="3"
-            tools:listitem="@layout/item_card" />
+            android:layout_alignParentRight="true"
+            android:background="@drawable/button_background"
+            android:backgroundTint="@color/purple_200"
+            android:padding="10dp"
+            android:layout_gravity="center_horizontal"
+            android:text="Profile"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toTopOf="@+id/search_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.92"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.050000012" />
 
     </LinearLayout>
+
 
 </FrameLayout>

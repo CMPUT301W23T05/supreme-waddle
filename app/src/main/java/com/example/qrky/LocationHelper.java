@@ -1,7 +1,6 @@
 package com.example.qrky;
 
 import android.Manifest;
-import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -31,12 +30,22 @@ public class LocationHelper implements DefaultLifecycleObserver {
     };
 
     private final Context context;
+
+    /**
+     *this method is a constructor for a class called LocationHelper. The constructor accepts two parameters: context and owner.
+     * @param context
+     * @param owner
+     */
     public LocationHelper(Context context, LifecycleOwner owner) {
         this.context = context;
         handler = new Handler(Looper.getMainLooper());
         owner.getLifecycle().addObserver(this);
     }
 
+    /**
+     * this method is responsible for retrieving the last known GPS location of the device.
+     * @return
+     */
     public Location getGPS() {
         Location location = null;
         LocationManager manager =
@@ -51,6 +60,10 @@ public class LocationHelper implements DefaultLifecycleObserver {
         return location;
     }
 
+    /**
+     *this method is responsible for retrieving the last known network-based location of the device.
+     * @return
+     */
     public Location getNetwork() {
         Location location = null;
         LocationManager manager =
@@ -65,6 +78,11 @@ public class LocationHelper implements DefaultLifecycleObserver {
         return location;
     }
 
+    /**
+     * this method is is responsible for retrieving the last known location of the device based on the best available provider that matches the given criteria.
+     * @param criteria
+     * @return
+     */
     public Location getBest(Criteria criteria) {
         Location location;
         LocationManager manager =
@@ -89,6 +107,11 @@ public class LocationHelper implements DefaultLifecycleObserver {
         return location;
     }
 
+    /**
+     *this method is responsible for requesting location updates from the specified provider and handling the location update events via the provided callback.
+     * @param provider
+     * @param callback
+     */
     public void startLocation(String provider, LocationCallback callback) {
         if (callback != null) {
             this.callback = callback;
@@ -109,6 +132,9 @@ public class LocationHelper implements DefaultLifecycleObserver {
         manager.requestLocationUpdates(provider, 5000L, 0.0F, listener);
     }
 
+    /**
+     *this method is responsible for stopping the location updates that were previously requested and removing any pending callbacks related to location updates.
+     */
     public void stopLocation() {
         handler.removeCallbacksAndMessages(null);
         if (callback != null) {
@@ -125,11 +151,14 @@ public class LocationHelper implements DefaultLifecycleObserver {
             manager.removeUpdates(listener);
         }
     }
-
+    /**
+     * this method is responsible for handling the onDestroy lifecycle event of the associated LifecycleOwner (such as an Activity or Fragment). The method is called when the LifecycleOwner is being destroyed.
+     */
     @Override
     public void onDestroy(@NonNull LifecycleOwner owner) {
         stopLocation();
     }
+
 
     public interface LocationCallback {
         void onSuccess(double latitude, double longitude);
