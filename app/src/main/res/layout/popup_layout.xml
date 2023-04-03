@@ -28,22 +28,21 @@
         android:gravity="left"
         android:padding="16dp">
 
-        <Button
+        <ImageButton
             android:id="@+id/button1"
-
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@drawable/rounded_div"
-            android:paddingHorizontal="10dp"
-            android:text="1" />
+            android:src="@drawable/location" />
 
-        <Button
+        <ImageButton
             android:id="@+id/button2"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginStart="20dp"
-            android:text="2"
-            android:background="@drawable/rounded_div"/>
+            android:background="@drawable/rounded_div"
+            android:src="@drawable/group"
+            android:layout_marginStart="20dp"/>
+
 
     </LinearLayout>
 
