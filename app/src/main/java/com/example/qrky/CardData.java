@@ -8,6 +8,21 @@ public class CardData {
     private String hash;
     private int score;
     private int rarity;
+    private String facepath;
+
+    public String getFacepath() {
+        return facepath;
+    }
+
+    public void setFacepath(String facepath) {
+        this.facepath = facepath;
+    }
+    public CardData(String title, int score, String hash, String facepath) {
+        this.title = title;
+        this.score = score;
+        this.hash = hash;
+        this.facepath = facepath;
+    }
     /**
      * Constructs a new CardData object with the given title and score.
      * @param title the title of the card

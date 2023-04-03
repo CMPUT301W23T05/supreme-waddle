@@ -11,13 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FieldValue;
@@ -30,6 +36,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
@@ -50,6 +59,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private Boolean otherUser;
+    private final Executor executor = Executors.newFixedThreadPool(4);
 
     /**
      * Constructor for the CardAdapter class. Initializes the filteredCards list with the provided list and gets an instance of the FirebaseFirestore class.
@@ -60,7 +70,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         this.filteredCards = filteredCards;
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
+        setHasStableIds(true);
     }
+
 
     /**
      * Loads face images from Firebase Storage and displays them in the RecyclerView.
@@ -71,6 +83,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     private void loadImageByTitle(String title, ImageView imageView) {
         int index = generateIndexFromTitle(title);
 
+
+    @Override
+    public long getItemId(int position) {
+        return filteredCards.get(position).hashCode();
+    }
+    private void loadImageByTitle(String title, CardViewHolder holder) {
+        int index = generateIndexFromTitle(title);
+        holder.progressBar.setVisibility(View.VISIBLE);
         StorageReference cartoonsetRef = storage.getReference().child("cartoonset");
         cartoonsetRef.listAll()
                 .addOnSuccessListener(new OnSuccessListener<ListResult>() {
@@ -79,10 +99,30 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                         List<StorageReference> items = listResult.getItems();
                         Log.d("CardAdapter", "Number of items found: " + items.size());
                         if (index >= 0 && index < items.size()) {
+                            // Get the image reference
+                            StorageReference imageRef = items.get(index);
 
-                            GlideApp.with(imageView.getContext())
-                                    .load(items.get(index))
-                                    .into(imageView);
+                            // Load the image into the ImageView
+                            GlideApp.with(holder.itemView.getContext())
+                                    .load(imageRef)
+                                    .listener(new RequestListener<Drawable>() {
+                                        @Override
+                                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                            holder.progressBar.setVisibility(View.GONE);
+                                            return false;
+                                        }
+
+                                        @Override
+                                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                            holder.progressBar.setVisibility(View.GONE);
+                                            return false;
+                                        }
+                                    })
+                                    .into(holder.roboticFace);
+
+                            // Save the image path to the Firebase document
+                            imageRef.getPath();
+                            saveImagePathToFirebase(title, imageRef.getPath(),holder);
                         }
                     }
                 })
@@ -90,15 +130,52 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                     @Override
                     public void onFailure(@NonNull Exception exception) {
                         // Handle any errors
+                        holder.progressBar.setVisibility(View.GONE);
                     }
                 });
     }
 
 
+
+    private void saveImagePathToFirebase(String title, String imagePath, CardViewHolder holder) {
+        executor.execute(() -> {
+        db.collection("QR Codes")
+                .whereEqualTo("name", title)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            documentSnapshot.getReference().update("facepath", imagePath)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("CardAdapter", "Successfully updated facepath.");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.d("CardAdapter", "Error updating facepath: " + e.getMessage());
+                                        }
+                                    });
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("CardAdapter", "Error getting document: " + e.getMessage());
+                    }
+                });
+        });
+    }
+
     /** get an index for the image based on the title
      * @param title title of the card
      * @return index of face image to use
      */
+
     private int generateIndexFromTitle(String title) {
         int index = 0;
         for (int i = 0; i < title.length(); i++) {
@@ -106,10 +183,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         }
         return Math.abs(index) % 2427;
     }
-
-
-
-
     /**
      * public int getItemCount()
      * Gets the number of items in the filteredCards list.
@@ -171,7 +244,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         holder.score.setText(String.valueOf(card.getScore()));
         String rarity = getRarity(card.getScore());
         holder.rarity.setText(rarity);
-
+        ProgressBar progressBar = holder.progressBar;
         int backgroundColor = ContextCompat.getColor(holder.itemView.getContext(), getBackgroundColor(rarity));
         Drawable circularBackground = ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.circular_border_background);
         GradientDrawable gradientDrawable = new GradientDrawable();
@@ -185,29 +258,38 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
         holder.rarity.setBackground(layerDrawable);
 
-        // Load the image based on the title of the card
-        ImageView roboticFace = holder.itemView.findViewById(R.id.robotic_face);
-        loadImageByTitle(card.getTitle(), roboticFace);
+        // Load the image based on the title of the card or from the facepath if it exists
+        ImageView roboticFace = holder.roboticFace;
+        if (card.getFacepath() != null && !card.getFacepath().isEmpty()) {
+            StorageReference imageRef = storage.getReference().child(card.getFacepath());
+            GlideApp.with(roboticFace.getContext())
+                    .load(imageRef)
+                    .into(roboticFace);
+        } else {
+            loadImageByTitle(card.getTitle(), holder);
+        }
     }
 
 
 
 /** The CardViewHolder class represents a single item in the RecyclerView. */
 
+
     public class CardViewHolder extends RecyclerView.ViewHolder {
+        public ImageView roboticFace;
         TextView rarity;
         TextView title;
         TextView score;
         private Button deleteButton;
-
-
-
+        ProgressBar progressBar;
         public CardViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.card_title);
             score = itemView.findViewById(R.id.score);
             rarity = itemView.findViewById(R.id.difficulty);
             deleteButton = itemView.findViewById(R.id.button_delete);
+            progressBar = itemView.findViewById(R.id.progress_bar);
+            roboticFace = itemView.findViewById(R.id.robotic_face);
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 /**
                  * public void onClick(View view)
