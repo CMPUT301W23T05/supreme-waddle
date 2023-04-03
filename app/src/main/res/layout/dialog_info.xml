@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Ultra Rare QR code \nPoints in range [950,1000]" />
+            android:text="Ultra Rare code \nPoints in range [950,1000]" />
 
     </LinearLayout>
 
@@ -41,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Very Rare QR code \nPoints in range [750,950]" />
+            android:text="Very Rare code \nPoints in range [750,950]" />
 
     </LinearLayout>
 
@@ -61,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Rare QR code \nPoints in range [500,750]" />
+            android:text="Rare code \nPoints in range [500,750]" />
 
     </LinearLayout>
     <LinearLayout
@@ -80,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Uncommon QR code \nPoints in range [300,500]" />
+            android:text="Uncommon code \nPoints in range [300,500]" />
 
     </LinearLayout>
     <LinearLayout
@@ -99,9 +103,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Common QR code \nPoints in range\n[0,300]" />
+            android:text="Common code \nPoints in range\n[0,300]" />
 
+    </LinearLayout>
     </LinearLayout>
 
 
-</LinearLayout>
+</ScrollView>
