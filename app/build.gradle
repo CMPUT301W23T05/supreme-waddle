@@ -112,6 +112,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
 
 //    implementation files('C:\\Users\\Franc\\AppData\\Local\\Android\\Sdk\\platforms\\android-33\\android.jar')
+//    implementation files('C:\\Users\\user\\AppData\\Local\\Android\\Sdk\\platforms\\android-33\\android.jar')
 }
 apply plugin: 'com.google.gms.google-services'
 
