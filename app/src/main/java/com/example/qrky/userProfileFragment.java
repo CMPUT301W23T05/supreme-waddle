@@ -29,7 +29,7 @@ public class userProfileFragment extends DialogFragment {
     private String Password;
     private int Rank;
     private int cardsCollected;
-    private int totalPoints;
+   
 
     public userProfileFragment() {
         // empty constructor
