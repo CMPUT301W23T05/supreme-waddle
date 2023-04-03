@@ -20,6 +20,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Allows user to edit their profile and password
+ */
 public class ProfileEditActivity extends AppCompatActivity {
     private EditText mUsername;
     private EditText mEmail;
@@ -83,6 +86,14 @@ public class ProfileEditActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * Updates the user's username
+     * @param oldName the user's old username
+     * @param nameChanged whether the user changed their username
+     * @param emailChanged whether the user changed their email
+     * @param passwordChanged whether the user changed their password
+     */
     private void updateUsername(String oldName, Boolean nameChanged, Boolean emailChanged, Boolean passwordChanged) {
         if (nameChanged) {
             String newUName = mUsername.getText().toString();
@@ -114,7 +125,6 @@ public class ProfileEditActivity extends AppCompatActivity {
                                         db.collection("QR Codes").document(document.getId()).update("playerID", FieldValue.arrayUnion(newUName));
                                     }
                                 });
-//
 
                                 Log.d("updateUsername", "Username updated");
 
@@ -133,6 +143,13 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * Updates the user's email
+     * @param email the user's new email
+     * @param username the user's username
+     * @param emailChanged whether the user changed their email
+     */
     private void updateEmail(String email, String username, Boolean emailChanged) {
         if (emailChanged){
             user.updateEmail(email).addOnCompleteListener(task -> {
@@ -156,6 +173,13 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Updates the user's password
+     * @param password the user's new password
+     * @param username the user's username
+     * @param emailChanged whether the user changed their email
+     * @param passwordChanged whether the user changed their password
+     */
     private void updatePassword(String password, String username,  Boolean emailChanged, Boolean passwordChanged) {
         if (passwordChanged) {
             user.updatePassword(password).addOnCompleteListener(task -> {
@@ -191,6 +215,10 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * Finishes the update process and reloads the app
+     */
     private void finishUpdate() {
         user.reload();
         resultIntent.putExtra("changed", changed);

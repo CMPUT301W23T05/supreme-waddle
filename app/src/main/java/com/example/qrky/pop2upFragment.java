@@ -107,7 +107,7 @@ public class pop2upFragment extends DialogFragment {
 
     /**
      *
-     * @param savedInstanceState
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
      */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
