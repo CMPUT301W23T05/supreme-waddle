@@ -106,12 +106,12 @@ public class libraryFragment extends Fragment {
                 scoreButton.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.button_background, null));
                 title_sort.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.button_background, null));
                 title_sort.setText("Title");
-                if (score == -1) {
-                    adapter.sortCards(2);
+                if (score == 1) {
+                    adapter.sortCards(3);
                     scoreButton.setText("Score (>)");
                 }
                 else {
-                    adapter.sortCards(3);
+                    adapter.sortCards(2);
                     scoreButton.setText("Score (<)");
                 }
                 score *= -1;
@@ -126,12 +126,12 @@ public class libraryFragment extends Fragment {
                 title_sort.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.button_background, null));
 
                 scoreButton.setText("Score");
-                if (title == -1) {
-                    adapter.sortCards(0);
+                if (title == 1) {
+                    adapter.sortCards(1);
                     title_sort.setText("Title (Z-A)");
                 }
                 else {
-                    adapter.sortCards(1);
+                    adapter.sortCards(0);
                     title_sort.setText("Title (A-Z)");
                 }
                 title *= -1;
