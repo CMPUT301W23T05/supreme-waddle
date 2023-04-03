@@ -62,6 +62,8 @@ public class scannerFragment extends CaptureFragment {
     private String mCode;
     private GeoPoint mGeoPoint;
     private Bitmap mPhotoBitmap;
+    // Other class members
+    private boolean mIsBitmapSaved;
 
 
     /**
@@ -104,6 +106,7 @@ public class scannerFragment extends CaptureFragment {
      */
     @OptIn(markerClass = ExperimentalGetImage.class)
     private void goSaveLibrary() {
+
         if (TextUtils.isEmpty(mCode)) {
             Toast.makeText(requireContext(), "Code not valid.",
                     Toast.LENGTH_SHORT).show();
@@ -115,22 +118,29 @@ public class scannerFragment extends CaptureFragment {
             return;
         }
         if (Objects.isNull(mPhotoBitmap)) {
-            Toast.makeText(requireContext(), "Photo is not taken.",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Photo is not taken.", Toast.LENGTH_SHORT).show();
             return;
         }
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int quality = 100;
         int size = mPhotoBitmap.getByteCount();
+
         while (size > 100 * 1024 && quality > 1) {
             quality -= 1;
             size = quality * size / 100;
         }
-        mPhotoBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+
+        if (!mPhotoBitmap.isRecycled()) {
+            mPhotoBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+        }
+
         InputStream photoInputStream = new ByteArrayInputStream(baos.toByteArray());
         mDatabase.goSaveLibrary(true, mCode, mGeoPoint, photoInputStream);
+        mIsBitmapSaved = true;
         MainActivity mainActivity = (MainActivity) requireActivity();
         mainActivity.switchTab(R.id.libraryFragment);
+
     }
 
     /**
@@ -254,12 +264,14 @@ public class scannerFragment extends CaptureFragment {
      */
     @Override
     public void onDestroyView() {
-        if (mPhotoBitmap != null) {
+        if (!mIsBitmapSaved && mPhotoBitmap != null && !mPhotoBitmap.isRecycled()) {
             mPhotoBitmap.recycle();
             mPhotoBitmap = null;
         }
         super.onDestroyView();
     }
+
+
 
     /**
      *getLayoutId returns an integer representing the layout resource ID for the associated ScannerFragment.
