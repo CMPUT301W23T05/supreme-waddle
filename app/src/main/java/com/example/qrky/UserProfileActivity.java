@@ -39,7 +39,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(null);
         Intent intent = getIntent();
 
         user = MainActivity.getUser();

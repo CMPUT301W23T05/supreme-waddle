@@ -6,6 +6,8 @@
         <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
           <Key>
+
+
             <type value="SERIAL_NUMBER" />
             <value value="LHS7N18B23012325" />
           </Key>
