@@ -121,14 +121,17 @@ public class CardDetailsFragment extends DialogFragment {
                 }
             }
         });
-        Button seeButton =  view.findViewById(R.id.button2);
+        Button seeButton = view.findViewById(R.id.button2);
         seeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pop2upFragment fragment = new pop2upFragment();
+                String title = getArguments().getString(ARG_TITLE); // get the argument value
+                pop2upFragment fragment = pop2upFragment.newInstance(title);
                 fragment.show(getFragmentManager(), "popup");
             }
         });
+
+
 
         builder.setView(view);
 

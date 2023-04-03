@@ -15,14 +15,14 @@
         android:textStyle="bold"
         android:padding="15dp"
         android:textColor="@color/white"
-        android:textSize="30sp" />
+        android:textSize="50sp" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="690dp"
         android:orientation="vertical"
-        android:padding="50dp"
-        android:textColor="@color/white">
+        android:padding="90sp"
+        android:fillViewport="true">
 
         <ListView
             android:id="@+id/ppl_list"
