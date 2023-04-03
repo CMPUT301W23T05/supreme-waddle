@@ -61,12 +61,14 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar loadingProgressBar;
     private EditText emailEditText;
     private TextView loginRegister;
+    private Button back_button;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         result = new Intent();
 
         super.onCreate(savedInstanceState);
+
         Log.d("LoginActivity", "onCreate: 1");
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         Log.d("LoginActivity", "onCreate: 2");
@@ -84,6 +86,29 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = binding.login;
         loadingProgressBar = binding.loading;
         emailEditText.setVisibility(View.GONE);
+        back_button = findViewById(R.id.back);
+        back_button.setVisibility(View.GONE);
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginRegister.setText("Login");
+                emailEditText.setVisibility(View.GONE);
+                back_button.setVisibility(View.GONE);
+                loginButton.setText("Login");
+                loginButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        loadingProgressBar.setVisibility(View.VISIBLE);
+                        try {
+                            login(usernameEditText.getText().toString(),
+                                    passwordEditText.getText().toString());
+                        } catch (NoSuchAlgorithmException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+            }
+        });
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -190,6 +215,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d("Auth", "No such document");
                         loadingProgressBar.setVisibility(View.GONE);
                         emailEditText.setVisibility(View.VISIBLE);
+                        back_button.setVisibility(View.VISIBLE);
                         loginButton.setText("Register");
                         loginRegister.setText("Register");
                         loginButton.setOnClickListener(new View.OnClickListener() {
