@@ -2,6 +2,7 @@ package com.example.qrky;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -120,6 +121,17 @@ public class CardDetailsFragment extends DialogFragment {
                 }
             }
         });
+        Button seeButton = view.findViewById(R.id.button2);
+        seeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String title = getArguments().getString(ARG_TITLE); // get the argument value
+                pop2upFragment fragment = pop2upFragment.newInstance(title);
+                fragment.show(getFragmentManager(), "popup");
+            }
+        });
+
+
 
         builder.setView(view);
 
@@ -131,6 +143,7 @@ public class CardDetailsFragment extends DialogFragment {
 
         return dialog;
     }
+
 
 
     @Override
