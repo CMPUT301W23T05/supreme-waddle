@@ -10,7 +10,7 @@
     <TextView
         android:background="@drawable/player_brief_background"
         android:id="@+id/item_text"
-        android:layout_width="250dp"
+        android:layout_width="0dp"
         android:layout_height="40dp"
         android:text="[code]"
         android:autoSizeTextType="uniform"
@@ -20,8 +20,11 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/distance_text"
+    app:layout_constraintHorizontal_weight="1"
         android:paddingTop="5sp"
-        android:paddingLeft="10sp"/>
+        android:paddingLeft="10sp"
+        android:layout_marginRight="4dp"/>
 
     <TextView
         android:background="@drawable/player_brief_background"
@@ -34,6 +37,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:padding="5sp"/>
+        app:layout_constraintStart_toEndOf="@+id/item_text"
+        app:layout_constraintHorizontal_weight="0"
+        android:padding="5sp"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
