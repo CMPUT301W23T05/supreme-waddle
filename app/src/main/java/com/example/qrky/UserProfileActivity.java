@@ -39,7 +39,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(null);
         Intent intent = getIntent();
 
         user = MainActivity.getUser();
@@ -150,7 +150,7 @@ public class UserProfileActivity extends AppCompatActivity {
         if (RESULT_OK == resultCode) {
             if (data.getBooleanExtra("changed", false)) {
                 Log.d("profile", "onActivityResult: ");
-//                user.reload();
+                user.reload();
                 updateProfile(data.getParcelableExtra("user"));
                 MainActivity.userUpdate(data.getParcelableExtra("user"));
 

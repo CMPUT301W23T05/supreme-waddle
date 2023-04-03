@@ -37,7 +37,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     private FirebaseAuth fAuth = FirebaseAuth.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(null);
         setContentView(R.layout.activity_profile_edit);
         mUsername = findViewById(R.id.username);
         mEmail = findViewById(R.id.email);
@@ -113,16 +113,17 @@ public class ProfileEditActivity extends AppCompatActivity {
                                 db.collection("Players").document(newUName).set(Objects.requireNonNull(task.getResult().getData()));
                                 db.collection("Players").document(oldName).delete();
 
-                                db.collection("QR Codes").whereArrayContains("playerID", oldName).addSnapshotListener((value, error) -> {
-                                    if (error != null) {
-                                        Log.d("updateUsername", "Listen failed.", error);
-                                        return;
-                                    }
-
-                                    List<DocumentSnapshot> documents = value.getDocuments();
-                                    for (DocumentSnapshot document : documents) {
-                                        db.collection("QR Codes").document(document.getId()).update("playerID", FieldValue.arrayRemove(oldName));
-                                        db.collection("QR Codes").document(document.getId()).update("playerID", FieldValue.arrayUnion(newUName));
+                                db.collection("QR Codes").whereArrayContains("playerID", oldName).get().addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        for (DocumentSnapshot document : Objects.requireNonNull(task1.getResult())) {
+                                            Log.d("updateUsername", document.getId() + " => " + document.getData());
+                                            List<String> playerID = (List<String>) document.get("playerID");
+                                            playerID.remove(oldName);
+                                            playerID.add(newUName);
+                                            db.collection("QR Codes").document(document.getId()).update("playerID", playerID);
+                                        }
+                                    } else {
+                                        Log.d("updateUsername", "Error getting documents: ", task1.getException());
                                     }
                                 });
 
