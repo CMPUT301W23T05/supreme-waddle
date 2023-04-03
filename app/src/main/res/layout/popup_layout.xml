@@ -15,10 +15,12 @@
         android:textColor="@android:color/white"
         android:textSize="24sp" />
 
-    <View
+    <ImageView
+        android:id="@+id/robotic_face"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
+        > </ImageView>
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
