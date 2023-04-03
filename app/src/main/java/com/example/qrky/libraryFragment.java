@@ -40,7 +40,6 @@ public class libraryFragment extends Fragment {
 
     RecyclerView recyclerView;
     CardAdapter adapter;
-
     private int title = 1;
     private int score = 1;
     List<CardData> allCards;
