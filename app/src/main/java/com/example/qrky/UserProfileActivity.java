@@ -113,7 +113,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 if (document.exists()) {
                     cardsCollected = Objects.requireNonNull(document.getLong("totalCodes")).intValue();
                     totalPoints = Objects.requireNonNull(document.getLong("score")).intValue();
-                    rank.setText(String.valueOf(Rank));
+                    rank.setText(Objects.requireNonNull(document.getLong("rank")).toString());
                     cards_collected.setText(String.valueOf(cardsCollected));
                     total_points.setText(String.valueOf(totalPoints));
                 }
