@@ -1,6 +1,5 @@
 package com.example.qrky;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,21 +8,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * CommunityAdapter.java
@@ -136,7 +126,14 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.Comm
             notifyDataSetChanged();
         }
 
-        public String getPlayer(int position) {
+        /**
+         * Gets the player or QR Code at the given position.
+         *
+         * @param position The position of the player or QR Code.
+         * @return The player or QR Code at the given position.
+         * @since 1.0
+         */
+        public String getItem(int position) {
             return playerAndScoreRanked.get(position).get(0);
         }
 }

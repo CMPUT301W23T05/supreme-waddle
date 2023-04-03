@@ -22,23 +22,23 @@ import com.google.firebase.auth.FirebaseUser;
 public class LoginViewModel extends ViewModel {
 
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
-    private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
-    private FirebaseAuth mAuth;
+//    private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
 
-    LoginViewModel(FirebaseAuth loginRepository) {
-        this.mAuth = loginRepository;
+
+    LoginViewModel() {
+
     }
 
     LiveData<LoginFormState> getLoginFormState() {
         return loginFormState;
     }
 
-    LiveData<LoginResult> getLoginResult() {
-        return loginResult;
-    }
 
-
-
+    /**
+     * Checks if username and password are valid.
+     * @param username Username to be checked.
+     * @param password Password to be checked.
+     */
     public void loginDataChanged(String username, String password) {
         if (!isUserNameValid(username)) {
             loginFormState.setValue(new LoginFormState(R.string.invalid_username, null));
@@ -49,6 +49,11 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
+    /**
+     * Checks if username is valid.
+     * @param username Username to be checked.
+     * @return true if username is valid.
+     */
     // A placeholder username validation check
     private boolean isUserNameValid(String username) {
         if (username == null) {
@@ -61,6 +66,11 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
+    /**
+     * Checks if password is valid.
+     * @param password Password to be checked.
+     * @return true if password is valid.
+     */
     // A placeholder password validation check
     private boolean isPasswordValid(String password) {
         return password != null && password.trim().length() > 5;

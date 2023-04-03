@@ -51,6 +51,9 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 
+/** A Fragment that displays info of a selected QR Code
+ * @author Aaron & Sophia
+ */
 public class CardDetailsFragment extends DialogFragment {
 
     private static final String ARG_TITLE = "title";

@@ -16,6 +16,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+/**
+ * this class is responsible for retrieving the last known GPS location of the device.
+ */
 public class LocationHelper implements DefaultLifecycleObserver {
     private final Handler handler;
     private LocationCallback callback;
@@ -33,8 +36,8 @@ public class LocationHelper implements DefaultLifecycleObserver {
 
     /**
      *this method is a constructor for a class called LocationHelper. The constructor accepts two parameters: context and owner.
-     * @param context
-     * @param owner
+     * @param context The context of the application.
+     * @param owner The LifecycleOwner object that is responsible for managing the lifecycle of the LocationHelper object.
      */
     public LocationHelper(Context context, LifecycleOwner owner) {
         this.context = context;
@@ -44,7 +47,7 @@ public class LocationHelper implements DefaultLifecycleObserver {
 
     /**
      * this method is responsible for retrieving the last known GPS location of the device.
-     * @return
+     * @return The last known GPS location of the device.
      */
     public Location getGPS() {
         Location location = null;
@@ -62,7 +65,7 @@ public class LocationHelper implements DefaultLifecycleObserver {
 
     /**
      *this method is responsible for retrieving the last known network-based location of the device.
-     * @return
+     * @return The last known network-based location of the device.
      */
     public Location getNetwork() {
         Location location = null;
@@ -80,8 +83,8 @@ public class LocationHelper implements DefaultLifecycleObserver {
 
     /**
      * this method is is responsible for retrieving the last known location of the device based on the best available provider that matches the given criteria.
-     * @param criteria
-     * @return
+     * @param criteria The criteria that is used to select the best available provider.
+     * @return The last known location of the device based on the best available provider that matches the given criteria.
      */
     public Location getBest(Criteria criteria) {
         Location location;
@@ -109,8 +112,8 @@ public class LocationHelper implements DefaultLifecycleObserver {
 
     /**
      *this method is responsible for requesting location updates from the specified provider and handling the location update events via the provided callback.
-     * @param provider
-     * @param callback
+     * @param provider The name of the provider with which to register for location updates.
+     * @param callback The callback that is invoked when the location is updated.
      */
     public void startLocation(String provider, LocationCallback callback) {
         if (callback != null) {
@@ -159,7 +162,9 @@ public class LocationHelper implements DefaultLifecycleObserver {
         stopLocation();
     }
 
-
+    /**
+     * this method is responsible for handling the onPause lifecycle event of the associated LifecycleOwner (such as an Activity or Fragment). The method is called when the LifecycleOwner is being paused.
+     */
     public interface LocationCallback {
         void onSuccess(double latitude, double longitude);
 

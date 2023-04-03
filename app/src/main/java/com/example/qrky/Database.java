@@ -75,7 +75,7 @@ public class Database {
             mDb.collection("QR Codes").document(hexString.toString()).update("location", mGeoPoint);
         }
         Log.d("goSaveLibrary", "before makeName");
-        mDb.collection("QR Codes").document(hexString.toString()).update("name", makeName(extractBinary(hexString.toString())));
+        mDb.collection("QR Codes").document(hexString.toString()).update("name", makeName(extractFromHex(hexString.toString())));
         Log.d("goSaveLibrary", "after makeName");
         mDb.collection("QR Codes").document(hexString.toString()).update("timestamp", Timestamp.now());
         mDb.collection("QR Codes").document(hexString.toString()).update("playerID", FieldValue.arrayUnion(MainActivity.getuName()));
@@ -180,7 +180,12 @@ public class Database {
 
     }
 
-    private String extractBinary(String str) {
+    /**
+     * Gets important info for unique name from Hexadecimal hash of QR Code
+     * @param str the string to be extracted from
+     * @return the extracted string
+     */
+    private String extractFromHex(String str) {
         String[] strArr = str.split("");
         String binary = "";
         for (int i = 0; i < 4; i++) {
@@ -239,8 +244,8 @@ public class Database {
         return binary;
     }
     /**
-     * This method takes a QR Code hash and converts it to a name
-     * @param str
+     * This method takes info extracted from a QR Code hash and converts it to a name
+     * @param str the string to be converted
      * @return name: an 8 word name for a QR Code
      */
     String makeName(String str) {
