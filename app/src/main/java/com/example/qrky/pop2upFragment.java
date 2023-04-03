@@ -64,18 +64,16 @@ public class pop2upFragment extends DialogFragment {
         return fragment;
     }
 
-    public void onCreateView(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_pop2up, container, false);
+
         String title = getArguments().getString(ARG_TITLE);
 
         FirebaseFirestore fireStore = FirebaseFirestore.getInstance();
         CollectionReference qrCodesCollection = fireStore.collection("QR Codes");
-
-        LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.fragment_pop2up, null);
-
-        TextView itemDetailsText = view.findViewById(R.id.item_details_text);
-        itemDetailsText.setText(title);
 
         pplList = view.findViewById(R.id.ppl_list);
         pplAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, pplArray);
@@ -87,22 +85,26 @@ public class pop2upFragment extends DialogFragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            pplArray.clear();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 List<String> IDs = (List<String>) document.get("playerID");
                                 if (IDs != null) {
                                     pplArray.addAll(IDs);
-                                    pplAdapter.notifyDataSetChanged();
                                 }
                             }
+                            pplAdapter.notifyDataSetChanged();
                         }
                     }
                 });
+
+        return view;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pop2up, container, false);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            String title = getArguments().getString(ARG_TITLE);
+        }
     }
 }
