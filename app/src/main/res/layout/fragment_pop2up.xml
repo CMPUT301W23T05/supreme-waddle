@@ -19,9 +19,9 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="681dp"
+        android:layout_height="690dp"
         android:orientation="vertical"
-        android:padding="100dp"
+        android:padding="50dp"
         android:textColor="@color/white">
 
         <ListView
