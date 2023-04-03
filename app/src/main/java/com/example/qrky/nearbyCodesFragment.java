@@ -127,7 +127,7 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // Request location updates
             try {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this); // 1000 ms = 1 second
             } catch (SecurityException e) {
                 // Handle the exception
                 e.printStackTrace();
@@ -136,6 +136,7 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
             // Request location permission
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
         }
+
         return view;
     }
     /**
@@ -233,9 +234,6 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
      */
     @Override
     public void onLocationChanged(Location location) {
-        // Remove the location update listener
-        locationManager.removeUpdates(this);
-
         // Get the user's current location
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
@@ -243,6 +241,7 @@ public class nearbyCodesFragment extends Fragment implements LocationListener {
         // Query nearby QR codes
         queryNearbyCodes(latitude, longitude, 5.0);
     }
+
 
 
     /**

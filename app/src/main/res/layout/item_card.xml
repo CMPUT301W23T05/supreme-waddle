@@ -81,6 +81,13 @@
             android:background="@drawable/list_shape"
             android:padding="2dp"/>
 
+        <ImageView
+            android:id="@+id/robotic_face"
+            android:layout_width="240dp"
+            android:layout_height="235dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="0dp" />
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

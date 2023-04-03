@@ -10,7 +10,7 @@
     <TextView
         android:background="@drawable/player_brief_background"
         android:id="@+id/username"
-        android:layout_width="250dp"
+        android:layout_width="0dp"
         android:layout_height="40dp"
         android:text="[Username]"
         android:autoSizeTextType="uniform"
@@ -20,13 +20,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/score"
+        app:layout_constraintHorizontal_weight="3"
         android:paddingTop="5sp"
-        android:paddingLeft="10sp"/>
+        android:paddingLeft="10sp"
+        android:layout_marginRight="10dp"/>
 
     <TextView
         android:background="@drawable/player_brief_background"
         android:id="@+id/score"
-        android:layout_width="72dp"
+        android:layout_width="0dp"
         android:layout_height="40dp"
         android:text="[Score]"
         android:textAlignment="center"
@@ -34,6 +37,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/username"
+        app:layout_constraintHorizontal_weight="1"
         android:padding="5sp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
