@@ -150,7 +150,7 @@ public class UserProfileActivity extends AppCompatActivity {
         if (RESULT_OK == resultCode) {
             if (data.getBooleanExtra("changed", false)) {
                 Log.d("profile", "onActivityResult: ");
-                user.reload();
+//                user.reload();
                 updateProfile(data.getParcelableExtra("user"));
                 MainActivity.userUpdate(data.getParcelableExtra("user"));
 

@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -20,7 +21,9 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -30,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  *  A Fragment that displays a list of CardData objects in a RecyclerView, with search functionality.
@@ -140,6 +144,26 @@ public class libraryFragment extends Fragment {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 // Retrieve data from the Firebase database
+        db.collection("Players").document(MainActivity.getuName()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("score", totalScore);
+                        db.collection("Players").document(MainActivity.getuName()).update(data);
+                        totalCodes.setText("Total Codes: " + Objects.requireNonNull(document.get("totalCodes")));
+
+
+
+                        // set the text of the totalPoints TextView here, after the total score has been calculated
+                        TextView totalPoints = view.findViewById(R.id.total_points);
+                        totalPoints.setText("Full Score: " + Objects.requireNonNull(document.get("score")));
+                    }
+                }
+            }
+        });
         db.collection("QR Codes")
                 .whereArrayContains("playerID", MainActivity.getuName())
                 .get()
@@ -165,13 +189,7 @@ public class libraryFragment extends Fragment {
                         allCards = cards;
                         filteredCards.addAll(cards);
                         adapter.notifyDataSetChanged();
-                        totalCodes.setText("Total Codes: " + allCards.size());
 
-                        adapter.notifyDataSetChanged();
-
-                        // set the text of the totalPoints TextView here, after the total score has been calculated
-                        TextView totalPoints = view.findViewById(R.id.total_points);
-                        totalPoints.setText("Full Score: " + totalScore);
                     }
 
                 });

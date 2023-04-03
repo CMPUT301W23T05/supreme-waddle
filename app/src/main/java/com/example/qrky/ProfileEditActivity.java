@@ -59,7 +59,6 @@ public class ProfileEditActivity extends AppCompatActivity {
                 String username = mUsername.getText().toString();
                 String uName = user.getDisplayName();
                 String email = mEmail.getText().toString();
-                final String[] signedEmail = {user.getEmail()};
                 Boolean nameChanged = false;
                 Boolean emailChanged = false;
                 Boolean passwordChanged = false;
@@ -75,6 +74,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                     passwordChanged = true;
                 }
                 updateUsername(uName, nameChanged, emailChanged, passwordChanged);
+                finishUpdate();
             }
         });
 
