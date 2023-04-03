@@ -27,22 +27,15 @@ import java.util.Objects;
  */
 public class UserProfileActivity extends AppCompatActivity {
     private String uName;
-    private String Email;
     private int cardsCollected;
     private int totalPoints;
     private TextView username;
     private TextView rank;
-    private Button back_button;
-    private Button logout_button;
     private TextView contactInfo;
     private TextView cards_collected;
     private TextView total_points;
-    private FirebaseFirestore db;
     private FirebaseUser user;
-    private Button edit_button;
-    private RecyclerView codesRecycler;
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    private int Rank;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +45,14 @@ public class UserProfileActivity extends AppCompatActivity {
         user = MainActivity.getUser();
         setContentView(R.layout.activity_user_profile);
         username = findViewById(R.id.username);
-        db = FirebaseFirestore.getInstance();
+        FirebaseFirestore db1 = FirebaseFirestore.getInstance();
         rank = findViewById(R.id.rank);
-        back_button = findViewById(R.id.backBttn);
-        logout_button = findViewById(R.id.logout_button);
+        Button back_button = findViewById(R.id.backBttn);
+        Button logout_button = findViewById(R.id.logout_button);
         contactInfo = findViewById(R.id.contact_info);
         cards_collected = findViewById(R.id.cards_collected);
         total_points = findViewById(R.id.total_points);
-        edit_button = findViewById(R.id.edit_button);
+        Button edit_button = findViewById(R.id.edit_button);
         updateProfile(user);
         Log.d("UserProfileActivity", "editButton" + edit_button);
         if (intent.getBooleanExtra("viewOther", false) && !Objects.equals(intent.getStringExtra("username"), user.getDisplayName())) {
@@ -67,7 +60,7 @@ public class UserProfileActivity extends AppCompatActivity {
             logout_button.setVisibility(View.GONE);
             contactInfo.setVisibility(View.GONE);
             edit_button.setVisibility(View.GONE);
-            codesRecycler = findViewById(R.id.normal_recycler);
+            RecyclerView codesRecycler = findViewById(R.id.normal_recycler);
             codesRecycler.setVisibility(View.VISIBLE);
             codesRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
@@ -110,7 +103,7 @@ public class UserProfileActivity extends AppCompatActivity {
             edit_button.setVisibility(View.VISIBLE);
         }
         username.setText(uName);
-        db.collection("Players").document(uName).get().addOnCompleteListener(task -> {
+        db1.collection("Players").document(uName).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
