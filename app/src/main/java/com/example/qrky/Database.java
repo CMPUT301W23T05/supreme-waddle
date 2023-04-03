@@ -92,7 +92,11 @@ public class Database {
                 mDb.collection("Players").document(MainActivity.getuName()).update("totalCodes", size);
                 int totalScore = 0;
                 for (int i = 0; i < size; i++) {
-                    totalScore += task.getResult().getDocuments().get(i).getLong("score").intValue();
+                    try {
+                        totalScore += Objects.requireNonNull(task.getResult().getDocuments().get(i).getLong("score")).intValue();
+                    } catch (Exception e) {
+                        Log.d("updatePlayer", "error: " + e);
+                    }
                 }
                 mDb.collection("Players").document(MainActivity.getuName()).update("score", totalScore);
             }
@@ -118,14 +122,20 @@ public class Database {
         Log.d("getScore", "lastBytes: " + bytes[bytes.length-4] + bytes[bytes.length-3] + bytes[bytes.length-2] + bytes[bytes.length-1]);
         Long lastBytes = Long.parseLong(bytes[bytes.length-4]+bytes[bytes.length-3]+bytes[bytes.length-2]+bytes[bytes.length-1], 16);
         Log.d("getScore", "firstBytesValue: " + firstBytes);
+        long divisor = (abs(firstBytes) - abs(lastBytes)) % 1000;
+        if (divisor == 0) {
+            divisor = 1; // set a non-zero value for divisor
+        }
         score = (int) ((Long.valueOf(bytes[6] + bytes[8] + bytes[10] + bytes[12] + bytes[14] , 16)
                 + Long.valueOf(bytes[16] + bytes[18] + bytes[20] + bytes[22] + bytes[24] + bytes[26], 16)
                 - Long.valueOf(bytes[7] + bytes[9] + bytes[11] + bytes[13] + bytes[15], 16)
                 + Long.valueOf( bytes[17] + bytes[19] + bytes[21] + bytes[23] + bytes[25] + bytes[27], 16))
-                % (((abs(firstBytes) - abs(lastBytes))%1000)+1)) + 1;
+                % divisor) + 1;
         Log.d("getScore", "score: " + score);
         return abs(score);
     }
+
+
 
     /**
      * This method is used to upload an image to the firebase storage
