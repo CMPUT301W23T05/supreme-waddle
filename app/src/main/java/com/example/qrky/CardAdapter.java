@@ -73,6 +73,17 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         setHasStableIds(true);
     }
 
+
+    /**
+     * Loads face images from Firebase Storage and displays them in the RecyclerView.
+     * @param title The title of the card to be displayed.
+     * @param imageView The ImageView to display the image in.
+     */
+
+    private void loadImageByTitle(String title, ImageView imageView) {
+        int index = generateIndexFromTitle(title);
+
+
     @Override
     public long getItemId(int position) {
         return filteredCards.get(position).hashCode();
@@ -125,6 +136,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     }
 
 
+
     private void saveImagePathToFirebase(String title, String imagePath, CardViewHolder holder) {
         executor.execute(() -> {
         db.collection("QR Codes")
@@ -158,6 +170,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                 });
         });
     }
+
+    /** get an index for the image based on the title
+     * @param title title of the card
+     * @return index of face image to use
+     */
+
     private int generateIndexFromTitle(String title) {
         int index = 0;
         for (int i = 0; i < title.length(); i++) {
@@ -192,6 +210,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
         return new CardViewHolder(view);
     }
+
+    /**
+     * public void sortCardsByScore()
+     * Sorts the filteredCards list by score in descending order.
+     */
     public static String getRarity(int value) {
         double percentile = (double) value / 1000.0; // assuming values are between 1 and 999
         if (percentile >= 0.95) {
@@ -246,6 +269,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             loadImageByTitle(card.getTitle(), holder);
         }
     }
+
+
+
+/** The CardViewHolder class represents a single item in the RecyclerView. */
+
+
     public class CardViewHolder extends RecyclerView.ViewHolder {
         public ImageView roboticFace;
         TextView rarity;
@@ -341,6 +370,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         }
 
     }
+
+    /**
+     * private int getBackgroundColor(String rarity)
+     * Returns the color resource ID for the given rarity.
+     * @param rarity The rarity of the card.
+     * @return The color resource ID for the given rarity.
+     */
     private int getBackgroundColor(String rarity) {
         switch (rarity) {
             case "Ultra Rare":
@@ -404,6 +440,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         notifyDataSetChanged();
     }
 
+    /**
+     * public void sortCards(int method)
+     * Sorts the filteredCards list based on the given method.
+     * @param method The method to sort the list by. 0 = sort by title ascending, 1 = sort by title descending, 2 = sort by score ascending, 3 = sort by score descending.
+     */
     public void sortCards(int method) {
         switch (method) {
             case 0:
@@ -438,22 +479,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                     }
                 });
                 break;
-            case 4:
-                Collections.sort(filteredCards, new Comparator<CardData>() {
-                    @Override
-                    public int compare(CardData card1, CardData card2) {
-                        return card2.getRarity()-card1.getRarity();
-                    }
-                });
-                break;
-            case 5:
-                Collections.sort(filteredCards, new Comparator<CardData>() {
-                    @Override
-                    public int compare(CardData card1, CardData card2) {
-                        return -(card2.getRarity()-card1.getRarity());
-                    }
-                });
-                break;
+
         }
         notifyDataSetChanged();
     }

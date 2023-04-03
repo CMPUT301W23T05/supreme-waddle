@@ -1,22 +1,16 @@
 package com.example.qrky;
 
-import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
@@ -36,7 +30,6 @@ import java.util.Objects;
  * @version 1.0 2023/04/01
  * @see CommunityFragment
  * @see CommunityAdapter
- * @see OtherUsersCodes
  */
 public class CommunityFragmentQrs extends Fragment {
 
@@ -83,7 +76,21 @@ public class CommunityFragmentQrs extends Fragment {
         getAllCodesAndScores();
         codesBriefList.setAdapter(commAdapter);
         commAdapter.update(codesAndScore, codeAndRank);
+        codesBriefList.addOnItemTouchListener(new RecyclerItemClickListener(requireActivity(), codesBriefList, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                String cardTitle = commAdapter.getItem(position);
+                // get code name
+                CardDetailsFragment fragment = CardDetailsFragment.newInstance(cardTitle);
+                fragment.show(((FragmentActivity) view.getContext()).getSupportFragmentManager(), "card_details");
 
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+                // do nothing
+            }
+        }));
         return view;
     }
 

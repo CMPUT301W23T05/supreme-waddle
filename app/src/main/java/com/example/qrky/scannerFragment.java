@@ -274,8 +274,8 @@ public class scannerFragment extends CaptureFragment {
 
 
     /**
-     *getLayoutId returns an integer representing the layout resource ID for the associated ScannerFragment.
-     *
+     * getLayoutId
+     * @return an integer representing the layout resource ID for the associated ScannerFragment.
      */
 
     @Override
@@ -285,7 +285,8 @@ public class scannerFragment extends CaptureFragment {
     }
 
     /**
-     *getPreviewViewId returns the resource ID of a preview view.
+     * getPreviewViewId
+     * @return the resource ID of a preview view.
      *
      */
 
@@ -296,9 +297,8 @@ public class scannerFragment extends CaptureFragment {
     }
 
     /**
-     * getViewfinderViewId returns the ID of the view that will be used as the
-     * viewfinder for the QR code scanner.
-     *
+     * getViewfinderViewId
+     * @return the ID of the view that will be used as the viewfinder for the QR code scanner.
      */
     @Override
     public int getViewfinderViewId() {

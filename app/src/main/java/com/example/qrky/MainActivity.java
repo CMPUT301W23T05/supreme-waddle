@@ -91,6 +91,10 @@ public class  MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Updates the user object.
+     * @param user the new user object
+     */
     protected static void userUpdate(FirebaseUser user) {
         MainActivity.user = user;
     }
@@ -103,6 +107,7 @@ public class  MainActivity extends AppCompatActivity {
 
         }
     }
+
     /**
      * Switches between the different tabs in the bottom navigation view.
      * @param id the id of the tab to switch to
@@ -122,10 +127,18 @@ public class  MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Gets the user's name.
+     * @return the user's name
+     */
     public static String getuName() {
         return user.getDisplayName();
     }
 
+    /**
+     * Gets the FirebaseUser object.
+     * @return the FirebaseUser object
+     */
     public static FirebaseUser getUser() {
         return user;
     }

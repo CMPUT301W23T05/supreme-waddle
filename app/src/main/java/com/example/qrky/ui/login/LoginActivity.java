@@ -126,21 +126,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
-            @Override
-            public void onChanged(@Nullable LoginResult loginResult) {
-                if (loginResult == null) {
-                    return;
-                }
-                loadingProgressBar.setVisibility(View.GONE);
-
-                setResult(Activity.RESULT_OK);
-
-                //Complete and destroy login activity once successful
-                finish();
-            }
-        });
-
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
@@ -162,7 +147,9 @@ public class LoginActivity extends AppCompatActivity {
         usernameEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
+            /**
+             * calls login() when the done button is pressed on the keyboard
+             */
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -179,6 +166,9 @@ public class LoginActivity extends AppCompatActivity {
 
 
         loginButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * calls login() when the login button is clicked
+             */
             @Override
             public void onClick(View v) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
@@ -219,6 +209,9 @@ public class LoginActivity extends AppCompatActivity {
                         loginButton.setText("Register");
                         loginRegister.setText("Register");
                         loginButton.setOnClickListener(new View.OnClickListener() {
+                            /**
+                             * switches Login page to Register page
+                             */
                             @Override
                             public void onClick(View v) {
                                 loadingProgressBar.setVisibility(View.VISIBLE);
@@ -246,6 +239,7 @@ public class LoginActivity extends AppCompatActivity {
      *
      * @param username the username of the user
      * @param password the password of the user
+     * @param email the email of the user
      */
     private void register(String username, String password, String email) {
         loadingProgressBar.setVisibility(View.VISIBLE);
@@ -253,6 +247,10 @@ public class LoginActivity extends AppCompatActivity {
 
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        /**
+                         * called when the user is registered
+                         * @param task the task of registering the user
+                         */
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
@@ -283,11 +281,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * signs into firebase with the given email and password
+     * signs into firebase with the given username and password
+     * @param uName the username of the user
+     * @param pass the password of the user
      */
     private void signInViaEmail(String uName, String pass) {
         final String[] email = new String[1];
         db.collection("Players").document(uName).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            /**
+             * gets the email of the user
+             * @param task the task to be completed
+             */
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -311,6 +315,7 @@ public class LoginActivity extends AppCompatActivity {
      * updates the UI with the given user
      *
      * @param model the user to update the UI with
+     * @param uName the username of the user
      */
     private void updateUiWithUser(FirebaseUser model, String uName) {
         loadingProgressBar.setVisibility(View.GONE);
@@ -327,11 +332,16 @@ public class LoginActivity extends AppCompatActivity {
      *
      * @param email the email of the user
      * @param pass  the password of the user
+     * @param uName the username of the user
      */
     private void authorize(String email, String pass, String uName) {
         Log.d("Auth", "Signing in with email: " + email + " and password: " + pass);
         mAuth.signInWithEmailAndPassword(email.trim(), pass)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    /**
+                     * called when the task is complete
+                     * @param task the task that was completed
+                     */
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
