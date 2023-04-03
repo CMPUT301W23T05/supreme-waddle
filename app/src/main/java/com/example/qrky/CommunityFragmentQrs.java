@@ -22,6 +22,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -44,6 +45,7 @@ public class CommunityFragmentQrs extends Fragment {
     CommunityAdapter commAdapter;
     RecyclerView codesBriefList;
     HashMap<String, String> codesAndScore = new HashMap<>();  // username and score
+    HashMap<String, String> codeAndRank;  // username and rank
 
     /**
      * Constructor (empty) for CommunityFragment.
@@ -71,15 +73,16 @@ public class CommunityFragmentQrs extends Fragment {
 
         qrkyDB = FirebaseFirestore.getInstance();
         codesCollection = qrkyDB.collection("QR Codes");
+        codeAndRank = getRanks();
 
         // make list of all players and scores
         // - set up adapter
-        commAdapter = new CommunityAdapter(codesAndScore);
+        commAdapter = new CommunityAdapter(codesAndScore, codeAndRank);
         codesBriefList = view.findViewById(R.id.community_codes_leaderboard);
         codesBriefList.setLayoutManager(new LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false));
         getAllCodesAndScores();
         codesBriefList.setAdapter(commAdapter);
-        commAdapter.update(codesAndScore);
+        commAdapter.update(codesAndScore, codeAndRank);
 
         return view;
     }
@@ -105,8 +108,35 @@ public class CommunityFragmentQrs extends Fragment {
                     }
 
                 }
-                commAdapter.update(codesAndScore);
+                commAdapter.update(codesAndScore, codeAndRank);
             }
         });
+    }
+
+    public HashMap<String, String> getRanks() {
+        // get code from database
+        // rank the code
+        // put code and rank in hashmap
+        // return hashmap
+        HashMap<String, String> codeAndRank = new HashMap<>();
+        codesCollection.orderBy("score", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                int rank = 1;
+                assert value != null;
+                for (QueryDocumentSnapshot doc: value) {
+                    try {
+                        codeAndRank.put(Objects.requireNonNull(doc.get("name")).toString(), String.valueOf(rank));
+                        rank++;
+                    } catch (NullPointerException e) {
+                        try {
+                            codeAndRank.put(Objects.requireNonNull(doc.get("name")).toString(), "0");
+                        } catch (NullPointerException ignored) {}
+                    }
+
+                }
+            }
+        });
+        return codeAndRank;
     }
 }
