@@ -82,12 +82,23 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     private void loadImageByTitle(String title, ImageView imageView) {
         int index = generateIndexFromTitle(title);
+    }
 
-
+    /**
+     * Gets id for the QR Code at position.
+     * @param position Adapter position to query
+     * @return
+     */
     @Override
     public long getItemId(int position) {
         return filteredCards.get(position).hashCode();
     }
+
+    /**
+     * Loads face images from Firebase Storage and displays them in the RecyclerView.
+     * @param title The title of the card to be displayed.
+     * @param holder The CardViewHolder to display the image in.
+     */
     private void loadImageByTitle(String title, CardViewHolder holder) {
         int index = generateIndexFromTitle(title);
         holder.progressBar.setVisibility(View.VISIBLE);
@@ -122,7 +133,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
                             // Save the image path to the Firebase document
                             imageRef.getPath();
-                            saveImagePathToFirebase(title, imageRef.getPath(),holder);
+                            saveImagePathToFirebase(title, imageRef.getPath());
                         }
                     }
                 })
@@ -136,8 +147,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     }
 
 
-
-    private void saveImagePathToFirebase(String title, String imagePath, CardViewHolder holder) {
+    /**
+     * Saves the face image path to the Firebase document.
+     * @param title The title of the card.
+     * @param imagePath The path of the face image.
+     */
+    private void saveImagePathToFirebase(String title, String imagePath) {
         executor.execute(() -> {
         db.collection("QR Codes")
                 .whereEqualTo("name", title)
