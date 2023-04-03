@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/communityFragment">
+
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="com.example.qrky.MapsFragment"
+        android:label="fragment_maps"
+        tools:layout="@layout/fragment_maps" />
+    <fragment
+        android:id="@+id/scannerFragment"
+        android:name="com.example.qrky.scannerFragment"
+        android:label="fragment_scanner"
+        tools:layout="@layout/fragment_scanner" >
+    </fragment>
+    <fragment
+        android:id="@+id/libraryFragment"
+        android:name="com.example.qrky.libraryFragment"
+        android:label="fragment_library"
+        tools:layout="@layout/fragment_library" />
+    <fragment
+        android:id="@+id/nearbyCodesFragment"
+        android:name="com.example.qrky.nearbyCodesFragment"
+        android:label="fragment_nearby_codes_list"
+        tools:layout="@layout/fragment_nearby_codes_list" />
+    <fragment
+        android:id="@+id/userProfileFragment"
+        android:name="com.example.qrky.userProfileFragment"
+        android:label="fragment_user_profile"
+        tools:layout="@layout/fragment_user_profile" />
+    <fragment
+        android:id="@+id/communityFragment"
+        android:name="com.example.qrky.CommunityFragment"
+        android:label="fragment_community"
+        tools:layout="@layout/fragment_community" />
+    <fragment
+        android:id="@+id/loginFragment3"
+        android:name="com.example.qrky.loginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.qrky.registerFragment"
+        android:label="fragment_register"
+        tools:layout="@layout/fragment_register" />
+</navigation>
