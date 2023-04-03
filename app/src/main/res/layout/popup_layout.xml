@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -22,14 +23,15 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:gravity="left"
         android:padding="16dp">
 
         <Button
             android:id="@+id/button1"
+
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="#E1B5FF"
+            android:background="@drawable/rounded_div"
             android:paddingHorizontal="10dp"
             android:text="1" />
 
@@ -37,18 +39,24 @@
             android:id="@+id/button2"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginStart="20dp"
             android:text="2"
-            android:background="#E1B5FF"/>
+            android:background="@drawable/rounded_div"/>
 
     </LinearLayout>
 
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:background="#E1B5FF">
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/rounded_div"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/comments_heading"
@@ -57,29 +65,38 @@
             android:padding="16dp"
             android:text="Comments"
             android:textColor="#06000A"
-            android:textSize="16sp" />
+            android:textSize="16dp" />
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="80dp">
+<!--        <ScrollView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="100dp">-->
 
             <ListView
                 android:id="@+id/comments_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="100sp"
+                tools:ignore="NestedScrolling" />
 
-        </ScrollView>
+<!--        </ScrollView>-->
 
         <EditText
             android:id="@+id/comment_input"
+            android:hint="Comment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="50sp"
+            android:layout_margin="10dp"
+            android:background="@drawable/input_field"
+             />
 
         <Button
             android:id="@+id/submit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Submit"/>
+            android:layout_margin="10dp"
+            android:text="Submit"
+            android:backgroundTint="@color/purple_500"
+            android:outlineAmbientShadowColor="@color/light_purple"
+            android:background="@drawable/button_background"/>
 
     </LinearLayout>
 
