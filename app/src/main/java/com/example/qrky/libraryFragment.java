@@ -152,7 +152,6 @@ public class libraryFragment extends Fragment {
                     if (document.exists()) {
                         Map<String, Object> data = new HashMap<>();
                         data.put("score", totalScore);
-                        db.collection("Players").document(MainActivity.getuName()).update(data);
                         totalCodes.setText("Total Codes: " + Objects.requireNonNull(document.get("totalCodes")));
 
 
