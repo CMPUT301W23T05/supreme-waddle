@@ -79,7 +79,7 @@ public class GeoImageDialogFragment extends DialogFragment {
                             // Get the last image path from the "photo" array field
                             List<String> photoPaths = (List<String>) document.get("photo");
                             if (photoPaths != null && !photoPaths.isEmpty()) {
-                                String imagePath = photoPaths.get(0); // Get the last image path
+                                String imagePath = photoPaths.get(photoPaths.size() - 1); // Get the last image path
                                 Log.d("GeoImageDialogFragment", "Image path: QRImages/" + imagePath);
                                 FirebaseStorage storage = FirebaseStorage.getInstance();
                                 StorageReference storageReference = storage.getReference().child(imagePath);
